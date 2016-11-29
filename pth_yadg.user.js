@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             pth-yadg
 // @name           passtheheadphones.me - YADG
-// @description    This script provides integration with online description generator YADG (http://yadg.cc)
+// @description    This script provides integration with online description generator YADG (http://yadg.cc) - Credit to Slack06
 // @license        https://github.com/Slack06/yadg-userscript/blob/master/LICENSE
 // @version        1.3.7
 // @namespace      yadg
