@@ -792,7 +792,7 @@ var factory = {
 
     setStyles : function() {
         // general styles
-        yadg_util.addCSS('div#yadg_options{ display:none; margin-top:3px; } input#yadg_input,input#yadg_submit,label#yadg_format_label,a#yadg_scraper_info { margin-right: 5px } div#yadg_response { margin-top:3px; } select#yadg_scraper { margin-right: 2px } #yadg_options_template,#yadg_options_api_token,#yadg_options_replace_div { margin-bottom: 3px; }');
+        yadg_util.addCSS('div#yadg_options{ display:none; margin-top:3px; } input#yadg_input,input#yadg_submit,label#yadg_format_label,a#yadg_scraper_info { margin-right: 5px } div#yadg_response { margin-top:3px; } select#yadg_scraper { margin-right: 2px } #yadg_options_template,#yadg_options_api_token,#yadg_options_replace_div { margin-bottom: 3px; } .add_form[name="yadg"] input,.add_form[name="yadg"] select { width: 90%; margin: 2px 0 !important; }');
 
         // location specific styles will go here
         switch(this.currentLocation) {
@@ -835,8 +835,9 @@ var factory = {
 
             case "pth_torrent_overview":
                 var div = document.createElement('div');
-                div.className = "yadg_div";
-                div.innerHTML = '<h3 class="label">YADG</h3>' + '<input type="text" name="yadg_input" id="yadg_input" />' + scraperSelectHTML + scraperInfoLink + buttonHTML + optionsHTML + responseDivHTML;
+                div.id = 'yadg_div'
+                div.className = 'box';
+                div.innerHTML = '<div class="head"><strong>YADG</strong></div>\n<div class="body">\n<form class="add_form" name="yadg" method="post">\n<input type="text" name="yadg_input" id="yadg_input" />\n' + scraperSelectHTML + '\n' + scraperInfoLink + '\n' + buttonHTML + '\n' + optionsHTML + '\n' + responseDivHTML;
                 return div;
 
             case "pth_request":
