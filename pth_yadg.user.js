@@ -830,7 +830,7 @@ var factory = {
             case "pth_edit":
                 var div = document.createElement('div');
                 div.className = "yadg_div";
-                div.innerHTML = '<h3 class="label">YADG</h3>' + inputHTML + scraperSelectHTML + scraperInfoLink + buttonHTML + toggleOptionsLinkHTML + optionsHTML + responseDivHTML;
+                div.innerHTML = '<h3 class="label">YADG:</h3>\n' + inputHTML + '\n'  + scraperSelectHTML + '\n'  + scraperInfoLink + '\n'  + buttonHTML + '\n'  + toggleOptionsLinkHTML + '\n'  + optionsHTML + '\n'  + responseDivHTML;
                 return div;
 
             case "pth_torrent_overview":
