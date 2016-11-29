@@ -12,7 +12,7 @@
 // @include        http*://*passtheheadphones.me/torrents.php*
 // @include        http*://*waffles.ch/upload.php*
 // @include        http*://*waffles.ch/requests.php*
-// @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/develop/pth_yadg.user.js
+// @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
 // ==/UserScript==
 
 // --------- USER SETTINGS START ---------
