@@ -837,7 +837,7 @@ var factory = {
                 var div = document.createElement('div');
                 div.id = 'yadg_div'
                 div.className = 'box';
-                div.innerHTML = '<div class="head"><strong>YADG</strong></div>\n<div class="body">\n<form class="add_form" name="yadg" method="post">\n<input type="text" name="yadg_input" id="yadg_input" />\n' + scraperSelectHTML + '\n' + scraperInfoLink + '\n' + buttonHTML + '\n' + optionsHTML + '\n' + responseDivHTML;
+                div.innerHTML = '<div class="head"><strong>YADG</strong></div>\n<div class="body">\n<form class="add_form" name="yadg" method="post">\n<input type="text" name="yadg_input" id="yadg_input" />\n' + scraperSelectHTML + '\n' + scraperInfoLink + '\n' + buttonHTML + '\n' + toggleOptionsLinkHTML + '\n' + optionsHTML + '\n' + responseDivHTML;
                 return div;
 
             case "pth_request":
