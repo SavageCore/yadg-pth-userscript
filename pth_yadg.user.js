@@ -684,6 +684,10 @@ var factory = {
             } else {
                 desc_box.value = value;
             }
+            var previewBtn = document.getElementsByClassName("button_preview_0")[0];
+            if (previewBtn.value=="Preview") {
+                previewBtn.click();
+            }            
         }
     },
 
