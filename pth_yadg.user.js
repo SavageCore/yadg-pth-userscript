@@ -22,7 +22,8 @@
  You can find a list of available templates at: https://yadg.cc/api/v2/templates/
 */
 var defaultPTHFormat = 5,
-    defaultWafflesFormat = 9;
+    defaultWafflesFormat = 9,
+    defaultPTHTarget = 'other';
 
 // --------- USER SETTINGS END ---------
 
@@ -406,6 +407,7 @@ var factory = {
     // storage keys for settings
     KEY_API_TOKEN : "apiToken",
     KEY_DEFAULT_TEMPLATE : "defaultTemplate",
+    KEY_DEFAULT_TARGET: "defaultTarget",
     KEY_DEFAULT_SCRAPER : "defaultScraper",
     KEY_REPLACE_DESCRIPTION : "replaceDescriptionOn",
     KEY_SETTINGS_INIT_VER : "settingsInitializedVer",
@@ -505,6 +507,14 @@ var factory = {
                     if (yadg_renderer.hasCached()) {
                         yadg_renderer.renderCached(this.value, factory.setDescriptionBoxValue, factory.setDescriptionBoxValue);
                     }
+                });
+            }
+
+            // add the action for the target select
+            var targetSelect = this.getTargetSelect();
+            if (targetSelect !== null) {
+                targetSelect.addEventListener('change', function (e) {
+                    var target = this.value;
                 });
             }
 
@@ -611,11 +621,13 @@ var factory = {
     saveSettings : function() {
         var scraper_select = factory.getScraperSelect(),
             template_select = factory.getFormatSelect(),
+            target_select = factory.getTargetSelect(),
             api_token_input = factory.getApiTokenInput(),
             replace_desc_checkbox = factory.getReplaceDescriptionCheckbox();
 
         var current_scraper = null,
             current_template = null,
+            current_target = null,
             api_token = api_token_input.value.trim(),
             replace_description = replace_desc_checkbox.checked;
 
@@ -627,6 +639,10 @@ var factory = {
             current_template = template_select.options[template_select.selectedIndex].value;
         }
 
+        if (target_select.options.length > 0) {
+            current_target = target_select.options[target_select.selectedIndex].value;
+        }
+
         if (current_scraper !== null) {
             yadg_util.settings.addItem(factory.KEY_DEFAULT_SCRAPER, current_scraper);
         }
@@ -634,6 +650,10 @@ var factory = {
         if (current_template !== null) {
             yadg_util.settings.addItem(factory.KEY_DEFAULT_TEMPLATE, current_template);
         }
+        
+        if (current_target !== null) {
+            yadg_util.settings.addItem(factory.KEY_DEFAULT_TARGET, current_target);
+        }        
 
         if (api_token !== "") {
             yadg_util.settings.addItem(factory.KEY_API_TOKEN, api_token);
@@ -693,6 +713,22 @@ var factory = {
             }
         }
     },
+    
+    getTargetSelect : function() {
+        return document.getElementById('yadg_target');
+    },    
+    
+    setDefaultTarget: function () {
+        var target_select = factory.getTargetSelect();
+        var target_offsets = yadg_util.getOptionOffsets(target_select);
+
+        var default_target = yadg_util.settings.getItem(factory.KEY_DEFAULT_TARGET);
+        if (default_target !== null && default_target in target_offsets) {
+            target_select.selectedIndex = target_offsets[default_target];
+        } else {
+            target_select.selectedIndex = target_offsets[defaultPTHTarget];
+        }
+    },    
 
     getScraperSelect : function() {
         return document.getElementById("yadg_scraper");
@@ -755,6 +791,7 @@ var factory = {
 
         factory.setSelect(format_select, non_utility);
         factory.setDefaultFormat();
+        factory.setDefaultTarget();
 
         if (factory.UPDATE_PROGRESS > 0) {
             yadg_util.storage.addItem(factory.KEY_FORMAT_LIST, save_templates);
@@ -813,7 +850,7 @@ var factory = {
     getInputElements : function() {
         var buttonHTML = '<input type="submit" value="Fetch" id="yadg_submit"/>',
             scraperSelectHTML = '<select name="yadg_scraper" id="yadg_scraper"></select>',
-            optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>',
+            optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>',
             inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" />',
             responseDivHTML = '<div id="yadg_response"></div>',
             toggleOptionsLinkHTML = '<a id="yadg_toggle_options" href="#">Toggle options</a>',
@@ -955,16 +992,28 @@ var factory = {
     },
 
     getFormFillFunction : function() {
+        var current_target = factory.getTargetSelect().value;
         switch (this.currentLocation) {
             case "pth_upload":
                 var f = function(rawData) {
-                    var artist_inputs = document.getElementsByName("artists[]"),
-                        album_title_input = document.getElementById("title"),
-                        year_input = document.getElementById("year"),
-                        label_input = document.getElementById("record_label"),
-                        catalog_input = document.getElementById("catalogue_number"),
-                        tags_input = document.getElementById("tags"),
-                        data = yadg.prepareRawResponse(rawData);
+                    if (current_target === 'other') {
+                        var remaster = document.getElementById('remaster');
+                        var album_title_input = document.getElementById('remaster_title');
+                        var year_input = document.getElementById('remaster_year');
+                        var label_input = document.getElementById('remaster_record_label');
+                        var catalog_input = document.getElementById('remaster_catalogue_number');
+                        remaster.checked = 'checked';
+                        Remaster();
+                        CheckYear();
+                    } else {
+                        var album_title_input = document.getElementById('title');
+                        var year_input = document.getElementById('year');
+                        var label_input = document.getElementById('record_label');
+                        var catalog_input = document.getElementById('catalogue_number');
+                    }
+                    var artist_inputs = document.getElementsByName('artists[]');
+                    var tags_input = document.getElementById('tags');
+                    var data = yadg.prepareRawResponse(rawData);
 
                     if (data.artists != false) {
                         var input_idx = 0;
@@ -1335,6 +1384,7 @@ var yadg = {
         this.scraperSelect = document.getElementById('yadg_scraper');
         this.formatSelect = document.getElementById('yadg_format');
         this.input = document.getElementById('yadg_input');
+        this.targetSelect = document.getElementById('yadg_target'); 
         this.responseDiv = document.getElementById('yadg_response');
         this.button = document.getElementById('yadg_submit');
     },
@@ -1491,6 +1541,7 @@ var yadg = {
         this.input.setAttribute('disabled',true);
         this.scraperSelect.setAttribute('disabled',true);
         this.formatSelect.setAttribute('disabled',true);
+        this.targetSelect.setAttribute('disabled', true); 
     },
 
     busyStop : function() {
@@ -1499,6 +1550,7 @@ var yadg = {
         this.input.removeAttribute('disabled');
         this.scraperSelect.removeAttribute('disabled');
         this.formatSelect.removeAttribute('disabled');
+        this.targetSelect.removeAttribute('disabled');
         this.isBusy = false;
     },
 
