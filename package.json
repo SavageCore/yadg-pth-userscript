@@ -5,10 +5,12 @@
   "devDependencies": {
     "xo": "^0.17.0"
   },
-		"xo": {
+  "xo": {
     "plugins": ["unicorn"],
     "rules": {
-      "unicorn/filename-case": ["error", { "case": "snakeCase" }]
+      "unicorn/filename-case": ["error", {
+        "case": "snakeCase"
+      }]
     }
   }
 }
