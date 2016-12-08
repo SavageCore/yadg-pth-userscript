@@ -1007,8 +1007,8 @@ var factory = {
                         var label_input = document.getElementById('remaster_record_label');
                         var catalog_input = document.getElementById('remaster_catalogue_number');
                         remaster.checked = 'checked';
-                        Remaster();
-                        CheckYear();
+                        unsafeWindow.Remaster();
+                        unsafeWindow.CheckYear();
                     } else {
                         var album_title_input = document.getElementById('title');
                         var year_input = document.getElementById('year');
