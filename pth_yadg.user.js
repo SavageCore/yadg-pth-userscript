@@ -1002,7 +1002,7 @@ var factory = {
                 var f = function(rawData) {
                     if (current_target === 'other') {
                         var remaster = document.getElementById('remaster');
-                        var album_title_input = document.getElementById('remaster_title');
+                        var album_title_input = document.getElementById('title');
                         var year_input = document.getElementById('remaster_year');
                         var label_input = document.getElementById('remaster_record_label');
                         var catalog_input = document.getElementById('remaster_catalogue_number');
