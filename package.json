@@ -4,5 +4,11 @@
   },
   "devDependencies": {
     "xo": "^0.17.0"
+  },
+		"xo": {
+    "plugins": ["unicorn"],
+    "rules": {
+      "unicorn/filename-case": ["error", { "case": "snakeCase" }]
+    }
   }
 }
