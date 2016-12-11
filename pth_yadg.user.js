@@ -1067,7 +1067,11 @@ factory = {
 					if (data.tags === false) {
 						tagsInput.value = '';
 					} else {
-						tagsInput.value = data.tag_string.toLowerCase();
+						var tagsArray = data.tag_string.split(', ');
+						var tagsUnique = tagsArray.filter(function (elem, index, self) {
+							return index === self.indexOf(elem);
+						});
+						tagsInput.value = tagsUnique.join(',').toLowerCase();
 					}
 
 					yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
