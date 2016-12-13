@@ -34,6 +34,30 @@ var yadgTemplates;
 
 // --------- USER SETTINGS END ---------
 
+function fetchImage(target) {
+	var link;
+	if (target !== null) {
+		link = target;
+	}	else {
+		link = $('#yadg_input').val();
+	}
+	if (link.match(/discogs/)) {
+		GM_xmlhttpRequest({
+			method: 'GET',
+			url: link,
+			onload: function (response) {
+				if (response.status === 200) {
+					$('#image').val(
+                        $.parseJSON(
+                            $('.image_gallery.image_gallery_large', response.responseText).attr('data-images')
+                        )[0].full
+                    );
+				}
+			}
+		});
+	}
+}
+
 // --------- THIRD PARTY CODE AREA START ---------
 
 //
@@ -420,6 +444,7 @@ factory = {
 	KEY_DEFAULT_SCRAPER: 'defaultScraper',
 	KEY_REPLACE_DESCRIPTION: 'replaceDescriptionOn',
 	KEY_SETTINGS_INIT_VER: 'settingsInitializedVer',
+	KEY_FETCH_IMAGE: 'fetchImage',
 
 	CACHE_TIMEOUT: 1000 * 60 * 60 * 24, // 24 hours
 
@@ -486,6 +511,9 @@ factory = {
 		button.addEventListener('click', function (e) {
 			e.preventDefault();
 			yadg.makeRequest();
+			if (factory.getFetchImageCheckbox().checked) {
+				fetchImage(null);
+			}
 		}, false);
 
   // add the action for the options toggle
@@ -569,6 +597,10 @@ factory = {
 		return document.getElementById('yadg_options_replace');
 	},
 
+	getFetchImageCheckbox: function () {
+		return document.getElementById('yadg_options_image');
+	},
+
 	getReplaceDescriptionSettingKey: function () {
 		return this.makeReplaceDescriptionSettingsKey(this.currentLocation);
 	},
@@ -608,6 +640,7 @@ factory = {
 	populateSettings: function () {
 		var apiToken = yadgUtil.settings.getItem(factory.KEY_API_TOKEN);
 		var replaceDesc = yadgUtil.settings.getItem(factory.getReplaceDescriptionSettingKey());
+		var fetchImage = yadgUtil.settings.getItem(factory.KEY_FETCH_IMAGE);
 
 		if (apiToken) {
 			var apiTokenInput = factory.getApiTokenInput();
@@ -618,6 +651,11 @@ factory = {
 			var replaceDescCheckbox = factory.getReplaceDescriptionCheckbox();
 			replaceDescCheckbox.checked = true;
 		}
+
+		if (fetchImage) {
+			var fetchImageCheckbox = factory.getFetchImageCheckbox();
+			fetchImageCheckbox.checked = true;
+		}
 	},
 
 	saveSettings: function () {
@@ -626,12 +664,14 @@ factory = {
 		var targetSelect = factory.getTargetSelect();
 		var apiTokenInput = factory.getApiTokenInput();
 		var replaceDescCheckbox = factory.getReplaceDescriptionCheckbox();
+		var fetchImageCheckbox = factory.getFetchImageCheckbox();
 
 		var currentScraper = null;
 		var currentTemplate = null;
 		var currentTarget = null;
 		var apiToken = apiTokenInput.value.trim();
 		var replaceDescription = replaceDescCheckbox.checked;
+		var fetchImage = fetchImageCheckbox.checked;
 
 		if (scraperSelect.options.length > 0) {
 			currentScraper = scraperSelect.options[scraperSelect.selectedIndex].value;
@@ -668,6 +708,12 @@ factory = {
 			yadgUtil.settings.addItem(replaceDescSettingKey, true);
 		} else {
 			yadgUtil.settings.removeItem(replaceDescSettingKey);
+		}
+
+		if (fetchImage) {
+			yadgUtil.settings.addItem(factory.KEY_FETCH_IMAGE, true);
+		} else {
+			yadgUtil.settings.removeItem(factory.KEY_FETCH_IMAGE);
 		}
 	},
 
@@ -856,7 +902,7 @@ factory = {
 	getInputElements: function () {
 		var buttonHTML = '<input type="submit" value="Fetch" id="yadg_submit"/>';
 		var scraperSelectHTML = '<select name="yadg_scraper" id="yadg_scraper"></select>';
-		var optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
+		var optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (discogs)</label></div><div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
 		var inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" />';
 		var responseDivHTML = '<div id="yadg_response"></div>';
 		var toggleOptionsLinkHTML = '<a id="yadg_toggle_options" href="#">Toggle options</a>';
@@ -1486,6 +1532,9 @@ yadg = {
 						a.addEventListener('click', function (e) {
 							e.preventDefault();
 							yadg.makeRequest(this.params);
+							if (factory.getFetchImageCheckbox().checked) {
+								fetchImage(this.href);
+							}
 						}, false);
 
 						li.appendChild(a);
