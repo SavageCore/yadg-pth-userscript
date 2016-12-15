@@ -992,7 +992,7 @@ factory = {
 
 			case 'pth_torrent_overview':
 				var addArtistsBox = document.getElementsByClassName('box_addartists')[0];
-				addArtistsBox.appendChild(element);
+				addArtistsBox.parentNode.insertBefore(element, addArtistsBox.nextSibling.nextSibling);
 				break;
 
 			case 'pth_request':
