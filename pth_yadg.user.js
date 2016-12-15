@@ -72,6 +72,19 @@ function fetchImage(target) {
 				}
 			});
 			break;
+		case (/bandcamp/.test(link)):
+			GM_xmlhttpRequest({ // eslint-disable-line new-cap
+				method: 'GET',
+				url: link,
+				onload: function (response) {
+					if (response.status === 200) {
+						var container = document.implementation.createHTMLDocument().documentElement;
+						container.innerHTML = response.responseText;
+						document.getElementById('image').value = container.querySelectorAll('#tralbumArt > a > img')[0].src;
+					}
+				}
+			});
+			break;
 		default:
 			break;
 	}
