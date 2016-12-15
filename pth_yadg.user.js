@@ -53,6 +53,7 @@ function fetchImage(target) {
 								$('.image_gallery.image_gallery_large', response.responseText).attr('data-images')
 							)[0].full
 						);
+						pthImgIt();
 					}
 				}
 			});
@@ -68,6 +69,7 @@ function fetchImage(target) {
 						var data = JSON.parse(response.responseText);
 						var hires = data.results[0].artworkUrl100.replace('100x100bb', '100000x100000-999');
 						document.getElementById('image').value = hires;
+						pthImgIt();
 					}
 				}
 			});
@@ -81,6 +83,7 @@ function fetchImage(target) {
 						var container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
 						document.getElementById('image').value = container.querySelectorAll('#tralbumArt > a > img')[0].src;
+						pthImgIt();
 					}
 				}
 			});
@@ -94,6 +97,7 @@ function fetchImage(target) {
 						var container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
 						document.getElementById('image').value = container.querySelectorAll('div.interior-release-chart-artwork-parent > img')[0].src;
+						pthImgIt();
 					}
 				}
 			});
@@ -111,6 +115,7 @@ function fetchImage(target) {
 					if (response.status === 200) {
 						var data = JSON.parse(response.responseText);
 						document.getElementById('image').value = data.images[0].image;
+						pthImgIt();
 					}
 				}
 			});
@@ -124,6 +129,7 @@ function fetchImage(target) {
 						var container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
 						document.getElementById('image').value = container.querySelectorAll('#product_image_front > a')[0].href;
+						pthImgIt();
 					}
 				}
 			});
@@ -142,12 +148,20 @@ function fetchImage(target) {
 						var imgLink = parser.protocol + '//' + parser.hostname + parser.pathname;
 
 						document.getElementById('image').value = imgLink;
+						pthImgIt();
 					}
 				}
 			});
 			break;
 		default:
 			break;
+	}
+}
+
+function pthImgIt() {
+	var pthImgIt = document.getElementById('ptpimg_it_cover');
+	if (pthImgIt) {
+		pthImgIt.click();
 	}
 }
 
