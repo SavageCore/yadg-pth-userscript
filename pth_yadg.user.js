@@ -41,20 +41,39 @@ function fetchImage(target) {
 	}	else {
 		link = $('#yadg_input').val();
 	}
-	if (link.match(/discogs/)) {
-		GM_xmlhttpRequest({
-			method: 'GET',
-			url: link,
-			onload: function (response) {
-				if (response.status === 200) {
-					$('#image').val(
-                        $.parseJSON(
-                            $('.image_gallery.image_gallery_large', response.responseText).attr('data-images')
-                        )[0].full
-                    );
+	switch (true) {
+		case (/discogs/.test(link)):
+			GM_xmlhttpRequest({ // eslint-disable-line new-cap
+				method: 'GET',
+				url: link,
+				onload: function (response) {
+					if (response.status === 200) {
+						$('#image').val(
+							$.parseJSON(
+								$('.image_gallery.image_gallery_large', response.responseText).attr('data-images')
+							)[0].full
+						);
+					}
 				}
-			}
-		});
+			});
+			break;
+		case (/itunes/.test(link)):
+			var regex = /id(\d+)/;
+			var id = regex.exec(link)[1];
+			GM_xmlhttpRequest({ // eslint-disable-line new-cap
+				method: 'GET',
+				url: 'https://itunes.apple.com/lookup?id=' + id,
+				onload: function (response) {
+					if (response.status === 200) {
+						var data = JSON.parse(response.responseText);
+						var hires = data.results[0].artworkUrl100.replace('100x100bb', '100000x100000-999');
+						document.getElementById('image').value = hires;
+					}
+				}
+			});
+			break;
+		default:
+			break;
 	}
 }
 
