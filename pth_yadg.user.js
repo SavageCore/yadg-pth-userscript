@@ -17,7 +17,7 @@
 
 // --------- USER SETTINGS START ---------
 
-/*	global window	unsafeWindow document GM_xmlhttpRequest JSandbox formatName AddArtistField RemoveArtistField Blob alert */
+/*	global window	unsafeWindow document GM_xmlhttpRequest JSandbox formatName AddArtistField RemoveArtistField Blob alert $ */
 /*	eslint max-depth: ['off'], block-scoped-var: 'off', no-loop-func: 'off', no-alert: 'off' */
 
 /*
