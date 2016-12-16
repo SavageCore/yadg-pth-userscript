@@ -34,7 +34,7 @@ var yadgTemplates;
 
 // --------- USER SETTINGS END ---------
 
-function fetchImage(target) {
+function fetchImage(target, callback) {
 	var link;
 	if (target !== null) {
 		link = target;
@@ -48,12 +48,11 @@ function fetchImage(target) {
 				url: link,
 				onload: function (response) {
 					if (response.status === 200) {
-						$('#image').val(
-							$.parseJSON(
-								$('.image_gallery.image_gallery_large', response.responseText).attr('data-images')
-							)[0].full
-						);
-						pthImgIt();
+						var container = document.implementation.createHTMLDocument().documentElement;
+						container.innerHTML = response.responseText;
+						if (typeof callback === 'function') {
+							callback(JSON.parse(container.querySelectorAll('div.image_gallery.image_gallery_large')[0].getAttribute('data-images'))[0].full);
+						}
 					}
 				}
 			});
@@ -68,8 +67,7 @@ function fetchImage(target) {
 					if (response.status === 200) {
 						var data = JSON.parse(response.responseText);
 						var hires = data.results[0].artworkUrl100.replace('100x100bb', '100000x100000-999');
-						document.getElementById('image').value = hires;
-						pthImgIt();
+						callback(hires);
 					}
 				}
 			});
@@ -82,8 +80,7 @@ function fetchImage(target) {
 					if (response.status === 200) {
 						var container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
-						document.getElementById('image').value = container.querySelectorAll('#tralbumArt > a > img')[0].src;
-						pthImgIt();
+						callback(container.querySelectorAll('#tralbumArt > a > img')[0].src);
 					}
 				}
 			});
@@ -96,8 +93,7 @@ function fetchImage(target) {
 					if (response.status === 200) {
 						var container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
-						document.getElementById('image').value = container.querySelectorAll('div.interior-release-chart-artwork-parent > img')[0].src;
-						pthImgIt();
+						callback(container.querySelectorAll('div.interior-release-chart-artwork-parent > img')[0].src);
 					}
 				}
 			});
@@ -114,8 +110,7 @@ function fetchImage(target) {
 				onload: function (response) {
 					if (response.status === 200) {
 						var data = JSON.parse(response.responseText);
-						document.getElementById('image').value = data.images[0].image;
-						pthImgIt();
+						callback(data.images[0].image);
 					}
 				}
 			});
@@ -128,8 +123,7 @@ function fetchImage(target) {
 					if (response.status === 200) {
 						var container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
-						document.getElementById('image').value = container.querySelectorAll('#product_image_front > a')[0].href;
-						pthImgIt();
+						callback(container.querySelectorAll('#product_image_front > a')[0].href);
 					}
 				}
 			});
@@ -147,8 +141,7 @@ function fetchImage(target) {
 						parser.href = container.querySelectorAll('#cover > img')[0].src;
 						var imgLink = parser.protocol + '//' + parser.hostname + parser.pathname;
 
-						document.getElementById('image').value = imgLink;
-						pthImgIt();
+						callback(imgLink);
 					}
 				}
 			});
@@ -160,8 +153,35 @@ function fetchImage(target) {
 
 function pthImgIt() {
 	var pthImgIt = document.getElementById('ptpimg_it_cover');
-	if (pthImgIt) {
+
+	switch (window.location.href) {
+		case (window.location.href.match(/\/upload\.php/) || {}).input:
+			var imgElement = document.getElementById('image').value;
+			break;
+		case (window.location.href.match(/torrents\.php\?action=editgroup/) || {}).input:
+			var imgElement = document.querySelectorAll('#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)')[0].value;
+			break;
+		default:
+			break;
+	}
+
+	if (pthImgIt && imgElement) {
 		pthImgIt.click();
+	}
+}
+
+function insertImage(img, callback) {
+	switch (window.location.href) {
+		case (window.location.href.match(/\/upload\.php/) || {}).input:
+			document.getElementById('image').value = img;
+			callback();
+			break;
+		case (window.location.href.match(/torrents\.php\?action=editgroup/) || {}).input:
+			document.querySelectorAll('#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)')[0].value = img;
+			callback();
+			break;
+		default:
+			break;
 	}
 }
 
@@ -620,7 +640,11 @@ factory = {
 			e.preventDefault();
 			yadg.makeRequest();
 			if (factory.getFetchImageCheckbox().checked) {
-				fetchImage(null);
+				fetchImage(null, function (data) {
+					insertImage(data, function () {
+						pthImgIt();
+					});
+				});
 			}
 		}, false);
 
@@ -1659,7 +1683,11 @@ yadg = {
 							e.preventDefault();
 							yadg.makeRequest(this.params);
 							if (factory.getFetchImageCheckbox().checked) {
-								fetchImage(this.href);
+								fetchImage(this.href, function (data) {
+									insertImage(data, function () {
+										pthImgIt();
+									});
+								});
 							}
 						}, false);
 
