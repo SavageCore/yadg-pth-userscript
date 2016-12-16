@@ -820,7 +820,7 @@ factory = {
 			}
 		}
 
-		if (autoPreview) {
+		if (autoPreview && window.location.href.match(/\/upload\.php/)) {
 			var autoPreviewCheckbox = factory.getAutoPreviewCheckbox();
 			autoPreviewCheckbox.checked = true;
 		}
@@ -845,7 +845,9 @@ factory = {
 		if (autoRehostCheckbox) {
 			var autoRehost = autoRehostCheckbox.checked;
 		}
-		var autoPreview = autoPreviewCheckbox.checked;
+		if (window.location.href.match(/\/upload\.php/)) {
+			var autoPreview = autoPreviewCheckbox.checked;
+		}
 
 		if (scraperSelect.options.length > 0) {
 			currentScraper = scraperSelect.options[scraperSelect.selectedIndex].value;
@@ -898,7 +900,7 @@ factory = {
 
 		if (autoPreview) {
 			yadgUtil.settings.addItem(factory.KEY_AUTO_PREVIEW, true);
-		} else {
+		} else if (!autoPreview && window.location.href.match(/\/upload\.php/)) {
 			yadgUtil.settings.removeItem(factory.KEY_AUTO_PREVIEW);
 		}
 	},
@@ -1092,7 +1094,10 @@ factory = {
 		if (document.getElementById('ptpimg_it_cover')) {
 			optionsHTML += '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://passtheheadphones.me/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
 		}
-		optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div><div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
+		if (window.location.href.match(/\/upload\.php/)) {
+			optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
+		}
+		optionsHTML += '<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
 		var inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" />';
 		var responseDivHTML = '<div id="yadg_response"></div>';
 		var toggleOptionsLinkHTML = '<a id="yadg_toggle_options" href="#">Toggle options</a>';
