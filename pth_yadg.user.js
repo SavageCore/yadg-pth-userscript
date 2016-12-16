@@ -894,7 +894,7 @@ factory = {
 
 		if (autoRehost) {
 			yadgUtil.settings.addItem(factory.KEY_AUTO_REHOST, true);
-		} else {
+		} else if (!autoRehost && autoRehostCheckbox) {
 			yadgUtil.settings.removeItem(factory.KEY_AUTO_REHOST);
 		}
 
