@@ -859,7 +859,7 @@ factory = {
 				descBox.value = value;
 			}
 			var previewBtn = document.getElementsByClassName('button_preview_0')[0];
-			if (previewBtn.value === 'Preview' && factory.getAutoPreviewCheckbox().checked) {
+			if (previewBtn && previewBtn.value === 'Preview' && factory.getAutoPreviewCheckbox().checked) {
 				previewBtn.click();
 			}
 		}
