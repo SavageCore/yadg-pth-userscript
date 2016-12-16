@@ -67,7 +67,9 @@ function fetchImage(target, callback) {
 					if (response.status === 200) {
 						var data = JSON.parse(response.responseText);
 						var hires = data.results[0].artworkUrl100.replace('100x100bb', '100000x100000-999');
-						callback(hires);
+						if (typeof callback === 'function') {
+							callback(hires);
+						}
 					}
 				}
 			});
@@ -80,7 +82,9 @@ function fetchImage(target, callback) {
 					if (response.status === 200) {
 						var container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
-						callback(container.querySelectorAll('#tralbumArt > a > img')[0].src);
+						if (typeof callback === 'function') {
+							callback(container.querySelectorAll('#tralbumArt > a > img')[0].src);
+						}
 					}
 				}
 			});
@@ -93,7 +97,9 @@ function fetchImage(target, callback) {
 					if (response.status === 200) {
 						var container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
-						callback(container.querySelectorAll('div.interior-release-chart-artwork-parent > img')[0].src);
+						if (typeof callback === 'function') {
+							callback(container.querySelectorAll('div.interior-release-chart-artwork-parent > img')[0].src);
+						}
 					}
 				}
 			});
@@ -110,7 +116,9 @@ function fetchImage(target, callback) {
 				onload: function (response) {
 					if (response.status === 200) {
 						var data = JSON.parse(response.responseText);
-						callback(data.images[0].image);
+						if (typeof callback === 'function') {
+							callback(data.images[0].image);
+						}
 					}
 				}
 			});
@@ -123,7 +131,9 @@ function fetchImage(target, callback) {
 					if (response.status === 200) {
 						var container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
-						callback(container.querySelectorAll('#product_image_front > a')[0].href);
+						if (typeof callback === 'function') {
+							callback(container.querySelectorAll('#product_image_front > a')[0].href);
+						}
 					}
 				}
 			});
@@ -140,8 +150,9 @@ function fetchImage(target, callback) {
 						var parser = document.createElement('a');
 						parser.href = container.querySelectorAll('#cover > img')[0].src;
 						var imgLink = parser.protocol + '//' + parser.hostname + parser.pathname;
-
-						callback(imgLink);
+						if (typeof callback === 'function') {
+							callback(imgLink);
+						}
 					}
 				}
 			});
