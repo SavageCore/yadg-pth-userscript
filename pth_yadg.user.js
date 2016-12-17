@@ -27,6 +27,7 @@
 var defaultPTHFormat = 5;
 var defaultWafflesFormat = 9;
 var	defaultPTHTarget = 'other';
+var defaultPTHDescriptionTarget = 'album';
 var yadg;
 var factory;
 var yadgRenderer;
@@ -589,6 +590,7 @@ factory = {
 	KEY_API_TOKEN: 'apiToken',
 	KEY_DEFAULT_TEMPLATE: 'defaultTemplate',
 	KEY_DEFAULT_TARGET: 'defaultTarget',
+	KEY_DESCRIPTION_TARGET: 'descriptionTarget',
 	KEY_DEFAULT_SCRAPER: 'defaultScraper',
 	KEY_REPLACE_DESCRIPTION: 'replaceDescriptionOn',
 	KEY_SETTINGS_INIT_VER: 'settingsInitializedVer',
@@ -807,6 +809,7 @@ factory = {
 		var fetchImage = yadgUtil.settings.getItem(factory.KEY_FETCH_IMAGE);
 		var autoRehost = yadgUtil.settings.getItem(factory.KEY_AUTO_REHOST);
 		var autoPreview = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
+		var descriptionTarget = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
 
 		if (apiToken) {
 			var apiTokenInput = factory.getApiTokenInput();
@@ -840,6 +843,7 @@ factory = {
 		var scraperSelect = factory.getScraperSelect();
 		var templateSelect = factory.getFormatSelect();
 		var targetSelect = factory.getTargetSelect();
+		var descriptionTargetSelect = factory.getDescriptionTargetSelect();
 		var apiTokenInput = factory.getApiTokenInput();
 		var replaceDescCheckbox = factory.getReplaceDescriptionCheckbox();
 		var fetchImageCheckbox = factory.getFetchImageCheckbox();
@@ -849,6 +853,7 @@ factory = {
 		var currentScraper = null;
 		var currentTemplate = null;
 		var currentTarget = null;
+		var currentDescriptionTarget = null;
 		var apiToken = apiTokenInput.value.trim();
 		var replaceDescription = replaceDescCheckbox.checked;
 		var fetchImage = fetchImageCheckbox.checked;
@@ -871,6 +876,10 @@ factory = {
 			currentTarget = targetSelect.options[targetSelect.selectedIndex].value;
 		}
 
+		if (descriptionTargetSelect.options.length > 0) {
+			currentDescriptionTarget = descriptionTargetSelect.options[descriptionTargetSelect.selectedIndex].value;
+		}
+
 		if (currentScraper !== null) {
 			yadgUtil.settings.addItem(factory.KEY_DEFAULT_SCRAPER, currentScraper);
 		}
@@ -881,6 +890,10 @@ factory = {
 
 		if (currentTarget !== null) {
 			yadgUtil.settings.addItem(factory.KEY_DEFAULT_TARGET, currentTarget);
+		}
+
+		if (currentDescriptionTarget !== null) {
+			yadgUtil.settings.addItem(factory.KEY_DESCRIPTION_TARGET, currentDescriptionTarget);
 		}
 
 		if (apiToken === '') {
@@ -924,15 +937,23 @@ factory = {
 			replaceDesc = replaceDescCheckbox.checked;
 		}
 
-		if (descBox !== null) {
+		if (descBox !== null && !Array.isArray(descBox)) {
 			if (!replaceDesc && /\S/.test(descBox.value)) { // check if the current description contains more than whitespace
 				descBox.value += '\n\n' + value;
 			} else {
 				descBox.value = value;
 			}
-			var previewBtn = document.getElementsByClassName('button_preview_0')[0];
+			var previewBtn = descBox.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
 			if (previewBtn && previewBtn.value === 'Preview' && factory.getAutoPreviewCheckbox().checked) {
 				previewBtn.click();
+			}
+		} else if (Array.isArray(descBox)) {
+			for (var i = 0; i < descBox.length; i++) {
+				descBox[i].value = value;
+				var previewBtn = descBox[i].parentNode.nextSibling.nextSibling.firstChild.nextSibling;
+				if (previewBtn && previewBtn.value === 'Preview' && factory.getAutoPreviewCheckbox().checked) {
+					previewBtn.click();
+				}
 			}
 		}
 	},
@@ -968,6 +989,10 @@ factory = {
 		return document.getElementById('yadg_target');
 	},
 
+	getDescriptionTargetSelect: function () {
+		return document.getElementById('yadg_description_target');
+	},
+
 	setDefaultTarget: function () {
 		var targetSelect = factory.getTargetSelect();
 		var targetOffsets = yadgUtil.getOptionOffsets(targetSelect);
@@ -977,6 +1002,18 @@ factory = {
 			targetSelect.selectedIndex = targetOffsets[defaultTarget];
 		} else {
 			targetSelect.selectedIndex = targetOffsets[defaultPTHTarget];
+		}
+	},
+
+	setDefaultDescriptionTarget: function () {
+		var targetDescriptionSelect = factory.getDescriptionTargetSelect();
+		var targetDescriptionOffsets = yadgUtil.getOptionOffsets(targetDescriptionSelect);
+
+		var defaultDescriptionTarget = yadgUtil.settings.getItem(factory.KEY_DESCRIPTION_TARGET);
+		if (defaultDescriptionTarget !== null && defaultDescriptionTarget in targetDescriptionOffsets) {
+			targetDescriptionSelect.selectedIndex = targetDescriptionOffsets[defaultDescriptionTarget];
+		} else {
+			targetDescriptionSelect.selectedIndex = targetDescriptionOffsets[defaultPTHDescriptionTarget];
 		}
 	},
 
@@ -1042,6 +1079,7 @@ factory = {
 		factory.setSelect(formatSelect, nonUtility);
 		factory.setDefaultFormat();
 		factory.setDefaultTarget();
+		factory.setDefaultDescriptionTarget();
 
 		if (factory.UPDATE_PROGRESS > 0) {
 			yadgUtil.storage.addItem(factory.KEY_FORMAT_LIST, saveTemplates);
@@ -1100,7 +1138,7 @@ factory = {
 	getInputElements: function () {
 		var buttonHTML = '<input type="submit" value="Fetch" id="yadg_submit"/>';
 		var scraperSelectHTML = '<select name="yadg_scraper" id="yadg_scraper"></select>';
-		var optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Bandcamp, Beatport, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
+		var optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Bandcamp, Beatport, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
 		if (document.getElementById('ptpimg_it_cover')) {
 			optionsHTML += '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://passtheheadphones.me/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
 		}
@@ -1217,7 +1255,14 @@ factory = {
 	getDescriptionBox: function () {
 		switch (this.currentLocation) {
 			case 'pth_upload':
-				return document.getElementById('album_desc');
+				if (factory.getDescriptionTargetSelect().value === 'album') {
+					return document.getElementById('album_desc');
+				} else if (factory.getDescriptionTargetSelect().value === 'release') {
+					return document.getElementById('release_desc');
+				}	else if (factory.getDescriptionTargetSelect().value === 'both') {
+					return [document.getElementById('album_desc'), document.getElementById('release_desc')];
+				}
+				break;
 
 			case 'pth_edit':
 				return document.getElementsByName('body')[0];
@@ -1652,6 +1697,7 @@ yadg = {
 		this.formatSelect = document.getElementById('yadg_format');
 		this.input = document.getElementById('yadg_input');
 		this.targetSelect = document.getElementById('yadg_target');
+		this.targetDescriptionSelect = document.getElementById('yadg_description_target');
 		this.responseDiv = document.getElementById('yadg_response');
 		this.button = document.getElementById('yadg_submit');
 	},
