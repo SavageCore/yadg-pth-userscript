@@ -1394,9 +1394,21 @@ factory = {
 			case 'pth_edit':
 				f = function (rawData) {
 					var summaryInput = document.getElementsByName('summary')[0];
-					yadg.prepareRawResponse(rawData);
+					var yearInput = document.getElementsByName('year')[0];
+					var labelInput = document.getElementsByName('record_label')[0];
+					var catalogInput = document.getElementsByName('catalogue_number')[0];
+					var data = yadg.prepareRawResponse(rawData);
 
 					summaryInput.value = 'YADG Update';
+					if (yearInput && yearInput.getAttribute('disabled') !== 'disabled') {
+						yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
+					}
+					if (labelInput && labelInput.getAttribute('disabled') !== 'disabled') {
+						yadgUtil.setValueIfSet(data.label, labelInput, data.label !== false);
+					}
+					if (catalogInput && catalogInput.getAttribute('disabled') !== 'disabled') {
+						yadgUtil.setValueIfSet(data.catalog, catalogInput, data.catalog !== false);
+					}
 				};
 				return f;
 
