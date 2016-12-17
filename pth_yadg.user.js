@@ -184,7 +184,13 @@ function pthImgIt() {
 function insertImage(img, callback) {
 	switch (window.location.href) {
 		case (window.location.href.match(/\/upload\.php/) || {}).input:
-			document.getElementById('image').value = img;
+			var input = document.getElementById('image');
+			input.value = img;
+			if (input.getAttribute('autorehost') === 'true') {
+				var evt = document.createEvent('HTMLEvents');
+				evt.initEvent('keyup', false, true);
+				input.dispatchEvent(evt);
+			}
 			callback();
 			break;
 		case (window.location.href.match(/torrents\.php\?action=editgroup/) || {}).input:
