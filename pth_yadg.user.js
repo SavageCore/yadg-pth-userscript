@@ -1331,7 +1331,9 @@ factory = {
 					if (albumTitleInput.getAttribute('disabled') !== 'disabled') {
 						yadgUtil.setValueIfSet(data.title, albumTitleInput, data.title !== false);
 					}
-					yadgUtil.setValueIfSet(data.label, labelInput, data.label !== false);
+					if (labelInput.getAttribute('disabled') !== 'disabled') {
+						yadgUtil.setValueIfSet(data.label, labelInput, data.label !== false);
+					}
 					yadgUtil.setValueIfSet(data.catalog, catalogInput, data.catalog !== false);
 				};
 				return f;
