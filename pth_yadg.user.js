@@ -41,10 +41,10 @@ function fetchImage(target, callback) {
 		return;
 	}
 	var link;
-	if (target !== null) {
-		link = target;
-	}	else {
+	if (target === null) {
 		link = $('#yadg_input').val();
+	}	else {
+		link = target;
 	}
 	switch (true) {
 		case (/discogs/.test(link)):
