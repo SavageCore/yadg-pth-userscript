@@ -1310,15 +1310,16 @@ factory = {
 							}
 						}
 					}
-
-					if (data.tags === false) {
-						tagsInput.value = '';
-					} else {
-						var tagsArray = data.tag_string.split(', ');
-						var tagsUnique = tagsArray.filter(function (elem, index, self) {
-							return index === self.indexOf(elem);
-						});
-						tagsInput.value = tagsUnique.join(',').toLowerCase();
+					if (tagsInput.getAttribute('disabled') !== 'disabled') {
+						if (data.tags === false) {
+							tagsInput.value = '';
+						} else {
+							var tagsArray = data.tag_string.split(', ');
+							var tagsUnique = tagsArray.filter(function (elem, index, self) {
+								return index === self.indexOf(elem);
+							});
+							tagsInput.value = tagsUnique.join(',').toLowerCase();
+						}
 					}
 
 					yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
