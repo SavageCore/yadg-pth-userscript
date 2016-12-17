@@ -654,7 +654,7 @@ factory = {
 			if (factory.getFetchImageCheckbox().checked) {
 				fetchImage(null, function (data) {
 					insertImage(data, function () {
-						if (factory.getAutoRehostCheckbox().checked) {
+						if (factory.getAutoRehostCheckbox() && factory.getAutoRehostCheckbox().checked) {
 							pthImgIt();
 						}
 					});
@@ -1730,7 +1730,7 @@ yadg = {
 							if (factory.getFetchImageCheckbox().checked) {
 								fetchImage(this.href, function (data) {
 									insertImage(data, function () {
-										if (factory.getAutoRehostCheckbox().checked) {
+										if (factory.getAutoRehostCheckbox() && factory.getAutoRehostCheckbox().checked) {
 											pthImgIt();
 										}
 									});
