@@ -1334,7 +1334,9 @@ factory = {
 					if (labelInput.getAttribute('disabled') !== 'disabled') {
 						yadgUtil.setValueIfSet(data.label, labelInput, data.label !== false);
 					}
-					yadgUtil.setValueIfSet(data.catalog, catalogInput, data.catalog !== false);
+					if (catalogInput.getAttribute('disabled') !== 'disabled') {
+						yadgUtil.setValueIfSet(data.catalog, catalogInput, data.catalog !== false);
+					}
 				};
 				return f;
 
