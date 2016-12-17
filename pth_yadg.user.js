@@ -37,7 +37,6 @@ var yadgTemplates;
 function fetchImage(target, callback) {
 	var imgElement = document.getElementById('image');
 	if (imgElement && imgElement.getAttribute('disabled') === 'disabled') {
-		console.log('skipping fetch');
 		return;
 	}
 	var link;
