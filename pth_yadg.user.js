@@ -1267,49 +1267,52 @@ factory = {
 					var tagsInput = document.getElementById('tags');
 					var data = yadg.prepareRawResponse(rawData);
 
-					if (data.artists === false) {
-						for (var i = 0; i < artistInputs.length; i++) {
-							artistInputs[i].value = '';
-						}
-					} else {
-						var inputIdx = 0;
+					if (artistInputs[0].getAttribute('disabled') !== 'disabled') {
+						if (data.artists === false) {
+							for (var i = 0; i < artistInputs.length; i++) {
+								artistInputs[i].value = '';
+							}
+						} else {
+							var inputIdx = 0;
 
-						yadgUtil.addRemoveArtistBoxes(data.effective_artist_count - artistInputs.length);
+							yadgUtil.addRemoveArtistBoxes(data.effective_artist_count - artistInputs.length);
 
-						artistInputs = document.getElementsByName('artists[]');
+							artistInputs = document.getElementsByName('artists[]');
 
-						for (i = 0; i < data.artist_keys.length; i++) {
-							var artistKey = data.artist_keys[i];
-							var artistTypes = data.artists[artistKey];
+							for (i = 0; i < data.artist_keys.length; i++) {
+								var artistKey = data.artist_keys[i];
+								var artistTypes = data.artists[artistKey];
 
-							for (var j = 0; j < artistTypes.length; j++) {
-								var artistType = artistTypes[j];
-								var artistInput = artistInputs[inputIdx];
-								var typeSelect = artistInput.nextSibling;
+								for (var j = 0; j < artistTypes.length; j++) {
+									var artistType = artistTypes[j];
+									var artistInput = artistInputs[inputIdx];
+									var typeSelect = artistInput.nextSibling;
 
-								while (typeSelect.tagName !== 'SELECT') {
-									typeSelect = typeSelect.nextSibling;
-								}
+									while (typeSelect.tagName !== 'SELECT') {
+										typeSelect = typeSelect.nextSibling;
+									}
 
-								artistInput.value = artistKey;
+									artistInput.value = artistKey;
 
-								var optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
+									var optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
-								if (artistType === 'main') {
-									typeSelect.selectedIndex = optionOffsets[1];
-								} else if (artistType === 'guest') {
-									typeSelect.selectedIndex = optionOffsets[2];
-								} else if (artistType === 'remixer') {
-									typeSelect.selectedIndex = optionOffsets[3];
-								} else {
+									if (artistType === 'main') {
+										typeSelect.selectedIndex = optionOffsets[1];
+									} else if (artistType === 'guest') {
+										typeSelect.selectedIndex = optionOffsets[2];
+									} else if (artistType === 'remixer') {
+										typeSelect.selectedIndex = optionOffsets[3];
+									} else {
 									// we don't know this artist type, default to "main"
-									typeSelect.selectedIndex = optionOffsets[1];
-								}
+										typeSelect.selectedIndex = optionOffsets[1];
+									}
         // next artist input
-								inputIdx += 1;
+									inputIdx += 1;
+								}
 							}
 						}
 					}
+
 					if (tagsInput.getAttribute('disabled') !== 'disabled') {
 						if (data.tags === false) {
 							tagsInput.value = '';
