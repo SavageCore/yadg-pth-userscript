@@ -943,9 +943,11 @@ factory = {
 			} else {
 				descBox.value = value;
 			}
-			var previewBtn = descBox.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
-			if (previewBtn && previewBtn.value === 'Preview' && factory.getAutoPreviewCheckbox().checked) {
-				previewBtn.click();
+			if (descBox.parentNode.nextSibling.nextSibling) {
+				var previewBtn = descBox.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
+				if (previewBtn && previewBtn.value === 'Preview' && factory.getAutoPreviewCheckbox().checked) {
+					previewBtn.click();
+				}
 			}
 		} else if (Array.isArray(descBox)) {
 			for (var i = 0; i < descBox.length; i++) {
