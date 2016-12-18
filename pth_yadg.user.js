@@ -1326,6 +1326,24 @@ factory = {
 						labelInput = document.getElementById('record_label');
 						catalogInput = document.getElementById('catalogue_number');
 					}
+
+					if (/itunes/.test(rawData.url)) {
+						var releaseTypeInput = document.getElementById('releasetype');
+						switch (true) {
+							case /.+ - Single$/.test(rawData.title):
+								rawData.title = rawData.title.replace(/ - Single$/, '');
+								releaseTypeInput.value = 9;
+								break;
+							case /.+ - EP$/.test(rawData.title):
+								rawData.title = rawData.title.replace(/ - EP$/, '');
+								releaseTypeInput.value = 5;
+								break;
+							default:
+								break;
+						}
+						document.getElementById('releasetype_tr').insertAdjacentHTML('afterend', '<tr id="yadg_release_type_check_tr"><td class="label">YADG Confirm:</td><td><input type="checkbox" id="yadg_release_type_check" name="yadg_release_type_check" required=""><label for="yadg_release_type_check"> I confirm release type and Album title are correct. Form will not submit until you check this.</label></td></tr>');
+					}
+
 					var artistInputs = document.getElementsByName('artists[]');
 					var tagsInput = document.getElementById('tags');
 					var data = yadg.prepareRawResponse(rawData);
