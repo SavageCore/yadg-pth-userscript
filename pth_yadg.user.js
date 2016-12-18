@@ -80,6 +80,7 @@ function fetchImage(target, callback) {
 			});
 			break;
 		case (/bandcamp/.test(link)):
+		case (factory.getScraperSelect().value === 'bandcamp'):
 			GM_xmlhttpRequest({ // eslint-disable-line new-cap
 				method: 'GET',
 				url: link,
