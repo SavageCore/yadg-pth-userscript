@@ -17,7 +17,7 @@
 
 // --------- USER SETTINGS START ---------
 
-/*	global window	unsafeWindow document GM_xmlhttpRequest JSandbox formatName AddArtistField RemoveArtistField Blob alert $ */
+/*	global window	unsafeWindow document GM_xmlhttpRequest JSandbox formatName AddArtistField RemoveArtistField Blob alert $ Image */
 /*	eslint max-depth: ['off'], block-scoped-var: 'off', no-loop-func: 'off', no-alert: 'off' */
 
 /*
@@ -87,9 +87,20 @@ function fetchImage(target, callback) {
 					if (response.status === 200) {
 						var container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
-						if (typeof callback === 'function') {
-							callback(container.querySelectorAll('#tralbumArt > a > img')[0].src);
-						}
+						var scaledImg = container.querySelectorAll('#tralbumArt > a > img')[0].src;
+						var originalImg = scaledImg.replace(/_16/, '_10');
+						var tempImg = new Image();
+						tempImg.src = originalImg;
+						tempImg.onload = function () {
+							if (this.width === this.height) {
+								var img = originalImg;
+							} else {
+								img = scaledImg;
+							}
+							if (typeof callback === 'function') {
+								callback(img);
+							}
+						};
 					}
 				}
 			});
