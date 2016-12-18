@@ -89,7 +89,7 @@ function fetchImage(target, callback) {
 						var container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
 						var scaledImg = container.querySelectorAll('#tralbumArt > a > img')[0].src;
-						var originalImg = scaledImg.replace(/_16/, '_10');
+						var originalImg = scaledImg.replace(/_16/, '_0');
 						var tempImg = new Image();
 						tempImg.src = originalImg;
 						tempImg.onload = function () {
