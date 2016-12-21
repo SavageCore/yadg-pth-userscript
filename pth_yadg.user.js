@@ -1070,6 +1070,14 @@ factory = {
 		var saveTemplates = [];
 		for (var i = 0; i < templates.length; i++) {
 			if (factory.UPDATE_PROGRESS > 0) {
+				if (templates[i].name === 'What') {
+					templates[i].name = 'PTH';
+					templates[i].nameFormatted = 'PTH';
+				} else if (templates[i].name === 'What (Tracks only)') {
+					templates[i].name = 'PTH (Tracks only)';
+					templates[i].nameFormatted = 'PTH (Tracks only)';
+				}
+
 				yadgTemplates.addTemplate(templates[i]);
 
 				saveTemplates.push({
@@ -1082,6 +1090,14 @@ factory = {
 					isUtility: templates[i].isUtility
 				});
 			} else {
+				if (templates[i].name === 'What') {
+					templates[i].name = 'PTH';
+					templates[i].nameFormatted = 'PTH';
+				} else if (templates[i].name === 'What (Tracks only)') {
+					templates[i].name = 'PTH (Tracks only)';
+					templates[i].nameFormatted = 'PTH (Tracks only)';
+				}
+
 				yadgTemplates.addTemplateUrl(templates[i].id, templates[i].url);
 			}
 
@@ -1713,6 +1729,7 @@ yadgRenderer = {
 				yadgSandbox.resetSandbox();
 				yadgSandbox.initializeSwig(template.dependencies);
 			}
+			template.code = template.code.replace('https://what.cd', 'https://passtheheadphones.me');
 			yadgSandbox.renderTemplate(template.code, data, callback, errorCallback);
 		});
 	},
