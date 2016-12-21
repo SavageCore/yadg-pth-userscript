@@ -1365,6 +1365,9 @@ factory = {
 								break;
 						}
 					}
+					if (/.+ ep$/i.test(rawData.title)) {
+						rawData.title = rawData.title.replace(/ ep$/i, '');
+					}
 
 					var artistInputs = document.getElementsByName('artists[]');
 					var tagsInput = document.getElementById('tags');
