@@ -208,10 +208,13 @@ function insertImage(img, callback) {
 				evt.initEvent('keyup', false, true);
 				input.dispatchEvent(evt);
 			}
+			input.parentNode.parentNode.insertAdjacentHTML('beforebegin', '<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="' + img + '" width="300px" /></tr></td>');
 			callback();
 			break;
 		case (window.location.href.match(/torrents\.php\?action=editgroup/) || {}).input:
-			document.querySelectorAll('#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)')[0].value = img;
+			var imageInputElement = document.querySelectorAll('#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)')[0];
+			imageInputElement.value = img;
+			imageInputElement.parentNode.insertAdjacentHTML('beforebegin', '<div id="yadg_image_preview_div"><img id="yadg_image_preview" src="' + img + '" width="300px" /></div>');
 			callback();
 			break;
 		default:
