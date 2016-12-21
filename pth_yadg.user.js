@@ -1364,9 +1364,6 @@ factory = {
 							default:
 								break;
 						}
-						if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
-							document.getElementById('releasetype_tr').insertAdjacentHTML('afterend', '<tr id="yadg_release_type_check_tr"><td class="label">YADG Confirm:</td><td><input type="checkbox" id="yadg_release_type_check" name="yadg_release_type_check" required=""><label for="yadg_release_type_check"> I confirm release type and Album title are correct. Form will not submit until you check this.</label></td></tr>');
-						}
 					}
 
 					var artistInputs = document.getElementsByName('artists[]');
