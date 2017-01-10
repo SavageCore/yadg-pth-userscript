@@ -180,7 +180,7 @@ function fetchImage(target, callback) {
 }
 
 function pthImgIt() {
-	var pthImgIt = document.getElementById('ptpimg_it_cover');
+	var pthImgIt = document.getElementById('rehost_it_cover');
 
 	switch (window.location.href) {
 		case (window.location.href.match(/\/upload\.php/) || {}).input:
@@ -1172,7 +1172,7 @@ factory = {
 		var buttonHTML = '<input type="submit" value="Fetch" id="yadg_submit"/>';
 		var scraperSelectHTML = '<select name="yadg_scraper" id="yadg_scraper"></select>';
 		var optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Bandcamp, Beatport, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
-		if (document.getElementById('ptpimg_it_cover')) {
+		if (document.getElementById('rehost_it_cover')) {
 			optionsHTML += '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://passtheheadphones.me/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
 		}
 		if (window.location.href.match(/\/upload\.php/)) {
