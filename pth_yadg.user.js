@@ -1369,6 +1369,7 @@ factory = {
 					var artistInputs = document.getElementsByName('artists[]');
 					var tagsInput = document.getElementById('tags');
 					var data = yadg.prepareRawResponse(rawData);
+					var nullArtistCount = 0;
 
 					if (artistInputs[0].getAttribute('disabled') !== 'disabled') {
 						if (data.artists === false) {
@@ -1384,6 +1385,10 @@ factory = {
 
 							for (i = 0; i < data.artist_keys.length; i++) {
 								var artistKey = data.artist_keys[i];
+								if (artistKey === 'null') {
+									nullArtistCount++;
+									continue;
+								}
 								var artistTypes = data.artists[artistKey];
 
 								for (var j = 0; j < artistTypes.length; j++) {
@@ -1412,6 +1417,9 @@ factory = {
         // next artist input
 									inputIdx += 1;
 								}
+							}
+							if (nullArtistCount > 0) {
+								yadgUtil.addRemoveArtistBoxes(nullArtistCount *= -1);
 							}
 						}
 					}
@@ -1526,6 +1534,7 @@ factory = {
 					var catalogInput = document.getElementsByName('cataloguenumber')[0];
 					var tagsInput = document.getElementById('tags');
 					var data = yadg.prepareRawResponse(rawData);
+					var nullArtistCount = 0;
 
 					if (data.artists === false) {
 						for (var i = 0; i < artistInputs.length; i++) {
@@ -1541,6 +1550,10 @@ factory = {
 						for (i = 0; i < data.artist_keys.length; i++) {
 							var artistKey = data.artist_keys[i];
 							var artistTypes = data.artists[artistKey];
+							if (artistKey === 'null') {
+								nullArtistCount++;
+								continue;
+							}
 
 							for (var j = 0; j < artistTypes.length; j++) {
 								var artistType = artistTypes[j];
@@ -1569,6 +1582,9 @@ factory = {
         // next artist input
 								inputIdx += 1;
 							}
+						}
+						if (nullArtistCount > 0) {
+							yadgUtil.addRemoveArtistBoxes(nullArtistCount *= -1);
 						}
 					}
 
