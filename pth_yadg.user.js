@@ -1074,11 +1074,11 @@ factory = {
 		for (var i = 0; i < templates.length; i++) {
 			if (factory.UPDATE_PROGRESS > 0) {
 				if (templates[i].name === 'What') {
-					templates[i].name = 'PTH';
-					templates[i].nameFormatted = 'PTH';
+					templates[i].name = 'RED';
+					templates[i].nameFormatted = 'RED';
 				} else if (templates[i].name === 'What (Tracks only)') {
-					templates[i].name = 'PTH (Tracks only)';
-					templates[i].nameFormatted = 'PTH (Tracks only)';
+					templates[i].name = 'RED (Tracks only)';
+					templates[i].nameFormatted = 'RED (Tracks only)';
 				}
 
 				yadgTemplates.addTemplate(templates[i]);
