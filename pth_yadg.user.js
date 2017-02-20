@@ -1,15 +1,15 @@
 // ==UserScript==
 // @id             pth-yadg
-// @name           PTH YADG
+// @name           RED YADG
 // @description    This script provides integration with online description generator YADG (http://yadg.cc) - Credit to Slack06
 // @license        https://github.com/SavageCore/yadg-pth-userscript/blob/master/LICENSE
 // @version        1.3.32
 // @namespace      yadg
 // @grant          GM_xmlhttpRequest
 // @require        https://yadg.cc/static/js/jsandbox.min.js
-// @include        http*://*passtheheadphones.me/upload.php*
-// @include        http*://*passtheheadphones.me/requests.php*
-// @include        http*://*passtheheadphones.me/torrents.php*
+// @include        http*://*redacted.ch/upload.php*
+// @include        http*://*redacted.ch/requests.php*
+// @include        http*://*redacted.ch/torrents.php*
 // @include        http*://*waffles.ch/upload.php*
 // @include        http*://*waffles.ch/requests.php*
 // @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
@@ -619,23 +619,23 @@ factory = {
 	locations: [
 		{
 			name: 'pth_upload',
-			regex: /http(s)?:\/\/(.*\.)?passtheheadphones\.me\/upload\.php.*/i
+			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/upload\.php.*/i
 		},
 		{
 			name: 'pth_edit',
-			regex: /http(s)?:\/\/(.*\.)?passtheheadphones\.me\/torrents\.php\?action=editgroup&groupid=.*/i
+			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/torrents\.php\?action=editgroup&groupid=.*/i
 		},
 		{
 			name: 'pth_request',
-			regex: /http(s)?:\/\/(.*\.)?passtheheadphones\.me\/requests\.php\?action=new/i
+			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/requests\.php\?action=new/i
 		},
 		{
 			name: 'pth_request_edit',
-			regex: /http(s)?:\/\/(.*\.)?passtheheadphones\.me\/requests\.php\?action=edit&id=.*/i
+			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/requests\.php\?action=edit&id=.*/i
 		},
 		{
 			name: 'pth_torrent_overview',
-			regex: /http(s)?:\/\/(.*\.)?passtheheadphones\.me\/torrents\.php\?id=.*/i
+			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/torrents\.php\?id=.*/i
 		},
 		{
 			name: 'waffles_upload',
@@ -1129,7 +1129,7 @@ factory = {
 
 		for (var i = 0; i < data.length; i++) {
    // we are not using the javascript constructor to create an Option instance because this will create an
-   // incompatibility with jQuery in Chrome which will make it impossible to add a new artist field on passtheheadphones.me
+   // incompatibility with jQuery in Chrome which will make it impossible to add a new artist field on redacted.ch
 			var o = document.createElement('option');
 			if ('nameFormatted' in data[i]) {
 				o.text = data[i].nameFormatted;
@@ -1173,7 +1173,7 @@ factory = {
 		var scraperSelectHTML = '<select name="yadg_scraper" id="yadg_scraper"></select>';
 		var optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Bandcamp, Beatport, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
 		if (document.getElementsByClassName('rehost_it_cover')[0]) {
-			optionsHTML += '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://passtheheadphones.me/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
+			optionsHTML += '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://redacted.ch/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
 		}
 		if (window.location.href.match(/\/upload\.php/)) {
 			optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
@@ -1745,7 +1745,7 @@ yadgRenderer = {
 				yadgSandbox.resetSandbox();
 				yadgSandbox.initializeSwig(template.dependencies);
 			}
-			template.code = template.code.replace('https://what.cd', 'https://passtheheadphones.me');
+			template.code = template.code.replace('https://what.cd', 'https://redacted.ch');
 			yadgSandbox.renderTemplate(template.code, data, callback, errorCallback);
 		});
 	},
