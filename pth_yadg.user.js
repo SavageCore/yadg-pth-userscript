@@ -677,7 +677,6 @@ factory = {
   // add the appropriate action for the input textbox
 		var input = document.getElementById('yadg_input');
 		input.addEventListener('input', function(e) {
-
 			if(factory.getAutoSelectScraperCheckbox().checked) {
 				var inputValue = input.value;
 				var yadgScraper = document.getElementById('yadg_scraper');
