@@ -612,6 +612,7 @@ factory = {
 	KEY_FETCH_IMAGE: 'fetchImage',
 	KEY_AUTO_PREVIEW: 'autoPreview',
 	KEY_AUTO_REHOST: 'autoRehost',
+	KEY_AUTO_SELECT_SCRAPER: 'autoSelectScraper',
 
 	CACHE_TIMEOUT: 1000 * 60 * 60 * 24, // 24 hours
 
@@ -672,6 +673,32 @@ factory = {
 
   // populate settings inputs
 		this.populateSettings();
+
+  // add the appropriate action for the input textbox
+		var input = document.getElementById('yadg_input');
+		input.addEventListener('input', function(e) {
+
+			if(factory.getAutoSelectScraperCheckbox().checked) {
+				var inputValue = input.value;
+				var yadgScraper = document.getElementById('yadg_scraper');
+
+				if(/discogs/.test(inputValue)) {
+					yadgScraper.value = 'discogs';
+				} else if(/itunes/.test(inputValue)) {
+					yadgScraper.value = 'itunes';
+				} else if(/bandcamp/.test(inputValue)) {
+					yadgScraper.value = 'bandcamp';
+				} else if(/beatport/.test(inputValue)) {
+					yadgScraper.value = 'beatport';
+				} else if(/musicbrainz/.test(inputValue)) {
+					yadgScraper.value = 'musicbrainz';
+				} else if(/junodownload/.test(inputValue)) {
+					yadgScraper.value = 'junodownload';
+				} else if(/metal-archives/.test(inputValue)) {
+					yadgScraper.value = 'metalarchives';
+				}
+			}
+		});
 
   // add the appropriate action for the button
 		var button = document.getElementById('yadg_submit');
@@ -782,6 +809,10 @@ factory = {
 		return document.getElementById('yadg_options_preview');
 	},
 
+	getAutoSelectScraperCheckbox: function() {
+		return document.getElementById('yadg_options_auto_select_scraper');
+	},
+
 	getReplaceDescriptionSettingKey: function () {
 		return this.makeReplaceDescriptionSettingsKey(this.currentLocation);
 	},
@@ -825,6 +856,7 @@ factory = {
 		var autoRehost = yadgUtil.settings.getItem(factory.KEY_AUTO_REHOST);
 		var autoPreview = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
 		var descriptionTarget = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
+		var autoSelectScraper = yadgUtil.settings.getItem(factory.KEY_AUTO_SELECT_SCRAPER);
 
 		if (apiToken) {
 			var apiTokenInput = factory.getApiTokenInput();
@@ -852,6 +884,11 @@ factory = {
 			var autoPreviewCheckbox = factory.getAutoPreviewCheckbox();
 			autoPreviewCheckbox.checked = true;
 		}
+
+		if(autoSelectScraper) {
+			var autoSelectScraperCheckbox = factory.getAutoSelectScraperCheckbox();
+			autoSelectScraperCheckbox.checked = true;
+		}
 	},
 
 	saveSettings: function () {
@@ -864,6 +901,7 @@ factory = {
 		var fetchImageCheckbox = factory.getFetchImageCheckbox();
 		var autoRehostCheckbox = factory.getAutoRehostCheckbox();
 		var autoPreviewCheckbox = factory.getAutoPreviewCheckbox();
+		var autoSelectScraperCheckbox = factory.getAutoSelectScraperCheckbox();
 
 		var currentScraper = null;
 		var currentTemplate = null;
@@ -872,6 +910,8 @@ factory = {
 		var apiToken = apiTokenInput.value.trim();
 		var replaceDescription = replaceDescCheckbox.checked;
 		var fetchImage = fetchImageCheckbox.checked;
+		var autoSelectScraper = autoSelectScraperCheckbox.checked;
+
 		if (autoRehostCheckbox) {
 			var autoRehost = autoRehostCheckbox.checked;
 		}
@@ -940,6 +980,12 @@ factory = {
 			yadgUtil.settings.addItem(factory.KEY_AUTO_PREVIEW, true);
 		} else if (!autoPreview && window.location.href.match(/\/upload\.php/)) {
 			yadgUtil.settings.removeItem(factory.KEY_AUTO_PREVIEW);
+		}
+
+		if(autoSelectScraper) {
+			yadgUtil.settings.addItem(factory.KEY_AUTO_SELECT_SCRAPER, true);
+		} else {
+			yadgUtil.settings.removeItem(factory.KEY_AUTO_SELECT_SCRAPER);
 		}
 	},
 
@@ -1171,7 +1217,7 @@ factory = {
 	getInputElements: function () {
 		var buttonHTML = '<input type="submit" value="Fetch" id="yadg_submit"/>';
 		var scraperSelectHTML = '<select name="yadg_scraper" id="yadg_scraper"></select>';
-		var optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Bandcamp, Beatport, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
+		var optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Bandcamp, Beatport, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div><div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper" /> <label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">Auto select the correct scraper when pasting the URL</label>';
 		if (document.getElementsByClassName('rehost_it_cover')[0]) {
 			optionsHTML += '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://redacted.ch/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
 		}
