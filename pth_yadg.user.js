@@ -217,6 +217,12 @@ function insertImage(img, callback) {
 			imageInputElement.parentNode.insertAdjacentHTML('beforebegin', '<div id="yadg_image_preview_div"><img id="yadg_image_preview" src="' + img + '" width="300px" /></div>');
 			callback();
 			break;
+    case (window.location.href.match(/requests\.php\?/) || {}).input:
+			var imageInputElement = document.querySelectorAll('#image_tr > td:nth-child(2) > input[type="text"]:nth-child(1)')[0];
+			imageInputElement.value = img;
+			imageInputElement.parentNode.parentNode.insertAdjacentHTML('beforebegin', '<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="' + img + '" width="300px" /></tr></td>');
+			callback();
+			break;
 		default:
 			break;
 	}
