@@ -42,7 +42,7 @@ function fetchImage(target, callback) {
 	}
 	var link;
 	if (target === null) {
-		link = $('#yadg_input').val();
+		link = unsafeWindow.$('#yadg_input').val();
 	}	else {
 		link = target;
 	}
