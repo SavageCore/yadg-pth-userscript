@@ -63,11 +63,12 @@ function fetchImage(target, callback) {
 			});
 			break;
 		case (/itunes/.test(link)):
-			var regex = /id(\d+)/;
-			var id = regex.exec(link)[1];
+			var regex = /apple\.com\/([a-z]*)\/.*id(\d+)/;
+			var id = regex.exec(link)[2];
+			var country = regex.exec(link)[1];
 			GM_xmlhttpRequest({ // eslint-disable-line new-cap
 				method: 'GET',
-				url: 'https://itunes.apple.com/lookup?id=' + id,
+				url: 'https://itunes.apple.com/lookup?id=' + id + '&country=' + country,
 				onload: function (response) {
 					if (response.status === 200) {
 						var data = JSON.parse(response.responseText);
