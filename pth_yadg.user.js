@@ -6,6 +6,7 @@
 // @version        1.3.37
 // @namespace      yadg
 // @grant          GM_xmlhttpRequest
+// @grant          GM.xmlHttpRequest
 // @require        https://yadg.cc/static/js/jsandbox.min.js
 // @include        http*://*redacted.ch/upload.php*
 // @include        http*://*redacted.ch/requests.php*
@@ -13,11 +14,12 @@
 // @include        http*://*waffles.ch/upload.php*
 // @include        http*://*waffles.ch/requests.php*
 // @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
+// @require        https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
 // ==/UserScript==
 
 // --------- USER SETTINGS START ---------
 
-/*	global window	unsafeWindow document GM_xmlhttpRequest JSandbox formatName AddArtistField RemoveArtistField Blob alert $ Image */
+/*	global window	unsafeWindow document GM JSandbox formatName AddArtistField RemoveArtistField Blob alert $ Image */
 /*	eslint max-depth: ['off'], block-scoped-var: 'off', no-loop-func: 'off', no-alert: 'off' */
 
 /*
@@ -48,7 +50,7 @@ function fetchImage(target, callback) {
 	}
 	switch (true) {
 		case (/discogs/.test(link)):
-			GM_xmlhttpRequest({ // eslint-disable-line new-cap
+			GM.xmlHttpRequest ({ // eslint-disable-line new-cap
 				method: 'GET',
 				url: link,
 				onload: function (response) {
@@ -70,7 +72,7 @@ function fetchImage(target, callback) {
 			if (res[1]) {
 				country = res[1];
 			}
-			GM_xmlhttpRequest({ // eslint-disable-line new-cap
+			GM.xmlHttpRequest ({ // eslint-disable-line new-cap
 				method: 'GET',
 				url: 'https://itunes.apple.com/lookup?id=' + id + '&country=' + country,
 				onload: function (response) {
@@ -86,7 +88,7 @@ function fetchImage(target, callback) {
 			break;
 		case (/bandcamp/.test(link)):
 		case (factory.getScraperSelect().value === 'bandcamp'):
-			GM_xmlhttpRequest({ // eslint-disable-line new-cap
+			GM.xmlHttpRequest ({ // eslint-disable-line new-cap
 				method: 'GET',
 				url: link,
 				onload: function (response) {
@@ -112,7 +114,7 @@ function fetchImage(target, callback) {
 			});
 			break;
 		case (/beatport/.test(link)):
-			GM_xmlhttpRequest({ // eslint-disable-line new-cap
+			GM.xmlHttpRequest ({ // eslint-disable-line new-cap
 				method: 'GET',
 				url: link,
 				onload: function (response) {
@@ -129,7 +131,7 @@ function fetchImage(target, callback) {
 		case (/musicbrainz/.test(link)):
 			var regex = /release\/(.*)/;
 			var id = regex.exec(link)[1];
-			GM_xmlhttpRequest({ // eslint-disable-line new-cap
+			GM.xmlHttpRequest ({ // eslint-disable-line new-cap
 				headers: {
 					'User-Agent': 'YADG/1.3.17 (yadg.cc)'
 				},
@@ -146,7 +148,7 @@ function fetchImage(target, callback) {
 			});
 			break;
 		case (/junodownload/.test(link)):
-			GM_xmlhttpRequest({ // eslint-disable-line new-cap
+			GM.xmlHttpRequest ({ // eslint-disable-line new-cap
 				method: 'GET',
 				url: link,
 				onload: function (response) {
@@ -161,7 +163,7 @@ function fetchImage(target, callback) {
 			});
 			break;
 		case (/metal-archives/.test(link)):
-			GM_xmlhttpRequest({ // eslint-disable-line new-cap
+			GM.xmlHttpRequest ({ // eslint-disable-line new-cap
 				method: 'GET',
 				url: link,
 				onload: function (response) {
@@ -490,7 +492,7 @@ function requester(url, method, callback, data, errorCallback) { // eslint-disab
 
 		details.headers = headers;
 
-		GM_xmlhttpRequest(details); // eslint-disable-line new-cap
+		GM.xmlHttpRequest (details); // eslint-disable-line new-cap
 	};
 }
 
@@ -499,7 +501,7 @@ var yadgSandbox = {
 	KEY_LAST_WARNING: 'templateLastWarning',
 
 	init: function (callback) {
-		GM_xmlhttpRequest({ // eslint-disable-line new-cap
+		GM.xmlHttpRequest ({ // eslint-disable-line new-cap
 			method: 'GET',
 			url: yadg.yadgHost + '/static/js/jsandbox-worker.js',
 			onload: function (response) {
@@ -528,15 +530,15 @@ var yadgSandbox = {
 	loadSwig: function (callback) {
   // importScripts for the web worker will not work in Firefox with cross-domain requests
   // see: https://bugzilla.mozilla.org/show_bug.cgi?id=756589
-  // so download the Swig files manually with GM_xmlhttpRequest
-		GM_xmlhttpRequest({ // eslint-disable-line new-cap
+  // so download the Swig files manually with GM.xmlHttpRequest
+		GM.xmlHttpRequest ({ // eslint-disable-line new-cap
 			method: 'GET',
 			url: yadg.yadgHost + '/static/js/swig.min.js',
 			onload: function (response) {
 				if (response.status === 200) {
 					yadgSandbox.swigScript = response.responseText;
 
-					GM_xmlhttpRequest({ // eslint-disable-line new-cap
+					GM.xmlHttpRequest ({ // eslint-disable-line new-cap
 						method: 'GET',
 						url: yadg.yadgHost + '/static/js/swig.custom.js',
 						onload: function (response) {
