@@ -7,6 +7,7 @@
 // @namespace      yadg
 // @grant          GM_xmlhttpRequest
 // @grant          GM.xmlHttpRequest
+// @require        https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
 // @require        https://yadg.cc/static/js/jsandbox.min.js
 // @include        http*://*redacted.ch/upload.php*
 // @include        http*://*redacted.ch/requests.php*
@@ -14,7 +15,6 @@
 // @include        http*://*waffles.ch/upload.php*
 // @include        http*://*waffles.ch/requests.php*
 // @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
-// @require        https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
 // ==/UserScript==
 
 // --------- USER SETTINGS START ---------
