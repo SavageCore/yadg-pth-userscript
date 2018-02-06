@@ -1820,7 +1820,7 @@ yadg = {
 	yadgHost: 'https://yadg.cc',
 	baseURI: '/api/v2/',
 
-	standardError: 'Sorry, an error occured. Please try again. If this error persists the user script might need updating.',
+	standardError: 'Sorry, an error occured. Please try again. If this error persists check on <a href="https://yadg.cc">yadg.cc</a> before reporting an error with the userscript.',
 	authenticationError: 'Your API token is invalid. Please provide a valid API token or remove the current one.',
 	lastStateError: false,
 
