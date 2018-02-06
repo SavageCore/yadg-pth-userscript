@@ -1976,8 +1976,7 @@ yadg = {
 	},
 
 	printError(message, templateError) {
-		this.responseDiv.innerHTML = '';
-		this.responseDiv.appendChild(document.createTextNode(message));
+		this.responseDiv.innerHTML = message;
 		if (!templateError) {
 			this.lastStateError = true;
 
