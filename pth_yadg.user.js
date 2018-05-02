@@ -104,7 +104,7 @@ function fetchImage(target, callback) {
 						const originalImg = scaledImg.replace(/_16/, '_0');
 						const tempImg = new Image();
 						tempImg.src = originalImg;
-						tempImg.onload = function () {
+						tempImg.addEventListener('load', function () {
 							if (this.width === this.height) {
 								img = originalImg;
 							} else {
@@ -113,7 +113,7 @@ function fetchImage(target, callback) {
 							if (typeof callback === 'function') {
 								callback(img);
 							}
-						};
+						});
 					}
 				}
 			});
@@ -265,7 +265,7 @@ function LocalStorageWrapper(applicationPrefix) {
 
 	const delimiter = '_';
 
- // If the passed in value for prefix is not string, it should be converted
+	// If the passed in value for prefix is not string, it should be converted
 	const keyPrefix = typeof (applicationPrefix) === 'string' ? applicationPrefix : JSON.stringify(applicationPrefix);
 
 	const localStorage = window.localStorage || unsafeWindow.localStorage;
@@ -278,10 +278,10 @@ function LocalStorageWrapper(applicationPrefix) {
 		return keyPrefix;
 	};
 
- //
- // validates if there is a prefix defined for the keys
- // and checks if the localStorage functionality is available or not
- //
+	//
+	// validates if there is a prefix defined for the keys
+	// and checks if the localStorage functionality is available or not
+	//
 	const makeChecks = function (key) {
 		const prefix = getKeyPrefix();
 		if (prefix === undefined) {
@@ -292,15 +292,15 @@ function LocalStorageWrapper(applicationPrefix) {
 			throw new Error('LocalStorage is not supported by your browser, data cannot be saved');
 		}
 
-  // Keys are always strings
+		// Keys are always strings
 		const checkedKey = typeof (key) === 'string' ? key : JSON.stringify(key);
 
 		return checkedKey;
 	};
 
- //
- // saves the value associated to the key into the localStorage
- //
+	//
+	// saves the value associated to the key into the localStorage
+	//
 	const addItem = function (key, value) {
 		const that = this;
 		try {
@@ -313,9 +313,9 @@ function LocalStorageWrapper(applicationPrefix) {
 		}
 	};
 
- //
- // gets the value of the object saved to the key passed as parameter
- //
+	//
+	// gets the value of the object saved to the key passed as parameter
+	//
 	const getItem = function (key) {
 		const that = this;
 		let result;
@@ -331,9 +331,9 @@ function LocalStorageWrapper(applicationPrefix) {
 		return result;
 	};
 
- //
- // returns all the keys from the localStorage
- //
+	//
+	// returns all the keys from the localStorage
+	//
 	const getAllKeys = function () {
 		const prefix = getKeyPrefix();
 		const results = [];
@@ -356,9 +356,9 @@ function LocalStorageWrapper(applicationPrefix) {
 		return results;
 	};
 
- //
- // removes the value associated to the key from the localStorage
- //
+	//
+	// removes the value associated to the key from the localStorage
+	//
 	const removeItem = function (key) {
 		const that = this;
 		let result = false;
@@ -374,9 +374,9 @@ function LocalStorageWrapper(applicationPrefix) {
 		return result;
 	};
 
- //
- // removes all the values from the localStorage
- //
+	//
+	// removes all the values from the localStorage
+	//
 	const removeAll = function () {
 		const that = this;
 
@@ -393,7 +393,7 @@ function LocalStorageWrapper(applicationPrefix) {
 		}
 	};
 
- // Make some of the functionalities public
+	// Make some of the functionalities public
 	return {
 		isLocalStorageAvailable,
 		getKeyPrefix,
@@ -416,7 +416,7 @@ const yadgUtil = {
 		document.body.removeChild(script); // Clean up
 	},
 
- // Handle for updating page css, taken from one of hateradio's scripts
+	// Handle for updating page css, taken from one of hateradio's scripts
 	addCSS(style) {
 		if (!this.style) {
 			this.style = document.createElement('style');
@@ -434,7 +434,7 @@ const yadgUtil = {
 		}
 	},
 
-  // Negative count will remove, positive count will add given number of artist boxes
+	// Negative count will remove, positive count will add given number of artist boxes
 	addRemoveArtistBoxes(count) {
 		if (count !== 0) {
 			if (count < 0) {
@@ -541,9 +541,9 @@ const yadgSandbox = {
 	},
 
 	loadSwig(callback) {
-  // ImportScripts for the web worker will not work in Firefox with cross-domain requests
-  // see: https://bugzilla.mozilla.org/show_bug.cgi?id=756589
-  // so download the Swig files manually with GM.xmlHttpRequest
+		// ImportScripts for the web worker will not work in Firefox with cross-domain requests
+		// see: https://bugzilla.mozilla.org/show_bug.cgi?id=756589
+		// so download the Swig files manually with GM.xmlHttpRequest
 		GM.xmlHttpRequest({ // eslint-disable-line new-cap
 			method: 'GET',
 			url: yadg.yadgHost + '/static/js/swig.min.js',
@@ -622,12 +622,12 @@ const yadgSandbox = {
 };
 
 factory = {
- // Storage keys for cache
+	// Storage keys for cache
 	KEY_LAST_CHECKED: 'lastChecked',
 	KEY_SCRAPER_LIST: 'scraperList',
 	KEY_FORMAT_LIST: 'formatList',
 
- // Storage keys for settings
+	// Storage keys for settings
 	KEY_API_TOKEN: 'apiToken',
 	KEY_DEFAULT_TEMPLATE: 'defaultTemplate',
 	KEY_DEFAULT_TARGET: 'defaultTarget',
@@ -684,22 +684,22 @@ factory = {
 
 	init() {
 		this.currentLocation = this.determineLocation(document.URL);
-  // Only continue with the initialization if we found a valid location
+		// Only continue with the initialization if we found a valid location
 		if (this.currentLocation === null) {
 			return false;
 		}
 		this.insertIntoPage(this.getInputElements());
 
-  // Set the necessary styles
+		// Set the necessary styles
 		this.setStyles();
 
-  // Make sure we initialize the settings to the most recent version
+		// Make sure we initialize the settings to the most recent version
 		this.initializeSettings();
 
-  // Populate settings inputs
+		// Populate settings inputs
 		this.populateSettings();
 
-  // Add the appropriate action for the button
+		// Add the appropriate action for the button
 		const button = document.getElementById('yadg_submit');
 		button.addEventListener('click', e => {
 			e.preventDefault();
@@ -715,7 +715,7 @@ factory = {
 			}
 		}, false);
 
-  // Add the action for the options toggle
+		// Add the action for the options toggle
 		const toggleLink = document.getElementById('yadg_toggle_options');
 		if (toggleLink !== null) {
 			toggleLink.addEventListener('click', e => {
@@ -732,7 +732,7 @@ factory = {
 			});
 		}
 
-  // Add the action for the template select
+		// Add the action for the template select
 		const formatSelect = this.getFormatSelect();
 		if (formatSelect !== null) {
 			formatSelect.addEventListener('change', function () {
@@ -742,7 +742,7 @@ factory = {
 			});
 		}
 
-  // // add the action for the target select
+		// // add the action for the target select
 		// var targetSelect = this.getTargetSelect();
 		// if (targetSelect !== null) {
 		// 	targetSelect.addEventListener('change', function (e) {
@@ -750,7 +750,7 @@ factory = {
 		// 	});
 		// }
 
-  // add the action to the save settings link
+		// add the action to the save settings link
 		const saveSettingsLink = document.getElementById('yadg_save_settings');
 		if (saveSettingsLink !== null) {
 			saveSettingsLink.addEventListener('click', e => {
@@ -762,7 +762,7 @@ factory = {
 			});
 		}
 
-  // Add the action to the clear cache link
+		// Add the action to the clear cache link
 		const clearCacheLink = document.getElementById('yadg_clear_cache');
 		if (clearCacheLink !== null) {
 			clearCacheLink.addEventListener('click', e => {
@@ -776,7 +776,7 @@ factory = {
 
 		const lastChecked = yadgUtil.storage.getItem(factory.KEY_LAST_CHECKED);
 		if (lastChecked === null || (new Date()).getTime() - (new Date(lastChecked)).getTime() > factory.CACHE_TIMEOUT) {
-   // Update the scraper and formats list
+			// Update the scraper and formats list
 			factory.UPDATE_PROGRESS = 1;
 			yadg.getScraperList(factory.setScraperSelect);
 			yadg.getFormatsList(factory.setFormatSelect);
@@ -825,7 +825,7 @@ factory = {
 		}
 
 		if (settingsVer < currentVer) {
-   // Replace descriptions on upload and new request pages
+			// Replace descriptions on upload and new request pages
 			const locations = [
 				'pth_upload',
 				'pth_request',
@@ -1013,7 +1013,7 @@ factory = {
 		if (defaultFormat !== null && defaultFormat in formatOffsets) {
 			formatSelect.selectedIndex = formatOffsets[defaultFormat];
 		} else {
-   // We have no settings so fall back to the hard coded defaults
+			// We have no settings so fall back to the hard coded defaults
 			switch (this.currentLocation) {
 				case 'waffles_upload':
 				case 'waffles_upload_new':
@@ -1154,8 +1154,8 @@ factory = {
 		select.options.length = data.length;
 
 		for (let i = 0; i < data.length; i++) {
-   // We are not using the javascript constructor to create an Option instance because this will create an
-   // incompatibility with jQuery in Chrome which will make it impossible to add a new artist field on redacted.ch
+			// We are not using the javascript constructor to create an Option instance because this will create an
+			// incompatibility with jQuery in Chrome which will make it impossible to add a new artist field on redacted.ch
 			const o = document.createElement('option');
 			if ('nameFormatted' in data[i]) {
 				o.text = data[i].nameFormatted;
@@ -1175,10 +1175,10 @@ factory = {
 	},
 
 	setStyles() {
-  // General styles
+		// General styles
 		yadgUtil.addCSS('div#yadg_options{ display:none; margin-top:3px; } input#yadg_input,input#yadg_submit,label#yadg_format_label,a#yadg_scraper_info { margin-right: 5px } div#yadg_response { margin-top:3px; } select#yadg_scraper { margin-right: 2px } #yadg_options_template,#yadg_options_api_token,#yadg_options_replace_div { margin-bottom: 3px; } .add_form[name="yadg"] input,.add_form[name="yadg"] select { width: 90%; margin: 2px 0 !important; } input#yadg_submit { position: inherit !important}');
 
-  // Location specific styles will go here
+		// Location specific styles will go here
 		switch (this.currentLocation) {
 			case 'waffles_upload':
 				yadgUtil.addCSS('div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }');
@@ -1330,9 +1330,11 @@ factory = {
 			case 'pth_upload':
 				if (factory.getDescriptionTargetSelect().value === 'album') {
 					return document.getElementById('album_desc');
-				} else if (factory.getDescriptionTargetSelect().value === 'release') {
+				}
+				if (factory.getDescriptionTargetSelect().value === 'release') {
 					return document.getElementById('release_desc');
-				}	else if (factory.getDescriptionTargetSelect().value === 'both') {
+				}
+				if (factory.getDescriptionTargetSelect().value === 'both') {
 					return [document.getElementById('album_desc'), document.getElementById('release_desc')];
 				}
 				break;
@@ -1360,7 +1362,7 @@ factory = {
 				return document.getElementsByName('information')[0];
 
 			default:
-    // That should actually never happen
+				// That should actually never happen
 				return document.createElement('div');
 		}
 	},
@@ -1458,7 +1460,7 @@ factory = {
 									// We don't know this artist type, default to "main"
 										typeSelect.selectedIndex = optionOffsets[1];
 									}
-        // Next artist input
+									// Next artist input
 									inputIdx += 1;
 								}
 							}
@@ -1558,11 +1560,11 @@ factory = {
 								} else if (artistType === 'remixer') {
 									typeSelect.selectedIndex = optionOffsets[3];
 								} else {
-         // We don't know this artist type, default to "main"
+									// We don't know this artist type, default to "main"
 									typeSelect.selectedIndex = optionOffsets[1];
 								}
 
-        // Next artist input
+								// Next artist input
 								inputIdx += 1;
 							}
 						}
@@ -1622,11 +1624,11 @@ factory = {
 								} else if (artistType === 'remixer') {
 									typeSelect.selectedIndex = optionOffsets[3];
 								} else {
-         // We don't know this artist type, default to "main"
+									// We don't know this artist type, default to "main"
 									typeSelect.selectedIndex = optionOffsets[1];
 								}
 
-        // Next artist input
+								// Next artist input
 								inputIdx += 1;
 							}
 						}
@@ -1744,7 +1746,7 @@ factory = {
 			}
 
 			default:
-    // That should actually never happen
+				// That should actually never happen
 				return function () {};
 		}
 	}
@@ -1954,7 +1956,7 @@ yadg = {
 						yadg.responseDiv.appendChild(ul);
 						yadg.lastStateError = false;
 
-      // We got a ListResult so clear the last ReleaseResult from the render cache
+						// We got a ListResult so clear the last ReleaseResult from the render cache
 						yadgRenderer.clearCached();
 					}
 				} else if (response.data.type === 'NotFoundResult') {
@@ -1980,8 +1982,8 @@ yadg = {
 		if (!templateError) {
 			this.lastStateError = true;
 
-   // There was a non template related error, so for consistencies sake clear the last ReleaseResult from the
-   // render cache
+			// There was a non template related error, so for consistencies sake clear the last ReleaseResult from the
+			// render cache
 			yadgRenderer.clearCached();
 		}
 	},
@@ -2054,7 +2056,7 @@ yadg = {
 						let newTypes = null;
 						if (name in result.artists) {
 							newTypes = result.artists[name].concat(type);
-       // Deduplicate new types array
+							// Deduplicate new types array
 							for (let i = 0; i < newTypes.length; ++i) {
 								for (let j = i + 1; j < newTypes.length; ++j) {
 									if (newTypes[i] === newTypes[j]) {
@@ -2123,7 +2125,7 @@ yadg = {
 		}
 
 		if (result.artists !== false) {
-   // Count the artists
+			// Count the artists
 			result.artists_length = 0; // eslint-disable-line camelcase
 			result.artist_keys = []; // eslint-disable-line camelcase
 			result.effective_artist_count = 0; // eslint-disable-line camelcase
@@ -2140,7 +2142,7 @@ yadg = {
 		if (result.artists_length === 0) {
 			result.artists = false;
 		} else {
-   // Create a flat string of all the main artists
+			// Create a flat string of all the main artists
 			let artistString = '';
 
 			for (let i = 0; i < result.artists_length; i++) {
