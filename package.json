@@ -6,11 +6,16 @@
     "xo": "^0.17.0"
   },
   "xo": {
-    "plugins": ["unicorn"],
+    "plugins": [
+      "unicorn"
+    ],
     "rules": {
-      "unicorn/filename-case": ["error", {
-        "case": "snakeCase"
-      }]
+      "unicorn/filename-case": [
+        "error",
+        {
+          "case": "snakeCase"
+        }
+      ]
     }
   }
 }
