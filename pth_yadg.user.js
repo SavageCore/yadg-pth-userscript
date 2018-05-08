@@ -26,7 +26,7 @@
  Here you can set site specific default templates.
  You can find a list of available templates at: https://yadg.cc/api/v2/templates/
 */
-const defaultPTHFormat = 4;
+const defaultPTHFormat = 5;
 const defaultWafflesFormat = 9;
 const	defaultPTHTarget = 'other';
 const defaultPTHDescriptionTarget = 'album';
