@@ -3,7 +3,7 @@
 // @name           RED YADG
 // @description    This script provides integration with online description generator YADG (http://yadg.cc) - Credit to Slack06
 // @license        https://github.com/SavageCore/yadg-pth-userscript/blob/master/LICENSE
-// @version        1.4.40
+// @version        1.4.41
 // @namespace      yadg
 // @grant          GM_xmlhttpRequest
 // @grant          GM.xmlHttpRequest
@@ -139,7 +139,7 @@ function fetchImage(target, callback) {
 			const id = regex.exec(link)[1];
 			GM.xmlHttpRequest({ // eslint-disable-line new-cap
 				headers: {
-					'User-Agent': 'YADG/1.3.17 (yadg.cc)'
+					'User-Agent': 'YADG/1.4.41 (yadg.cc)'
 				},
 				method: 'GET',
 				url: 'http://coverartarchive.org/release/' + id + '/',
