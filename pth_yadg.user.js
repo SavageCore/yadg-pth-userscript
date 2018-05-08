@@ -73,7 +73,7 @@ function fetchImage(target, callback) {
 			const id = res[2] | res[3];
 			let country = 'us';
 			if (res[1]) {
-				country = res[1];
+				[country] = res;
 			}
 			GM.xmlHttpRequest({ // eslint-disable-line new-cap
 				method: 'GET',
@@ -136,7 +136,7 @@ function fetchImage(target, callback) {
 			break;
 		case (/musicbrainz/.test(link)): {
 			const regex = /release\/(.*)/;
-			const id = regex.exec(link)[1];
+			const {1: id} = regex.exec(link);
 			GM.xmlHttpRequest({ // eslint-disable-line new-cap
 				headers: {
 					'User-Agent': 'YADG/1.4.41 (yadg.cc)'
@@ -194,7 +194,7 @@ function fetchImage(target, callback) {
 }
 
 function pthImgIt() {
-	const pthImgIt = document.getElementsByClassName('rehost_it_cover')[0];
+	const [pthImgIt] = document.getElementsByClassName('rehost_it_cover');
 	let imgElement;
 
 	switch (window.location.href) {
@@ -230,14 +230,14 @@ function insertImage(img, callback) {
 			break;
 		}
 		case (window.location.href.match(/torrents\.php\?action=editgroup/) || {}).input: {
-			const imageInputElement = document.querySelectorAll('#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)')[0];
+			const [imageInputElement] = document.querySelectorAll('#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)');
 			imageInputElement.value = img;
 			imageInputElement.parentNode.insertAdjacentHTML('beforebegin', '<div id="yadg_image_preview_div"><img id="yadg_image_preview" src="' + img + '" width="300px" /></div>');
 			callback();
 			break;
 		}
 		case (window.location.href.match(/requests\.php\?/) || {}).input: {
-			const imageInputElement = document.querySelectorAll('#image_tr > td:nth-child(2) > input[type="text"]:nth-child(1)')[0];
+			const [imageInputElement] = document.querySelectorAll('#image_tr > td:nth-child(2) > input[type="text"]:nth-child(1)');
 			imageInputElement.value = img;
 			imageInputElement.parentNode.parentNode.insertAdjacentHTML('beforebegin', '<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="' + img + '" width="300px" /></tr></td>');
 			callback();
@@ -722,7 +722,7 @@ factory = {
 				e.preventDefault();
 
 				const optionsDiv = document.getElementById('yadg_options');
-				const display = optionsDiv.style.display;
+				const {display} = optionsDiv.style;
 
 				if (display === 'none' || display === '') {
 					optionsDiv.style.display = 'block';
@@ -1277,13 +1277,13 @@ factory = {
 			}
 
 			case 'pth_edit': {
-				const summaryInput = document.getElementsByName('summary')[0];
+				const [summaryInput] = document.getElementsByName('summary');
 				summaryInput.parentNode.insertBefore(element, summaryInput.nextSibling.nextSibling);
 				break;
 			}
 
 			case 'pth_torrent_overview': {
-				const addArtistsBox = document.getElementsByClassName('box_addartists')[0];
+				const [addArtistsBox] = document.getElementsByClassName('box_addartists');
 				addArtistsBox.parentNode.insertBefore(element, addArtistsBox.nextSibling.nextSibling);
 				break;
 			}
@@ -1296,7 +1296,7 @@ factory = {
 			}
 
 			case 'waffles_upload': {
-				const submitButton = document.getElementsByName('submit')[0];
+				const [submitButton] = document.getElementsByName('submit');
 				submitButton.parentNode.parentNode.parentNode.insertBefore(element, submitButton.parentNode.parentNode);
 				break;
 			}
@@ -1315,7 +1315,7 @@ factory = {
 			}
 
 			case 'waffles_request': {
-				const categorySelect = document.getElementsByName('category')[0];
+				const [categorySelect] = document.getElementsByName('category');
 				categorySelect.parentNode.parentNode.parentNode.insertBefore(element, categorySelect.parentNode.parentNode);
 				break;
 			}
@@ -1451,14 +1451,14 @@ factory = {
 									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
 									if (artistType === 'main') {
-										typeSelect.selectedIndex = optionOffsets[1];
+										typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
 									} else if (artistType === 'guest') {
-										typeSelect.selectedIndex = optionOffsets[2];
+										typeSelect.selectedIndex = optionOffsets[2]; // eslint-disable-line prefer-destructuring
 									} else if (artistType === 'remixer') {
-										typeSelect.selectedIndex = optionOffsets[3];
+										typeSelect.selectedIndex = optionOffsets[3]; // eslint-disable-line prefer-destructuring
 									} else {
 									// We don't know this artist type, default to "main"
-										typeSelect.selectedIndex = optionOffsets[1];
+										typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
 									}
 									// Next artist input
 									inputIdx += 1;
@@ -1500,10 +1500,10 @@ factory = {
 
 			case 'pth_edit': {
 				const f = function (rawData) {
-					const summaryInput = document.getElementsByName('summary')[0];
-					const yearInput = document.getElementsByName('year')[0];
-					const labelInput = document.getElementsByName('record_label')[0];
-					const catalogInput = document.getElementsByName('catalogue_number')[0];
+					const [summaryInput] = document.getElementsByName('summary');
+					const [yearInput] = document.getElementsByName('year');
+					const [labelInput] = document.getElementsByName('record_label');
+					const [catalogInput] = document.getElementsByName('catalogue_number');
 					const data = yadg.prepareRawResponse(rawData);
 
 					summaryInput.value = 'YADG Update';
@@ -1554,14 +1554,14 @@ factory = {
 								const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
 								if (artistType === 'main') {
-									typeSelect.selectedIndex = optionOffsets[1];
+									typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
 								} else if (artistType === 'guest') {
-									typeSelect.selectedIndex = optionOffsets[2];
+									typeSelect.selectedIndex = optionOffsets[2]; // eslint-disable-line prefer-destructuring
 								} else if (artistType === 'remixer') {
-									typeSelect.selectedIndex = optionOffsets[3];
+									typeSelect.selectedIndex = optionOffsets[3]; // eslint-disable-line prefer-destructuring
 								} else {
 									// We don't know this artist type, default to "main"
-									typeSelect.selectedIndex = optionOffsets[1];
+									typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
 								}
 
 								// Next artist input
@@ -1577,10 +1577,10 @@ factory = {
 			case 'pth_request_edit': {
 				const f = function (rawData) {
 					let artistInputs = document.getElementsByName('artists[]');
-					const albumTitleInput = document.getElementsByName('title')[0];
-					const yearInput = document.getElementsByName('year')[0];
-					const labelInput = document.getElementsByName('recordlabel')[0];
-					const catalogInput = document.getElementsByName('cataloguenumber')[0];
+					const [albumTitleInput] = document.getElementsByName('title');
+					const [yearInput] = document.getElementsByName('year');
+					const [labelInput] = document.getElementsByName('recordlabel');
+					const [catalogInput] = document.getElementsByName('cataloguenumber');
 					const tagsInput = document.getElementById('tags');
 					const data = yadg.prepareRawResponse(rawData);
 					let nullArtistCount = 0;
@@ -1618,14 +1618,14 @@ factory = {
 								const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
 								if (artistType === 'main') {
-									typeSelect.selectedIndex = optionOffsets[1];
+									[, typeSelect.selectedIndex] = optionOffsets;
 								} else if (artistType === 'guest') {
-									typeSelect.selectedIndex = optionOffsets[2];
+									[,, typeSelect.selectedIndex] = optionOffsets;
 								} else if (artistType === 'remixer') {
-									typeSelect.selectedIndex = optionOffsets[3];
+									[,,, typeSelect.selectedIndex] = optionOffsets;
 								} else {
 									// We don't know this artist type, default to "main"
-									typeSelect.selectedIndex = optionOffsets[1];
+									[, typeSelect.selectedIndex] = optionOffsets;
 								}
 
 								// Next artist input
@@ -1653,9 +1653,9 @@ factory = {
 
 			case 'waffles_upload': {
 				const f = function (rawData) {
-					const artistInput = document.getElementsByName('artist')[0];
-					const albumTitleInput = document.getElementsByName('album')[0];
-					const yearInput = document.getElementsByName('year')[0];
+					const [artistInput] = document.getElementsByName('artist');
+					const [albumTitleInput] = document.getElementsByName('album');
+					const [yearInput] = document.getElementsByName('year');
 					const vaCheckbox = document.getElementById('va');
 					const tagsInput = document.getElementById('tags');
 					const data = yadg.prepareRawResponse(rawData);
@@ -1726,9 +1726,9 @@ factory = {
 
 			case 'waffles_request': {
 				const f = function (rawData) {
-					const artistInput = document.getElementsByName('artist')[0];
-					const albumTitleInput = document.getElementsByName('title')[0];
-					const yearInput = document.getElementsByName('year')[0];
+					const [artistInput] = document.getElementsByName('artist');
+					const [albumTitleInput] = document.getElementsByName('title');
+					const [yearInput] = document.getElementsByName('year');
 					const data = yadg.prepareRawResponse(rawData);
 
 					if (data.artists === false) {
@@ -1916,9 +1916,9 @@ yadg = {
 
 					const releaseList = response.data.items;
 					for (let i = 0; i < releaseList.length; i++) {
-						const name = releaseList[i].name;
-						const info = releaseList[i].info;
-						const queryParams = releaseList[i].queryParams;
+						const {name} = releaseList[i];
+						const {info} = releaseList[i];
+						const {queryParams} = releaseList[i];
 						const releaseUrl = releaseList[i].url;
 
 						const li = document.createElement('li');
@@ -2050,7 +2050,7 @@ yadg = {
 				for (let l = 0; l < disc.tracks.length; l++) {
 					const track = disc.tracks[l];
 					for (let m = 0; m < track.artists.length; m++) {
-						const name = track.artists[m].name;
+						const {name} = track.artists[m];
 						const type = track.artists[m].types;
 
 						let newTypes = null;
@@ -2076,7 +2076,7 @@ yadg = {
 		for (let i = 0; i < rawData.releaseEvents.length; i++) {
 			const event = rawData.releaseEvents[i];
 			if (event.date) {
-				result.year = event.date.match(/\d{4}/)[0];
+				[result.year] = event.date.match(/\d{4}/);
 				if (result.year.length === 4) {
 					break;
 				} else {
@@ -2088,12 +2088,12 @@ yadg = {
 			result.title = rawData.title;
 		}
 		if (rawData.labelIds.length > 0) {
-			const labelId = rawData.labelIds[0];
+			const [labelId] = rawData.labelIds;
 			if (labelId.label) {
 				result.label = labelId.label;
 			}
 			if (labelId.catalogueNrs.length > 0) {
-				result.catalog = labelId.catalogueNrs[0];
+				[result.catalog] = labelId.catalogueNrs;
 			}
 		}
 		if (rawData.genres.length > 0) {
