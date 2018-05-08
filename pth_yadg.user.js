@@ -978,6 +978,10 @@ factory = {
 			replaceDesc = replaceDescCheckbox.checked;
 		}
 
+		if (descBox.getAttribute('disabled') === 'disabled') {
+			return;
+		}
+
 		if (descBox !== null && !Array.isArray(descBox)) {
 			if (!replaceDesc && /\S/.test(descBox.value)) { // Check if the current description contains more than whitespace
 				descBox.value += '\n\n' + value;
