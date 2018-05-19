@@ -100,7 +100,14 @@ function fetchImage(target, callback) {
 					if (response.status === 200) {
 						const container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
-						const scaledImg = container.querySelectorAll('#tralbumArt > a > img')[0].src;
+						const [imgElem] = container.querySelectorAll('#tralbumArt > a > img');
+						if (!imgElem) {
+							if (typeof callback === 'function') {
+								callback(false);
+							}
+							return false;
+						}
+						const scaledImg = imgElem.src;
 						const originalImg = scaledImg.replace(/_16/, '_0');
 						const tempImg = new Image();
 						tempImg.src = originalImg;
@@ -706,11 +713,13 @@ factory = {
 			yadg.makeRequest();
 			if (factory.getFetchImageCheckbox().checked) {
 				fetchImage(null, data => {
-					insertImage(data, () => {
-						if (factory.getAutoRehostCheckbox() && factory.getAutoRehostCheckbox().checked) {
-							pthImgIt();
-						}
-					});
+					if (data) {
+						insertImage(data, () => {
+							if (factory.getAutoRehostCheckbox() && factory.getAutoRehostCheckbox().checked) {
+								pthImgIt();
+							}
+						});
+					}
 				});
 			}
 		}, false);
