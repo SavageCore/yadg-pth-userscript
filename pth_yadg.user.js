@@ -1622,14 +1622,14 @@ factory = {
 								const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
 								if (artistType === 'main') {
-									[, typeSelect.selectedIndex] = optionOffsets;
+									typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
 								} else if (artistType === 'guest') {
-									[,, typeSelect.selectedIndex] = optionOffsets;
+									typeSelect.selectedIndex = optionOffsets[2]; // eslint-disable-line prefer-destructuring
 								} else if (artistType === 'remixer') {
-									[,,, typeSelect.selectedIndex] = optionOffsets;
+									typeSelect.selectedIndex = optionOffsets[3]; // eslint-disable-line prefer-destructuring
 								} else {
 									// We don't know this artist type, default to "main"
-									[, typeSelect.selectedIndex] = optionOffsets;
+									typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
 								}
 
 								// Next artist input
