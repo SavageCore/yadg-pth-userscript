@@ -997,10 +997,12 @@ factory = {
 			} else {
 				descBox.value = value;
 			}
-			if (descBox.parentNode.nextSibling.nextSibling) {
-				const previewBtn = descBox.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
-				if (previewBtn && previewBtn.value === 'Preview' && factory.getAutoPreviewCheckbox().checked) {
-					previewBtn.click();
+			if (factory.currentLocation !== 'pth_torrent_overview') {
+				if (descBox.parentNode.nextSibling.nextSibling) {
+					const previewBtn = descBox.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
+					if (previewBtn && previewBtn.value === 'Preview' && factory.getAutoPreviewCheckbox().checked) {
+						previewBtn.click();
+					}
 				}
 			}
 		} else if (Array.isArray(descBox)) {
