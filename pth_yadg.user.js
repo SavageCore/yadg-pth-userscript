@@ -73,7 +73,7 @@ function fetchImage(target, callback) {
 			const id = res[2] | res[3];
 			let country = 'us';
 			if (res[1]) {
-				[country] = res;
+				[, country] = res;
 			}
 			GM.xmlHttpRequest({ // eslint-disable-line new-cap
 				method: 'GET',
