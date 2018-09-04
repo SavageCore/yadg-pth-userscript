@@ -314,9 +314,9 @@ function LocalStorageWrapper(applicationPrefix) {
 			const checkedKey = makeChecks(key);
 			const combinedKey = that.getKeyPrefix() + delimiter + checkedKey;
 			localStorage.setItem(combinedKey, JSON.stringify(value));
-		}		catch (err) {
-			console.log(err);
-			throw err;
+		} catch (error) {
+			console.log(error);
+			throw error;
 		}
 	};
 
@@ -331,9 +331,9 @@ function LocalStorageWrapper(applicationPrefix) {
 			const combinedKey = that.getKeyPrefix() + delimiter + checkedKey;
 			const resultAsJSON = localStorage.getItem(combinedKey);
 			result = JSON.parse(resultAsJSON);
-		}		catch (err) {
-			console.log(err);
-			throw err;
+		} catch (error) {
+			console.log(error);
+			throw error;
 		}
 		return result;
 	};
@@ -374,9 +374,9 @@ function LocalStorageWrapper(applicationPrefix) {
 			const combinedKey = that.getKeyPrefix() + delimiter + checkedKey;
 			localStorage.removeItem(combinedKey);
 			result = true;
-		}		catch (err) {
-			console.log(err);
-			throw err;
+		} catch (error) {
+			console.log(error);
+			throw error;
 		}
 		return result;
 	};
@@ -394,9 +394,9 @@ function LocalStorageWrapper(applicationPrefix) {
 				const combinedKey = that.getKeyPrefix() + delimiter + checkedKey;
 				localStorage.removeItem(combinedKey);
 			}
-		}		catch (err) {
-			console.log(err);
-			throw err;
+		} catch (error) {
+			console.log(error);
+			throw error;
 		}
 	};
 
