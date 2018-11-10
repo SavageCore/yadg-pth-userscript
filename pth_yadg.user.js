@@ -645,6 +645,7 @@ factory = {
 	KEY_FETCH_IMAGE: 'fetchImage',
 	KEY_AUTO_PREVIEW: 'autoPreview',
 	KEY_AUTO_REHOST: 'autoRehost',
+	KEY_AUTO_SELECT_SCRAPER: 'autoSelectScraper',
 
 	CACHE_TIMEOUT: 1000 * 60 * 60 * 24, // 24 hours
 
@@ -705,6 +706,30 @@ factory = {
 
 		// Populate settings inputs
 		this.populateSettings();
+
+		// Add the appropriate action for the input textbox
+		const input = document.getElementById('yadg_input');
+		input.addEventListener('input', () => {
+			if (factory.getAutoSelectScraperCheckbox().checked) {
+				const inputValue = input.value;
+				const yadgScraper = document.getElementById('yadg_scraper');
+				if (/discogs/.test(inputValue)) {
+					yadgScraper.value = 'discogs';
+				} else if (/itunes/.test(inputValue)) {
+					yadgScraper.value = 'itunes';
+				} else if (/bandcamp/.test(inputValue)) {
+					yadgScraper.value = 'bandcamp';
+				} else if (/beatport/.test(inputValue)) {
+					yadgScraper.value = 'beatport';
+				} else if (/musicbrainz/.test(inputValue)) {
+					yadgScraper.value = 'musicbrainz';
+				} else if (/junodownload/.test(inputValue)) {
+					yadgScraper.value = 'junodownload';
+				} else if (/metal-archives/.test(inputValue)) {
+					yadgScraper.value = 'metalarchives';
+				}
+			}
+		});
 
 		// Add the appropriate action for the button
 		const button = document.getElementById('yadg_submit');
@@ -817,6 +842,10 @@ factory = {
 		return document.getElementById('yadg_options_preview');
 	},
 
+	getAutoSelectScraperCheckbox() {
+		return document.getElementById('yadg_options_auto_select_scraper');
+	},
+
 	getReplaceDescriptionSettingKey() {
 		return this.makeReplaceDescriptionSettingsKey(this.currentLocation);
 	},
@@ -860,6 +889,7 @@ factory = {
 		autoRehost = yadgUtil.settings.getItem(factory.KEY_AUTO_REHOST);
 		autoPreview = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
 		descriptionTarget = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
+		const autoSelectScraper = yadgUtil.settings.getItem(factory.KEY_AUTO_SELECT_SCRAPER);
 
 		if (apiToken) {
 			const apiTokenInput = factory.getApiTokenInput();
@@ -887,6 +917,11 @@ factory = {
 			const autoPreviewCheckbox = factory.getAutoPreviewCheckbox();
 			autoPreviewCheckbox.checked = true;
 		}
+
+		if (autoSelectScraper) {
+			const autoSelectScraperCheckbox = factory.getAutoSelectScraperCheckbox();
+			autoSelectScraperCheckbox.checked = true;
+		}
 	},
 
 	saveSettings() {
@@ -899,6 +934,7 @@ factory = {
 		const fetchImageCheckbox = factory.getFetchImageCheckbox();
 		const autoRehostCheckbox = factory.getAutoRehostCheckbox();
 		const autoPreviewCheckbox = factory.getAutoPreviewCheckbox();
+		const autoSelectScraperCheckbox = factory.getAutoSelectScraperCheckbox();
 
 		let currentScraper = null;
 		let currentTemplate = null;
@@ -907,6 +943,7 @@ factory = {
 		const apiToken = apiTokenInput.value.trim();
 		const replaceDescription = replaceDescCheckbox.checked;
 		const fetchImage = fetchImageCheckbox.checked;
+		const autoSelectScraper = autoSelectScraperCheckbox.checked;
 		if (autoRehostCheckbox) {
 			autoRehost = autoRehostCheckbox.checked;
 		}
@@ -975,6 +1012,12 @@ factory = {
 			yadgUtil.settings.addItem(factory.KEY_AUTO_PREVIEW, true);
 		} else if (!autoPreview && window.location.href.match(/\/upload\.php/)) {
 			yadgUtil.settings.removeItem(factory.KEY_AUTO_PREVIEW);
+		}
+
+		if (autoSelectScraper) {
+			yadgUtil.settings.addItem(factory.KEY_AUTO_SELECT_SCRAPER, true);
+		} else {
+			yadgUtil.settings.removeItem(factory.KEY_AUTO_SELECT_SCRAPER);
 		}
 	},
 
@@ -1221,6 +1264,7 @@ factory = {
 		if (window.location.href.match(/\/upload\.php/)) {
 			optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
 		}
+		optionsHTML += '<div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper"/><label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">Auto select the correct scraper when pasting the URL</label></div>		';
 		optionsHTML += '<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
 		const inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" />';
 		const responseDivHTML = '<div id="yadg_response"></div>';
