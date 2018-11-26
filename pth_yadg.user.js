@@ -1438,19 +1438,16 @@ factory = {
 					let labelInput;
 					let catalogInput;
 					if (currentTarget === 'other') {
-						const remaster = document.getElementById('remaster');
 						albumTitleInput = document.getElementById('title');
 						yearInput = document.getElementById('remaster_year');
 						labelInput = document.getElementById('remaster_record_label');
 						catalogInput = document.getElementById('remaster_catalogue_number');
-						remaster.checked = 'checked';
-						unsafeWindow.Remaster(); // eslint-disable-line new-cap
 						unsafeWindow.CheckYear(); // eslint-disable-line new-cap
 					} else {
 						albumTitleInput = document.getElementById('title');
 						yearInput = document.getElementById('year');
-						labelInput = document.getElementById('record_label');
-						catalogInput = document.getElementById('catalogue_number');
+						labelInput = document.getElementById('remaster_record_label');
+						catalogInput = document.getElementById('remaster_catalogue_number');
 					}
 
 					if (/itunes/.test(rawData.url)) {
