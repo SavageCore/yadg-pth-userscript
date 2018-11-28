@@ -195,6 +195,45 @@ function fetchImage(target, callback) {
 				}
 			});
 			break;
+		case (/allmusic/.test(link)):
+			GM.xmlHttpRequest({ // eslint-disable-line new-cap
+				method: 'GET',
+				url: link,
+				onload(response) {
+					if (response.status === 200) {
+						const container = document.implementation.createHTMLDocument().documentElement;
+						container.innerHTML = response.responseText;
+						const data = container.querySelector('[data-largeurl]');
+						// No image available https://www.allmusic.com/album/release/beatles-mr0003843619
+						if (data !== null) {
+							const cover = data.getAttribute('data-largeurl');
+							if (typeof callback === 'function') {
+								callback(cover);
+							}
+						}
+					}
+				}
+			});
+			break;
+		case (/deezer/.test(link)): {
+			const regex = /\.com\/(\w+\/)?(album)\/(\d+)/g;
+			const helper = regex.exec(link);
+			const id = helper[3];
+			GM.xmlHttpRequest({ // eslint-disable-line new-cap
+				method: 'GET',
+				url: 'https://api.deezer.com/album/' + id,
+				onload(response) {
+					if (response.status === 200) {
+						const data = JSON.parse(response.responseText);
+						const cover = data.cover_xl.replace('1000x1000-000000-80-0-0.jpg', '1400x1400-000000-100-0-0.jpg');
+						if (typeof callback === 'function') {
+							callback(cover);
+						}
+					}
+				}
+			});
+			break;
+		}
 		default:
 			break;
 	}
