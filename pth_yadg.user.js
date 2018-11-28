@@ -727,6 +727,10 @@ factory = {
 					yadgScraper.value = 'junodownload';
 				} else if (/metal-archives/.test(inputValue)) {
 					yadgScraper.value = 'metalarchives';
+				} else if (/deezer/.test(inputValue)) {
+					yadgScraper.value = 'deezer';
+				} else if (/allmusic/.test(inputValue)) {
+					yadgScraper.value = 'allmusic';
 				}
 			}
 		});
