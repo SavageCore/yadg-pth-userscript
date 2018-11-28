@@ -170,7 +170,7 @@ function fetchImage(target, callback) {
 						const container = document.implementation.createHTMLDocument().documentElement;
 						container.innerHTML = response.responseText;
 						if (typeof callback === 'function') {
-							callback(container.querySelectorAll('#product_image_front > a')[0].href);
+							callback(container.querySelector('.img-fluid-fill').src);
 						}
 					}
 				}
@@ -2226,3 +2226,4 @@ yadgSandbox.init(() => {
 		yadg.init();
 	}
 });
+
