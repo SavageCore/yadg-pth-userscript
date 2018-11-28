@@ -81,7 +81,13 @@ function fetchImage(target, callback) {
 				onload(response) {
 					if (response.status === 200) {
 						const data = JSON.parse(response.responseText);
-						const hires = data.results[0].artworkUrl100.replace('100x100bb', '100000x100000-999');
+						let hires;
+						const settingCover = factory.getCoverSize().value;
+						if (settingCover === 'large') {
+							hires = data.results[0].artworkUrl100.replace('100x100bb', '100000x100000-999');
+						} else {
+							hires = data.results[0].artworkUrl100.replace('100x100bb', '700x700bb');
+						}
 						if (typeof callback === 'function') {
 							callback(hires);
 						}
@@ -107,8 +113,14 @@ function fetchImage(target, callback) {
 							}
 							return false;
 						}
+						let originalImg;
 						const scaledImg = imgElem.src;
-						const originalImg = scaledImg.replace(/_16/, '_0');
+						const settingCover = factory.getCoverSize().value;
+						if (settingCover === 'large') {
+							originalImg = scaledImg.replace(/_16/, '_0');
+						} else {
+							originalImg = scaledImg.replace(/_16/, '_10');
+						}
 						const tempImg = new Image();
 						tempImg.src = originalImg;
 						tempImg.addEventListener('load', function () {
@@ -225,7 +237,13 @@ function fetchImage(target, callback) {
 				onload(response) {
 					if (response.status === 200) {
 						const data = JSON.parse(response.responseText);
-						const cover = data.cover_xl.replace('1000x1000-000000-80-0-0.jpg', '1400x1400-000000-100-0-0.jpg');
+						let cover;
+						const settingCover = factory.getCoverSize().value;
+						if (settingCover === 'large') {
+							cover = data.cover_xl.replace('1000x1000-000000-80-0-0.jpg', '1400x1400-000000-100-0-0.jpg');
+						} else {
+							cover = data.cover_xl;
+						}
 						if (typeof callback === 'function') {
 							callback(cover);
 						}
@@ -685,6 +703,7 @@ factory = {
 	KEY_AUTO_PREVIEW: 'autoPreview',
 	KEY_AUTO_REHOST: 'autoRehost',
 	KEY_AUTO_SELECT_SCRAPER: 'autoSelectScraper',
+	KEY_COVER_SIZE: 'coverSize',
 
 	CACHE_TIMEOUT: 1000 * 60 * 60 * 24, // 24 hours
 
@@ -805,6 +824,20 @@ factory = {
 					optionsDiv.style.display = 'block';
 				} else {
 					optionsDiv.style.display = 'none';
+				}
+			});
+		}
+
+		// Add the action for the cover size select
+		const coverSizeSetting = document.getElementById('yadg_options_image');
+		if (coverSizeSetting !== null) {
+			coverSizeSetting.addEventListener('click', () => {
+				const optionsCoverSize = document.getElementById('yadg_options_coversize');
+				const {display} = optionsCoverSize.style;
+				if (display === 'none' || display === '') {
+					optionsCoverSize.style.display = 'block';
+				} else {
+					optionsCoverSize.style.display = 'none';
 				}
 			});
 		}
@@ -933,6 +966,7 @@ factory = {
 		autoPreview = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
 		descriptionTarget = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
 		const autoSelectScraper = yadgUtil.settings.getItem(factory.KEY_AUTO_SELECT_SCRAPER);
+		const coverSize = yadgUtil.settings.getItem(factory.KEY_COVER_SIZE);
 
 		if (apiToken) {
 			const apiTokenInput = factory.getApiTokenInput();
@@ -965,6 +999,15 @@ factory = {
 			const autoSelectScraperCheckbox = factory.getAutoSelectScraperCheckbox();
 			autoSelectScraperCheckbox.checked = true;
 		}
+
+		if (coverSize) {
+			const coverSizeOption = factory.getCoverSize();
+			coverSizeOption.value = coverSize;
+			if (factory.getFetchImageCheckbox().checked) {
+				const optionsCoverSize = document.getElementById('yadg_options_coversize');
+				optionsCoverSize.style.display = 'block';
+			}
+		}
 	},
 
 	saveSettings() {
@@ -978,11 +1021,13 @@ factory = {
 		const autoRehostCheckbox = factory.getAutoRehostCheckbox();
 		const autoPreviewCheckbox = factory.getAutoPreviewCheckbox();
 		const autoSelectScraperCheckbox = factory.getAutoSelectScraperCheckbox();
+		const coverSize = factory.getCoverSize();
 
 		let currentScraper = null;
 		let currentTemplate = null;
 		let currentTarget = null;
 		let currentDescriptionTarget = null;
+		let currentCoverSize = null;
 		const apiToken = apiTokenInput.value.trim();
 		const replaceDescription = replaceDescCheckbox.checked;
 		const fetchImage = fetchImageCheckbox.checked;
@@ -1010,6 +1055,10 @@ factory = {
 			currentDescriptionTarget = descriptionTargetSelect.options[descriptionTargetSelect.selectedIndex].value;
 		}
 
+		if (coverSize.options.length > 0) {
+			currentCoverSize = coverSize.options[coverSize.selectedIndex].value;
+		}
+
 		if (currentScraper !== null) {
 			yadgUtil.settings.addItem(factory.KEY_DEFAULT_SCRAPER, currentScraper);
 		}
@@ -1024,6 +1073,10 @@ factory = {
 
 		if (currentDescriptionTarget !== null) {
 			yadgUtil.settings.addItem(factory.KEY_DESCRIPTION_TARGET, currentDescriptionTarget);
+		}
+
+		if (currentCoverSize !== null) {
+			yadgUtil.settings.addItem(factory.KEY_COVER_SIZE, currentCoverSize);
 		}
 
 		if (apiToken === '') {
@@ -1129,6 +1182,10 @@ factory = {
 					break;
 			}
 		}
+	},
+
+	getCoverSize() {
+		return document.getElementById('yadg_coversize');
 	},
 
 	getTargetSelect() {
@@ -1279,7 +1336,7 @@ factory = {
 
 	setStyles() {
 		// General styles
-		yadgUtil.addCSS('div#yadg_options{ display:none; margin-top:3px; } input#yadg_input,input#yadg_submit,label#yadg_format_label,a#yadg_scraper_info { margin-right: 5px } div#yadg_response { margin-top:3px; } select#yadg_scraper { margin-right: 2px } #yadg_options_template,#yadg_options_api_token,#yadg_options_replace_div { margin-bottom: 3px; } .add_form[name="yadg"] input,.add_form[name="yadg"] select { width: 90%; margin: 2px 0 !important; } input#yadg_submit { position: inherit !important}');
+		yadgUtil.addCSS('div#yadg_options{ display:none; margin-top:3px; } input#yadg_input,input#yadg_submit,label#yadg_format_label,a#yadg_scraper_info { margin-right: 5px } div#yadg_response { margin-top:3px; } select#yadg_scraper { margin-right: 2px } #yadg_options_template,#yadg_options_api_token,#yadg_options_replace_div { margin-bottom: 3px; } .add_form[name="yadg"] input,.add_form[name="yadg"] select { width: 90%; margin: 2px 0 !important; } input#yadg_submit { position: inherit !important} div#yadg_options_coversize { display:none; padding-left: 16px }');
 
 		// Location specific styles will go here
 		switch (this.currentLocation) {
@@ -1300,7 +1357,8 @@ factory = {
 	getInputElements() {
 		const buttonHTML = '<input type="submit" value="Fetch" id="yadg_submit"/>';
 		const scraperSelectHTML = '<select name="yadg_scraper" id="yadg_scraper"></select>';
-		let optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Bandcamp, Beatport, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
+		let optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Allmusic, Bandcamp, Beatport, Deezer, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
+		optionsHTML += '<div id="yadg_options_coversize"><label for="yadg_coversize" id="yadg_coversize_label">Cover size: </label><select name="yadg_coversize" id="yadg_coversize"><option value="large">Large</option><option value="medium">Medium</option></select></div>';
 		if (document.getElementsByClassName('rehost_it_cover')[0]) {
 			optionsHTML += '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://redacted.ch/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
 		}
