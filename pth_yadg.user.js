@@ -42,6 +42,10 @@ let descriptionTarget; // eslint-disable-line no-unused-vars
 
 function fetchImage(target, callback) {
 	const imgElement = document.getElementById('image');
+	const dontReplaceCover = document.body.querySelectorAll('[name]')[18].value;
+	if (/imgur|ptpimg/g.test(dontReplaceCover)) {
+		return;
+	}
 	if (imgElement && imgElement.getAttribute('disabled') === 'disabled') {
 		return;
 	}
