@@ -2107,7 +2107,9 @@ yadg = {
 
 						li.appendChild(a);
 						li.appendChild(document.createElement('br'));
-						li.appendChild(document.createTextNode(info));
+						if (info) {
+							li.appendChild(document.createTextNode(info));
+						}
 
 						ul.appendChild(li);
 					}
