@@ -2129,7 +2129,7 @@ yadgRenderer = {
 				yadgSandbox.resetSandbox();
 				yadgSandbox.initializeSwig(template.dependencies);
 			}
-			template.code = template.code.replace('https://what.cd', 'https://'+window.location.hostname);
+			template.code = template.code.replace('https://what.cd', 'https://' + window.location.hostname);
 			yadgSandbox.renderTemplate(template.code, data, callback, errorCallback);
 		});
 	},
