@@ -41,6 +41,10 @@ let descriptionTarget; // eslint-disable-line no-unused-vars
 // --------- USER SETTINGS END ---------
 
 function fetchImage(target, callback) {
+	const dontReplaceCover = document.getElementsByName('image')[0].value;
+	if (/imgur|ptpimg/g.test(dontReplaceCover)) {
+		return;
+	}
 	const imgElement = document.getElementById('image');
 	if (imgElement && imgElement.getAttribute('disabled') === 'disabled') {
 		return;
@@ -48,7 +52,7 @@ function fetchImage(target, callback) {
 	let link;
 	if (target === null) {
 		link = unsafeWindow.$('#yadg_input').val();
-	}	else {
+	} else {
 		link = target;
 	}
 	switch (true) {
@@ -754,6 +758,10 @@ factory = {
 		if (this.currentLocation === null) {
 			return false;
 		}
+		if (this.currentLocation === 'pth_request') {
+			this.inputsOff(document.URL);
+		}
+
 		this.insertIntoPage(this.getInputElements());
 
 		// Set the necessary styles
@@ -928,6 +936,15 @@ factory = {
 
 	makeReplaceDescriptionSettingsKey(subKey) {
 		return this.KEY_REPLACE_DESCRIPTION + subKey.replace(/_/g, '');
+	},
+
+	// Disable fields as in groupid
+	inputsOff(url) {
+		if (/groupid=\d+/.test(url)) {
+			['artists[]', 'importance[]', 'title', 'releasetype', 'genre_tags', 'tags'].forEach(i => {
+				document.getElementsByName(i).forEach(i => i.setAttribute('disabled', false));
+			});
+		}
 	},
 
 	initializeSettings() {
@@ -1744,66 +1761,66 @@ factory = {
 					const data = yadg.prepareRawResponse(rawData);
 					let nullArtistCount = 0;
 
-					if (data.artists === false) {
-						for (let i = 0; i < artistInputs.length; i++) {
-							artistInputs[i].value = '';
-						}
-					} else {
-						let inputIdx = 0;
-
-						yadgUtil.addRemoveArtistBoxes(data.effective_artist_count - artistInputs.length);
-
-						artistInputs = document.getElementsByName('artists[]');
-
-						for (let i = 0; i < data.artist_keys.length; i++) {
-							const artistKey = data.artist_keys[i];
-							const artistTypes = data.artists[artistKey];
-							if (artistKey === 'null') {
-								nullArtistCount++;
-								continue;
+					if (!/groupid=\d+/.test(document.location.search)) {
+						if (data.artists === false) {
+							for (let i = 0; i < artistInputs.length; i++) {
+								artistInputs[i].value = '';
 							}
+						} else {
+							let inputIdx = 0;
 
-							for (let j = 0; j < artistTypes.length; j++) {
-								const artistType = artistTypes[j];
-								const artistInput = artistInputs[inputIdx];
-								let typeSelect = artistInput.nextSibling;
+							yadgUtil.addRemoveArtistBoxes(data.effective_artist_count - artistInputs.length);
 
-								while (typeSelect.tagName !== 'SELECT') {
-									typeSelect = typeSelect.nextSibling;
+							artistInputs = document.getElementsByName('artists[]');
+
+							for (let i = 0; i < data.artist_keys.length; i++) {
+								const artistKey = data.artist_keys[i];
+								const artistTypes = data.artists[artistKey];
+								if (artistKey === 'null') {
+									nullArtistCount++;
+									continue;
 								}
 
-								artistInput.value = artistKey;
+								for (let j = 0; j < artistTypes.length; j++) {
+									const artistType = artistTypes[j];
+									const artistInput = artistInputs[inputIdx];
+									let typeSelect = artistInput.nextSibling;
 
-								const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
+									while (typeSelect.tagName !== 'SELECT') {
+										typeSelect = typeSelect.nextSibling;
+									}
 
-								if (artistType === 'main') {
-									typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
-								} else if (artistType === 'guest') {
-									typeSelect.selectedIndex = optionOffsets[2]; // eslint-disable-line prefer-destructuring
-								} else if (artistType === 'remixer') {
-									typeSelect.selectedIndex = optionOffsets[3]; // eslint-disable-line prefer-destructuring
-								} else {
-									// We don't know this artist type, default to "main"
-									typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+									artistInput.value = artistKey;
+
+									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
+
+									if (artistType === 'main') {
+										typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+									} else if (artistType === 'guest') {
+										typeSelect.selectedIndex = optionOffsets[2]; // eslint-disable-line prefer-destructuring
+									} else if (artistType === 'remixer') {
+										typeSelect.selectedIndex = optionOffsets[3]; // eslint-disable-line prefer-destructuring
+									} else {
+										// We don't know this artist type, default to "main"
+										typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+									}
+
+									// Next artist input
+									inputIdx += 1;
 								}
-
-								// Next artist input
-								inputIdx += 1;
+							}
+							if (nullArtistCount > 0) {
+								yadgUtil.addRemoveArtistBoxes(nullArtistCount *= -1);
 							}
 						}
-						if (nullArtistCount > 0) {
-							yadgUtil.addRemoveArtistBoxes(nullArtistCount *= -1);
+						if (data.tags === false) {
+							tagsInput.value = '';
+						} else {
+							tagsInput.value = data.tag_string.toLowerCase();
 						}
+						yadgUtil.setValueIfSet(data.title, albumTitleInput, data.title !== false);
 					}
-
-					if (data.tags === false) {
-						tagsInput.value = '';
-					} else {
-						tagsInput.value = data.tag_string.toLowerCase();
-					}
-
 					yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
-					yadgUtil.setValueIfSet(data.title, albumTitleInput, data.title !== false);
 					yadgUtil.setValueIfSet(data.label, labelInput, data.label !== false);
 					yadgUtil.setValueIfSet(data.catalog, catalogInput, data.catalog !== false);
 				};
@@ -2103,7 +2120,9 @@ yadg = {
 
 						li.appendChild(a);
 						li.appendChild(document.createElement('br'));
-						li.appendChild(document.createTextNode(info));
+						if (info) {
+							li.appendChild(document.createTextNode(info));
+						}
 
 						ul.appendChild(li);
 					}
