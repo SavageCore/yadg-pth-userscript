@@ -31,7 +31,7 @@
 */
 const defaultPTHFormat = 5;
 const defaultWafflesFormat = 9;
-const	defaultPTHTarget = 'other';
+const defaultPTHTarget = 'other';
 const defaultPTHDescriptionTarget = 'album';
 let yadg; // eslint-disable-line prefer-const
 let factory; // eslint-disable-line prefer-const
