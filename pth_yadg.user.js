@@ -961,11 +961,13 @@ factory = {
 		return this.KEY_REPLACE_DESCRIPTION + subKey.replace(/_/g, '');
 	},
 
-	// Disable fields as in groupid
+	// Disable fields when groupid set
 	inputsOff(url) {
 		if (/groupid=\d+/.test(url)) {
 			['artists[]', 'importance[]', 'title', 'releasetype', 'genre_tags', 'tags'].forEach(i => {
-				document.getElementsByName(i).forEach(i => i.setAttribute('disabled', false));
+				document.getElementsByName(i).forEach(i => {
+					i.readOnly = true;
+				});
 			});
 		}
 	},
