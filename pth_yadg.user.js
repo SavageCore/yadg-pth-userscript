@@ -51,33 +51,45 @@ function fetchImage(target, callback) {
 	if (/imgur|ptpimg/g.test(dontReplaceCover)) {
 		return;
 	}
-	const imgElement = document.getElementById('image');
+
+	const imgElement = document.querySelector('#image');
 	if (imgElement && imgElement.getAttribute('disabled') === 'disabled') {
 		return;
 	}
+
 	let link;
 	if (target === null) {
 		link = unsafeWindow.$('#yadg_input').val();
 	} else {
 		link = target;
 	}
+
 	switch (true) {
-		case (/discogs/.test(link)):
-			GM.xmlHttpRequest({ // eslint-disable-line new-cap
+		case /discogs/.test(link):
+			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
 				onload(response) {
 					if (response.status === 200) {
-						const container = document.implementation.createHTMLDocument().documentElement;
+						const container = document.implementation.createHTMLDocument()
+							.documentElement;
 						container.innerHTML = response.responseText;
 						if (typeof callback === 'function') {
-							callback(JSON.parse(container.querySelectorAll('div.image_gallery.image_gallery_large')[0].getAttribute('data-images'))[0].full);
+							callback(
+								JSON.parse(
+									container
+										.querySelectorAll(
+											'div.image_gallery.image_gallery_large'
+										)[0]
+										.getAttribute('data-images')
+								)[0].full
+							);
 						}
 					}
 				}
 			});
 			break;
-		case (/itunes/.test(link)): {
+		case /itunes/.test(link): {
 			const regex = /apple\.com\/(?:([a-z]{2,3})\/)?.*\/(?:(\d+)|id(\d*))/;
 			const res = regex.exec(link);
 			const id = res[2] | res[3];
@@ -85,7 +97,8 @@ function fetchImage(target, callback) {
 			if (res[1]) {
 				[, country] = res;
 			}
-			GM.xmlHttpRequest({ // eslint-disable-line new-cap
+
+			GM.xmlHttpRequest({
 				method: 'GET',
 				url: 'https://itunes.apple.com/lookup?id=' + id + '&country=' + country,
 				onload(response) {
@@ -94,10 +107,17 @@ function fetchImage(target, callback) {
 						let hires;
 						const settingCover = factory.getCoverSize().value;
 						if (settingCover === 'large') {
-							hires = data.results[0].artworkUrl100.replace('100x100bb', '100000x100000-999');
+							hires = data.results[0].artworkUrl100.replace(
+								'100x100bb',
+								'100000x100000-999'
+							);
 						} else {
-							hires = data.results[0].artworkUrl100.replace('100x100bb', '700x700bb');
+							hires = data.results[0].artworkUrl100.replace(
+								'100x100bb',
+								'700x700bb'
+							);
 						}
+
 						if (typeof callback === 'function') {
 							callback(hires);
 						}
@@ -106,23 +126,29 @@ function fetchImage(target, callback) {
 			});
 			break;
 		}
-		case (/bandcamp/.test(link)):
-		case (factory.getScraperSelect().value === 'bandcamp'): {
+
+		case /bandcamp/.test(link):
+		case factory.getScraperSelect().value === 'bandcamp': {
 			let img;
-			GM.xmlHttpRequest({ // eslint-disable-line new-cap
+			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
 				onload(response) {
 					if (response.status === 200) {
-						const container = document.implementation.createHTMLDocument().documentElement;
+						const container = document.implementation.createHTMLDocument()
+							.documentElement;
 						container.innerHTML = response.responseText;
-						const [imgElem] = container.querySelectorAll('#tralbumArt > a > img');
+						const [imgElem] = container.querySelectorAll(
+							'#tralbumArt > a > img'
+						);
 						if (!imgElem) {
 							if (typeof callback === 'function') {
 								callback(false);
 							}
+
 							return false;
 						}
+
 						let originalImg;
 						const scaledImg = imgElem.src;
 						const settingCover = factory.getCoverSize().value;
@@ -131,6 +157,7 @@ function fetchImage(target, callback) {
 						} else {
 							originalImg = scaledImg.replace(/_16/, '_10');
 						}
+
 						const tempImg = new Image();
 						tempImg.src = originalImg;
 						tempImg.addEventListener('load', function () {
@@ -139,6 +166,7 @@ function fetchImage(target, callback) {
 							} else {
 								img = scaledImg;
 							}
+
 							if (typeof callback === 'function') {
 								callback(img);
 							}
@@ -148,25 +176,31 @@ function fetchImage(target, callback) {
 			});
 			break;
 		}
-		case (/beatport/.test(link)):
-			GM.xmlHttpRequest({ // eslint-disable-line new-cap
+
+		case /beatport/.test(link):
+			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
 				onload(response) {
 					if (response.status === 200) {
-						const container = document.implementation.createHTMLDocument().documentElement;
+						const container = document.implementation.createHTMLDocument()
+							.documentElement;
 						container.innerHTML = response.responseText;
 						if (typeof callback === 'function') {
-							callback(container.querySelectorAll('div.interior-release-chart-artwork-parent > img')[0].src);
+							callback(
+								container.querySelectorAll(
+									'div.interior-release-chart-artwork-parent > img'
+								)[0].src
+							);
 						}
 					}
 				}
 			});
 			break;
-		case (/musicbrainz/.test(link)): {
+		case /musicbrainz/.test(link): {
 			const regex = /release\/(.*)/;
 			const {1: id} = regex.exec(link);
-			GM.xmlHttpRequest({ // eslint-disable-line new-cap
+			GM.xmlHttpRequest({
 				headers: {
 					'User-Agent': 'YADG/1.4.41 (yadg.cc)'
 				},
@@ -183,13 +217,15 @@ function fetchImage(target, callback) {
 			});
 			break;
 		}
-		case (/junodownload/.test(link)):
-			GM.xmlHttpRequest({ // eslint-disable-line new-cap
+
+		case /junodownload/.test(link):
+			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
 				onload(response) {
 					if (response.status === 200) {
-						const container = document.implementation.createHTMLDocument().documentElement;
+						const container = document.implementation.createHTMLDocument()
+							.documentElement;
 						container.innerHTML = response.responseText;
 						if (typeof callback === 'function') {
 							callback(container.querySelector('.img-fluid-fill').src);
@@ -198,18 +234,20 @@ function fetchImage(target, callback) {
 				}
 			});
 			break;
-		case (/metal-archives/.test(link)):
-			GM.xmlHttpRequest({ // eslint-disable-line new-cap
+		case /metal-archives/.test(link):
+			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
 				onload(response) {
 					if (response.status === 200) {
-						const container = document.implementation.createHTMLDocument().documentElement;
+						const container = document.implementation.createHTMLDocument()
+							.documentElement;
 						container.innerHTML = response.responseText;
 
 						const parser = document.createElement('a');
 						parser.href = container.querySelectorAll('#cover > img')[0].src;
-						const imgLink = parser.protocol + '//' + parser.hostname + parser.pathname;
+						const imgLink =
+							parser.protocol + '//' + parser.hostname + parser.pathname;
 						if (typeof callback === 'function') {
 							callback(imgLink);
 						}
@@ -217,13 +255,14 @@ function fetchImage(target, callback) {
 				}
 			});
 			break;
-		case (/allmusic/.test(link)):
-			GM.xmlHttpRequest({ // eslint-disable-line new-cap
+		case /allmusic/.test(link):
+			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
 				onload(response) {
 					if (response.status === 200) {
-						const container = document.implementation.createHTMLDocument().documentElement;
+						const container = document.implementation.createHTMLDocument()
+							.documentElement;
 						container.innerHTML = response.responseText;
 						const data = container.querySelector('[data-largeurl]');
 						// No image available https://www.allmusic.com/album/release/beatles-mr0003843619
@@ -237,11 +276,11 @@ function fetchImage(target, callback) {
 				}
 			});
 			break;
-		case (/deezer/.test(link)): {
+		case /deezer/.test(link): {
 			const regex = /\.com\/(\w+\/)?(album)\/(\d+)/g;
 			const helper = regex.exec(link);
 			const id = helper[3];
-			GM.xmlHttpRequest({ // eslint-disable-line new-cap
+			GM.xmlHttpRequest({
 				method: 'GET',
 				url: 'https://api.deezer.com/album/' + id,
 				onload(response) {
@@ -250,10 +289,14 @@ function fetchImage(target, callback) {
 						let cover;
 						const settingCover = factory.getCoverSize().value;
 						if (settingCover === 'large') {
-							cover = data.cover_xl.replace('1000x1000-000000-80-0-0.jpg', '1400x1400-000000-100-0-0.jpg');
+							cover = data.cover_xl.replace(
+								'1000x1000-000000-80-0-0.jpg',
+								'1400x1400-000000-100-0-0.jpg'
+							);
 						} else {
 							cover = data.cover_xl;
 						}
+
 						if (typeof callback === 'function') {
 							callback(cover);
 						}
@@ -262,24 +305,30 @@ function fetchImage(target, callback) {
 			});
 			break;
 		}
+
 		default:
 			break;
 	}
 }
 
 function pthImgIt() {
-	const [pthImgIt] = document.getElementsByClassName('rehost_it_cover');
+	const [pthImgIt] = document.querySelectorAll('.rehost_it_cover');
 	let imgElement;
 
 	switch (window.location.href) {
 		case (window.location.href.match(/\/upload\.php/) || {}).input: {
-			imgElement = document.getElementById('image').value;
+			imgElement = document.querySelector('#image').value;
 			break;
 		}
-		case (window.location.href.match(/torrents\.php\?action=editgroup/) || {}).input: {
-			imgElement = document.querySelectorAll('#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)')[0].value;
+
+		case (window.location.href.match(/torrents\.php\?action=editgroup/) || {})
+			.input: {
+			imgElement = document.querySelectorAll(
+				'#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)'
+			)[0].value;
 			break;
 		}
+
 		default:
 			break;
 	}
@@ -292,31 +341,55 @@ function pthImgIt() {
 function insertImage(img, callback) {
 	switch (window.location.href) {
 		case (window.location.href.match(/\/upload\.php/) || {}).input: {
-			const input = document.getElementById('image');
+			const input = document.querySelector('#image');
 			input.value = img;
 			if (input.getAttribute('autorehost') === 'true') {
 				const evt = document.createEvent('HTMLEvents');
 				evt.initEvent('keyup', false, true);
 				input.dispatchEvent(evt);
 			}
-			input.parentNode.parentNode.insertAdjacentHTML('beforebegin', '<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="' + img + '" width="300px" /></tr></td>');
+
+			input.parentNode.parentNode.insertAdjacentHTML(
+				'beforebegin',
+				'<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="' +
+					img +
+					'" width="300px" /></tr></td>'
+			);
 			callback();
 			break;
 		}
-		case (window.location.href.match(/torrents\.php\?action=editgroup/) || {}).input: {
-			const [imageInputElement] = document.querySelectorAll('#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)');
+
+		case (window.location.href.match(/torrents\.php\?action=editgroup/) || {})
+			.input: {
+			const [imageInputElement] = document.querySelectorAll(
+				'#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)'
+			);
 			imageInputElement.value = img;
-			imageInputElement.parentNode.insertAdjacentHTML('beforebegin', '<div id="yadg_image_preview_div"><img id="yadg_image_preview" src="' + img + '" width="300px" /></div>');
+			imageInputElement.parentNode.insertAdjacentHTML(
+				'beforebegin',
+				'<div id="yadg_image_preview_div"><img id="yadg_image_preview" src="' +
+					img +
+					'" width="300px" /></div>'
+			);
 			callback();
 			break;
 		}
+
 		case (window.location.href.match(/requests\.php\?/) || {}).input: {
-			const [imageInputElement] = document.querySelectorAll('#image_tr > td:nth-child(2) > input[type="text"]:nth-child(1)');
+			const [imageInputElement] = document.querySelectorAll(
+				'#image_tr > td:nth-child(2) > input[type="text"]:nth-child(1)'
+			);
 			imageInputElement.value = img;
-			imageInputElement.parentNode.parentNode.insertAdjacentHTML('beforebegin', '<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="' + img + '" width="300px" /></tr></td>');
+			imageInputElement.parentNode.parentNode.insertAdjacentHTML(
+				'beforebegin',
+				'<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="' +
+					img +
+					'" width="300px" /></tr></td>'
+			);
 			callback();
 			break;
 		}
+
 		default:
 			break;
 	}
@@ -340,12 +413,15 @@ function LocalStorageWrapper(applicationPrefix) {
 	const delimiter = '_';
 
 	// If the passed in value for prefix is not string, it should be converted
-	const keyPrefix = typeof (applicationPrefix) === 'string' ? applicationPrefix : JSON.stringify(applicationPrefix);
+	const keyPrefix =
+		typeof applicationPrefix === 'string' ?
+			applicationPrefix :
+			JSON.stringify(applicationPrefix);
 
 	const localStorage = window.localStorage || unsafeWindow.localStorage;
 
 	const isLocalStorageAvailable = function () {
-		return typeof (localStorage) !== 'undefined';
+		return typeof localStorage !== 'undefined';
 	};
 
 	const getKeyPrefix = function () {
@@ -363,11 +439,13 @@ function LocalStorageWrapper(applicationPrefix) {
 		}
 
 		if (!isLocalStorageAvailable()) {
-			throw new Error('LocalStorage is not supported by your browser, data cannot be saved');
+			throw new Error(
+				'LocalStorage is not supported by your browser, data cannot be saved'
+			);
 		}
 
 		// Keys are always strings
-		const checkedKey = typeof (key) === 'string' ? key : JSON.stringify(key);
+		const checkedKey = typeof key === 'string' ? key : JSON.stringify(key);
 
 		return checkedKey;
 	};
@@ -402,6 +480,7 @@ function LocalStorageWrapper(applicationPrefix) {
 			console.log(error);
 			throw error;
 		}
+
 		return result;
 	};
 
@@ -417,7 +496,9 @@ function LocalStorageWrapper(applicationPrefix) {
 		}
 
 		if (!isLocalStorageAvailable()) {
-			throw new Error('LocalStorage is not supported by your browser, data cannot be saved');
+			throw new Error(
+				'LocalStorage is not supported by your browser, data cannot be saved'
+			);
 		}
 
 		for (const key in localStorage) {
@@ -445,6 +526,7 @@ function LocalStorageWrapper(applicationPrefix) {
 			console.log(error);
 			throw error;
 		}
+
 		return result;
 	};
 
@@ -486,7 +568,7 @@ const yadgUtil = {
 		const script = document.createElement('script');
 		script.setAttribute('type', 'application/javascript');
 		script.textContent = '(' + fn + ')();';
-		document.body.appendChild(script); // Run the script
+		document.body.append(script); // Run the script
 		document.body.removeChild(script); // Clean up
 	},
 
@@ -495,9 +577,12 @@ const yadgUtil = {
 		if (!this.style) {
 			this.style = document.createElement('style');
 			this.style.type = 'text/css';
-			(document.head || document.getElementsByTagName('head')[0]).appendChild(this.style);
+			(document.head || document.querySelectorAll('head')[0]).append(
+				this.style
+			);
 		}
-		this.style.appendChild(document.createTextNode(style + '\n'));
+
+		this.style.append(document.createTextNode(style + '\n'));
 	},
 
 	setValueIfSet(value, input, cond) {
@@ -532,6 +617,7 @@ const yadgUtil = {
 		for (let j = 0; j < select.options.length; j++) {
 			optionOffsets[select.options[j].value] = select.options[j].index;
 		}
+
 		return optionOffsets;
 	},
 
@@ -541,7 +627,8 @@ const yadgUtil = {
 };
 
 // Very simple wrapper for XmlHttpRequest
-function requester(url, method, callback, data, errorCallback) { // eslint-disable-line max-params
+// eslint-disable-next-line max-params
+function Requester(url, method, callback, data, errorCallback) {
 	this.data = data;
 	this.url = url;
 	this.method = method;
@@ -574,21 +661,21 @@ function requester(url, method, callback, data, errorCallback) { // eslint-disab
 		};
 
 		if (yadgUtil.settings.getItem(factory.KEY_API_TOKEN)) {
-			headers.Authorization = 'Token ' + yadgUtil.settings.getItem(factory.KEY_API_TOKEN);
+			headers.Authorization =
+				'Token ' + yadgUtil.settings.getItem(factory.KEY_API_TOKEN);
 		}
 
 		details.headers = headers;
 
-		GM.xmlHttpRequest(details); // eslint-disable-line new-cap
+		GM.xmlHttpRequest(details);
 	};
 }
 
 const yadgSandbox = {
-
 	KEY_LAST_WARNING: 'templateLastWarning',
 
 	init(callback) {
-		GM.xmlHttpRequest({ // eslint-disable-line new-cap
+		GM.xmlHttpRequest({
 			method: 'GET',
 			url: yadg.yadgHost + '/static/js/jsandbox-worker.js',
 			onload(response) {
@@ -599,8 +686,11 @@ const yadgSandbox = {
 					const blob = new Blob([script], {type: 'application/javascript'});
 					const URL = window.URL || window.webkitURL;
 					if (!URL || !URL.createObjectURL) {
-						throw new Error('No no valid implementation of window.URL.createObjectURL found.');
+						throw new Error(
+							'No no valid implementation of window.URL.createObjectURL found.'
+						);
 					}
+
 					dataURL = URL.createObjectURL(blob);
 					yadgSandbox.initCallback(dataURL);
 					yadgSandbox.loadSwig(callback);
@@ -618,14 +708,14 @@ const yadgSandbox = {
 		// ImportScripts for the web worker will not work in Firefox with cross-domain requests
 		// see: https://bugzilla.mozilla.org/show_bug.cgi?id=756589
 		// so download the Swig files manually with GM.xmlHttpRequest
-		GM.xmlHttpRequest({ // eslint-disable-line new-cap
+		GM.xmlHttpRequest({
 			method: 'GET',
 			url: yadg.yadgHost + '/static/js/swig.min.js',
 			onload(response) {
 				if (response.status === 200) {
 					yadgSandbox.swigScript = response.responseText;
 
-					GM.xmlHttpRequest({ // eslint-disable-line new-cap
+					GM.xmlHttpRequest({
 						method: 'GET',
 						url: yadg.yadgHost + '/static/js/swig.custom.js',
 						onload(response) {
@@ -647,17 +737,30 @@ const yadgSandbox = {
 		}
 
 		yadgSandbox.exec({data: this.swigScript, onerror: yadg.failedCallback});
-		yadgSandbox.exec({data: this.swigCustomScript, onerror: yadg.failedCallback});
-		yadgSandbox.exec({data: 'var myswig = new swig.Swig({ loader: swig.loaders.memory(input.templates), autoescape: false }), i=0; yadg_filters.register_filters(myswig);', input: {templates: dependencies}});
+		yadgSandbox.exec({
+			data: this.swigCustomScript,
+			onerror: yadg.failedCallback
+		});
+		yadgSandbox.exec({
+			data:
+				'var myswig = new swig.Swig({ loader: swig.loaders.memory(input.templates), autoescape: false }), i=0; yadg_filters.register_filters(myswig);',
+			input: {templates: dependencies}
+		});
 	},
 
 	renderTemplate(template, data, callback, error) {
-		const evalString = 'myswig.render(input.template, { locals: input.data, filename: \'scratchpad\' + (i++) })';
-		this.eval({data: evalString, callback(out) {
-			callback(out);
-		}, input: {template, data}, onerror(err) {
-			error(err);
-		}});
+		const evalString =
+			'myswig.render(input.template, { locals: input.data, filename: \'scratchpad\' + (i++) })';
+		this.eval({
+			data: evalString,
+			callback(out) {
+				callback(out);
+			},
+			input: {template, data},
+			onerror(err) {
+				error(err);
+			}
+		});
 	},
 
 	initCallback(dataUrl) {
@@ -688,8 +791,13 @@ const yadgSandbox = {
 
 		const lastWarning = yadgUtil.storage.getItem(this.KEY_LAST_WARNING);
 		const now = new Date();
-		if (lastWarning === null || now.getTime() - (new Date(lastWarning)).getTime() > factory.CACHE_TIMEOUT) {
-			console.log('Could not load the necessary script files for executing YADG. If this error persists you might need to update the user script. You will only get this message once a day.');
+		if (
+			lastWarning === null ||
+			now.getTime() - new Date(lastWarning).getTime() > factory.CACHE_TIMEOUT
+		) {
+			console.log(
+				'Could not load the necessary script files for executing YADG. If this error persists you might need to update the user script. You will only get this message once a day.'
+			);
 			yadgUtil.storage.addItem(this.KEY_LAST_WARNING, now);
 		}
 	}
@@ -795,6 +903,7 @@ factory = {
 				return this.locations[i].name;
 			}
 		}
+
 		return null;
 	},
 
@@ -804,6 +913,7 @@ factory = {
 		if (this.currentLocation === null) {
 			return false;
 		}
+
 		if (this.currentLocation === 'pth_request') {
 			this.inputsOff(document.URL);
 		}
@@ -820,11 +930,11 @@ factory = {
 		this.populateSettings();
 
 		// Add the appropriate action for the input textbox
-		const input = document.getElementById('yadg_input');
+		const input = document.querySelector('#yadg_input');
 		input.addEventListener('input', () => {
 			if (factory.getAutoSelectScraperCheckbox().checked) {
 				const inputValue = input.value;
-				const yadgScraper = document.getElementById('yadg_scraper');
+				const yadgScraper = document.querySelector('#yadg_scraper');
 				if (/discogs/.test(inputValue)) {
 					yadgScraper.value = 'discogs';
 				} else if (/itunes/.test(inputValue)) {
@@ -848,30 +958,37 @@ factory = {
 		});
 
 		// Add the appropriate action for the button
-		const button = document.getElementById('yadg_submit');
-		button.addEventListener('click', e => {
-			e.preventDefault();
-			yadg.makeRequest();
-			if (factory.getFetchImageCheckbox().checked) {
-				fetchImage(null, data => {
-					if (data) {
-						insertImage(data, () => {
-							if (factory.getAutoRehostCheckbox() && factory.getAutoRehostCheckbox().checked) {
-								pthImgIt();
-							}
-						});
-					}
-				});
-			}
-		}, false);
+		const button = document.querySelector('#yadg_submit');
+		button.addEventListener(
+			'click',
+			e => {
+				e.preventDefault();
+				yadg.makeRequest();
+				if (factory.getFetchImageCheckbox().checked) {
+					fetchImage(null, data => {
+						if (data) {
+							insertImage(data, () => {
+								if (
+									factory.getAutoRehostCheckbox() &&
+									factory.getAutoRehostCheckbox().checked
+								) {
+									pthImgIt();
+								}
+							});
+						}
+					});
+				}
+			},
+			false
+		);
 
 		// Add the action for the options toggle
-		const toggleLink = document.getElementById('yadg_toggle_options');
+		const toggleLink = document.querySelector('#yadg_toggle_options');
 		if (toggleLink !== null) {
 			toggleLink.addEventListener('click', e => {
 				e.preventDefault();
 
-				const optionsDiv = document.getElementById('yadg_options');
+				const optionsDiv = document.querySelector('#yadg_options');
 				const {display} = optionsDiv.style;
 
 				if (display === 'none' || display === '') {
@@ -883,10 +1000,12 @@ factory = {
 		}
 
 		// Add the action for the cover size select
-		const coverSizeSetting = document.getElementById('yadg_options_image');
+		const coverSizeSetting = document.querySelector('#yadg_options_image');
 		if (coverSizeSetting !== null) {
 			coverSizeSetting.addEventListener('click', () => {
-				const optionsCoverSize = document.getElementById('yadg_options_coversize');
+				const optionsCoverSize = document.querySelector(
+					'#yadg_options_coversize'
+				);
 				const {display} = optionsCoverSize.style;
 				if (display === 'none' || display === '') {
 					optionsCoverSize.style.display = 'block';
@@ -901,7 +1020,11 @@ factory = {
 		if (formatSelect !== null) {
 			formatSelect.addEventListener('change', function () {
 				if (yadgRenderer.hasCached()) {
-					yadgRenderer.renderCached(this.value, factory.setDescriptionBoxValue, factory.setDescriptionBoxValue);
+					yadgRenderer.renderCached(
+						this.value,
+						factory.setDescriptionBoxValue,
+						factory.setDescriptionBoxValue
+					);
 				}
 			});
 		}
@@ -915,7 +1038,7 @@ factory = {
 		// }
 
 		// add the action to the save settings link
-		const saveSettingsLink = document.getElementById('yadg_save_settings');
+		const saveSettingsLink = document.querySelector('#yadg_save_settings');
 		if (saveSettingsLink !== null) {
 			saveSettingsLink.addEventListener('click', e => {
 				e.preventDefault();
@@ -927,7 +1050,7 @@ factory = {
 		}
 
 		// Add the action to the clear cache link
-		const clearCacheLink = document.getElementById('yadg_clear_cache');
+		const clearCacheLink = document.querySelector('#yadg_clear_cache');
 		if (clearCacheLink !== null) {
 			clearCacheLink.addEventListener('click', e => {
 				e.preventDefault();
@@ -939,41 +1062,49 @@ factory = {
 		}
 
 		const lastChecked = yadgUtil.storage.getItem(factory.KEY_LAST_CHECKED);
-		if (lastChecked === null || (new Date()).getTime() - (new Date(lastChecked)).getTime() > factory.CACHE_TIMEOUT) {
+		if (
+			lastChecked === null ||
+			new Date().getTime() - new Date(lastChecked).getTime() >
+				factory.CACHE_TIMEOUT
+		) {
 			// Update the scraper and formats list
 			factory.UPDATE_PROGRESS = 1;
 			yadg.getScraperList(factory.setScraperSelect);
 			yadg.getFormatsList(factory.setFormatSelect);
 		} else {
-			factory.setScraperSelect(yadgUtil.storage.getItem(factory.KEY_SCRAPER_LIST));
-			factory.setFormatSelect(yadgUtil.storage.getItem(factory.KEY_FORMAT_LIST));
+			factory.setScraperSelect(
+				yadgUtil.storage.getItem(factory.KEY_SCRAPER_LIST)
+			);
+			factory.setFormatSelect(
+				yadgUtil.storage.getItem(factory.KEY_FORMAT_LIST)
+			);
 		}
 
 		return true;
 	},
 
 	getApiTokenInput() {
-		return document.getElementById('yadg_api_token');
+		return document.querySelector('#yadg_api_token');
 	},
 
 	getReplaceDescriptionCheckbox() {
-		return document.getElementById('yadg_options_replace');
+		return document.querySelector('#yadg_options_replace');
 	},
 
 	getFetchImageCheckbox() {
-		return document.getElementById('yadg_options_image');
+		return document.querySelector('#yadg_options_image');
 	},
 
 	getAutoRehostCheckbox() {
-		return document.getElementById('yadg_options_rehost');
+		return document.querySelector('#yadg_options_rehost');
 	},
 
 	getAutoPreviewCheckbox() {
-		return document.getElementById('yadg_options_preview');
+		return document.querySelector('#yadg_options_preview');
 	},
 
 	getAutoSelectScraperCheckbox() {
-		return document.getElementById('yadg_options_auto_select_scraper');
+		return document.querySelector('#yadg_options_auto_select_scraper');
 	},
 
 	getReplaceDescriptionSettingKey() {
@@ -987,7 +1118,14 @@ factory = {
 	// Disable fields when groupid set
 	inputsOff(url) {
 		if (/groupid=\d+/.test(url)) {
-			['artists[]', 'importance[]', 'title', 'releasetype', 'genre_tags', 'tags'].forEach(i => {
+			[
+				'artists[]',
+				'importance[]',
+				'title',
+				'releasetype',
+				'genre_tags',
+				'tags'
+			].forEach(i => {
 				document.getElementsByName(i).forEach(i => {
 					i.readOnly = true;
 				});
@@ -1018,7 +1156,9 @@ factory = {
 			];
 			for (let i = 0; i < locations.length; i++) {
 				const loc = locations[i];
-				const replaceDescSettingKey = factory.makeReplaceDescriptionSettingsKey(loc);
+				const replaceDescSettingKey = factory.makeReplaceDescriptionSettingsKey(
+					loc
+				);
 
 				yadgUtil.settings.addItem(replaceDescSettingKey, true);
 			}
@@ -1029,12 +1169,16 @@ factory = {
 
 	populateSettings() {
 		const apiToken = yadgUtil.settings.getItem(factory.KEY_API_TOKEN);
-		const replaceDesc = yadgUtil.settings.getItem(factory.getReplaceDescriptionSettingKey());
+		const replaceDesc = yadgUtil.settings.getItem(
+			factory.getReplaceDescriptionSettingKey()
+		);
 		const fetchImage = yadgUtil.settings.getItem(factory.KEY_FETCH_IMAGE);
 		autoRehost = yadgUtil.settings.getItem(factory.KEY_AUTO_REHOST);
 		autoPreview = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
 		descriptionTarget = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
-		const autoSelectScraper = yadgUtil.settings.getItem(factory.KEY_AUTO_SELECT_SCRAPER);
+		const autoSelectScraper = yadgUtil.settings.getItem(
+			factory.KEY_AUTO_SELECT_SCRAPER
+		);
 		const coverSize = yadgUtil.settings.getItem(factory.KEY_COVER_SIZE);
 
 		if (apiToken) {
@@ -1073,12 +1217,15 @@ factory = {
 			const coverSizeOption = factory.getCoverSize();
 			coverSizeOption.value = coverSize;
 			if (factory.getFetchImageCheckbox().checked) {
-				const optionsCoverSize = document.getElementById('yadg_options_coversize');
+				const optionsCoverSize = document.querySelector(
+					'#yadg_options_coversize'
+				);
 				optionsCoverSize.style.display = 'block';
 			}
 		}
 	},
 
+	// eslint-disable-next-line complexity
 	saveSettings() {
 		const scraperSelect = factory.getScraperSelect();
 		const templateSelect = factory.getFormatSelect();
@@ -1104,6 +1251,7 @@ factory = {
 		if (autoRehostCheckbox) {
 			autoRehost = autoRehostCheckbox.checked;
 		}
+
 		if (window.location.href.match(/\/upload\.php/)) {
 			autoPreview = autoPreviewCheckbox.checked;
 		}
@@ -1113,7 +1261,8 @@ factory = {
 		}
 
 		if (templateSelect.options.length > 0) {
-			currentTemplate = templateSelect.options[templateSelect.selectedIndex].value;
+			currentTemplate =
+				templateSelect.options[templateSelect.selectedIndex].value;
 		}
 
 		if (targetSelect.options.length > 0) {
@@ -1121,7 +1270,9 @@ factory = {
 		}
 
 		if (descriptionTargetSelect.options.length > 0) {
-			currentDescriptionTarget = descriptionTargetSelect.options[descriptionTargetSelect.selectedIndex].value;
+			currentDescriptionTarget =
+				descriptionTargetSelect.options[descriptionTargetSelect.selectedIndex]
+					.value;
 		}
 
 		if (coverSize.options.length > 0) {
@@ -1141,7 +1292,10 @@ factory = {
 		}
 
 		if (currentDescriptionTarget !== null) {
-			yadgUtil.settings.addItem(factory.KEY_DESCRIPTION_TARGET, currentDescriptionTarget);
+			yadgUtil.settings.addItem(
+				factory.KEY_DESCRIPTION_TARGET,
+				currentDescriptionTarget
+			);
 		}
 
 		if (currentCoverSize !== null) {
@@ -1199,15 +1353,26 @@ factory = {
 			if (descBox.getAttribute('disabled') === 'disabled') {
 				return;
 			}
-			if (!replaceDesc && /\S/.test(descBox.value)) { // Check if the current description contains more than whitespace
+
+			if (!replaceDesc && /\S/.test(descBox.value)) {
+				// Check if the current description contains more than whitespace
 				descBox.value += '\n\n' + value;
 			} else {
 				descBox.value = value;
 			}
-			if (factory.currentLocation !== 'pth_torrent_overview' || 'ops_torrent_overview') {
+
+			if (
+				factory.currentLocation !== 'pth_torrent_overview' ||
+				'ops_torrent_overview'
+			) {
 				if (descBox.parentNode.nextSibling.nextSibling) {
-					const previewBtn = descBox.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
-					if (previewBtn && previewBtn.value === 'Preview' && factory.getAutoPreviewCheckbox().checked) {
+					const previewBtn =
+						descBox.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
+					if (
+						previewBtn &&
+						previewBtn.value === 'Preview' &&
+						factory.getAutoPreviewCheckbox().checked
+					) {
 						previewBtn.click();
 					}
 				}
@@ -1217,9 +1382,15 @@ factory = {
 				if (descBox[i].getAttribute('disabled') === 'disabled') {
 					continue;
 				}
+
 				descBox[i].value = value;
-				const previewBtn = descBox[i].parentNode.nextSibling.nextSibling.firstChild.nextSibling;
-				if (previewBtn && previewBtn.value === 'Preview' && factory.getAutoPreviewCheckbox().checked) {
+				const previewBtn =
+					descBox[i].parentNode.nextSibling.nextSibling.firstChild.nextSibling;
+				if (
+					previewBtn &&
+					previewBtn.value === 'Preview' &&
+					factory.getAutoPreviewCheckbox().checked
+				) {
 					previewBtn.click();
 				}
 			}
@@ -1227,14 +1398,16 @@ factory = {
 	},
 
 	getFormatSelect() {
-		return document.getElementById('yadg_format');
+		return document.querySelector('#yadg_format');
 	},
 
 	setDefaultFormat() {
 		const formatSelect = factory.getFormatSelect();
 		const formatOffsets = yadgUtil.getOptionOffsets(formatSelect);
 
-		const defaultFormat = yadgUtil.settings.getItem(factory.KEY_DEFAULT_TEMPLATE);
+		const defaultFormat = yadgUtil.settings.getItem(
+			factory.KEY_DEFAULT_TEMPLATE
+		);
 		if (defaultFormat !== null && defaultFormat in formatOffsets) {
 			formatSelect.selectedIndex = formatOffsets[defaultFormat];
 		} else {
@@ -1254,15 +1427,15 @@ factory = {
 	},
 
 	getCoverSize() {
-		return document.getElementById('yadg_coversize');
+		return document.querySelector('#yadg_coversize');
 	},
 
 	getTargetSelect() {
-		return document.getElementById('yadg_target');
+		return document.querySelector('#yadg_target');
 	},
 
 	getDescriptionTargetSelect() {
-		return document.getElementById('yadg_description_target');
+		return document.querySelector('#yadg_description_target');
 	},
 
 	setDefaultTarget() {
@@ -1279,22 +1452,33 @@ factory = {
 
 	setDefaultDescriptionTarget() {
 		const targetDescriptionSelect = factory.getDescriptionTargetSelect();
-		const targetDescriptionOffsets = yadgUtil.getOptionOffsets(targetDescriptionSelect);
+		const targetDescriptionOffsets = yadgUtil.getOptionOffsets(
+			targetDescriptionSelect
+		);
 
-		const defaultDescriptionTarget = yadgUtil.settings.getItem(factory.KEY_DESCRIPTION_TARGET);
-		if (defaultDescriptionTarget !== null && defaultDescriptionTarget in targetDescriptionOffsets) {
-			targetDescriptionSelect.selectedIndex = targetDescriptionOffsets[defaultDescriptionTarget];
+		const defaultDescriptionTarget = yadgUtil.settings.getItem(
+			factory.KEY_DESCRIPTION_TARGET
+		);
+		if (
+			defaultDescriptionTarget !== null &&
+			defaultDescriptionTarget in targetDescriptionOffsets
+		) {
+			targetDescriptionSelect.selectedIndex =
+				targetDescriptionOffsets[defaultDescriptionTarget];
 		} else {
-			targetDescriptionSelect.selectedIndex = targetDescriptionOffsets[defaultPTHDescriptionTarget];
+			targetDescriptionSelect.selectedIndex =
+				targetDescriptionOffsets[defaultPTHDescriptionTarget];
 		}
 	},
 
 	getScraperSelect() {
-		return document.getElementById('yadg_scraper');
+		return document.querySelector('#yadg_scraper');
 	},
 
 	setDefaultScraper() {
-		const defaultScraper = yadgUtil.settings.getItem(factory.KEY_DEFAULT_SCRAPER);
+		const defaultScraper = yadgUtil.settings.getItem(
+			factory.KEY_DEFAULT_SCRAPER
+		);
 		if (defaultScraper !== null) {
 			const scraperSelect = factory.getScraperSelect();
 			const scraperOffsets = yadgUtil.getOptionOffsets(scraperSelect);
@@ -1391,12 +1575,14 @@ factory = {
 			} else {
 				o.text = data[i].name;
 			}
+
 			o.value = data[i].value || data[i].id;
 			o.selected = data[i].default;
 			select.options[i] = o;
 			if (data[i].default) {
 				select.selectedIndex = i;
 			}
+
 			if (data[i].url) {
 				o.setAttribute('data-url', data[i].url);
 			}
@@ -1405,41 +1591,59 @@ factory = {
 
 	setStyles() {
 		// General styles
-		yadgUtil.addCSS('div#yadg_options{ display:none; margin-top:3px; } input#yadg_input,input#yadg_submit,label#yadg_format_label,a#yadg_scraper_info { margin-right: 5px } div#yadg_response { margin-top:3px; } select#yadg_scraper { margin-right: 2px } #yadg_options_template,#yadg_options_api_token,#yadg_options_replace_div { margin-bottom: 3px; } .add_form[name="yadg"] input,.add_form[name="yadg"] select { width: 90%; margin: 2px 0 !important; } input#yadg_submit { position: inherit !important} div#yadg_options_coversize { display:none; padding-left: 16px }');
+		yadgUtil.addCSS(
+			'div#yadg_options{ display:none; margin-top:3px; } input#yadg_input,input#yadg_submit,label#yadg_format_label,a#yadg_scraper_info { margin-right: 5px } div#yadg_response { margin-top:3px; } select#yadg_scraper { margin-right: 2px } #yadg_options_template,#yadg_options_api_token,#yadg_options_replace_div { margin-bottom: 3px; } .add_form[name="yadg"] input,.add_form[name="yadg"] select { width: 90%; margin: 2px 0 !important; } input#yadg_submit { position: inherit !important} div#yadg_options_coversize { display:none; padding-left: 16px }'
+		);
 
 		// Location specific styles will go here
 		switch (this.currentLocation) {
 			case 'waffles_upload':
-				yadgUtil.addCSS('div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }');
+				yadgUtil.addCSS(
+					'div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }'
+				);
 				break;
 
 			case 'waffles_request':
-				yadgUtil.addCSS('div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }');
+				yadgUtil.addCSS(
+					'div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }'
+				);
 				break;
 
 			default:
-
 				break;
 		}
 	},
 
+	// eslint-disable-next-line complexity
 	getInputElements() {
 		const buttonHTML = '<input type="submit" value="Fetch" id="yadg_submit"/>';
-		const scraperSelectHTML = '<select name="yadg_scraper" id="yadg_scraper"></select>';
-		let optionsHTML = '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Allmusic, Bandcamp, Beatport, Deezer, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
-		optionsHTML += '<div id="yadg_options_coversize"><label for="yadg_coversize" id="yadg_coversize_label">Cover size: </label><select name="yadg_coversize" id="yadg_coversize"><option value="large">Large</option><option value="medium">Medium</option></select></div>';
-		if (document.getElementsByClassName('rehost_it_cover')[0]) {
-			optionsHTML += '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://redacted.ch/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
+		const scraperSelectHTML =
+			'<select name="yadg_scraper" id="yadg_scraper"></select>';
+		let optionsHTML =
+			'<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Allmusic, Bandcamp, Beatport, Deezer, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
+		optionsHTML +=
+			'<div id="yadg_options_coversize"><label for="yadg_coversize" id="yadg_coversize_label">Cover size: </label><select name="yadg_coversize" id="yadg_coversize"><option value="large">Large</option><option value="medium">Medium</option></select></div>';
+		if (document.querySelectorAll('.rehost_it_cover')[0]) {
+			optionsHTML +=
+				'<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://redacted.ch/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
 		}
+
 		if (window.location.href.match(/\/upload\.php/)) {
-			optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
+			optionsHTML +=
+				'<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
 		}
-		optionsHTML += '<div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper"/><label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">Auto select the correct scraper when pasting the URL</label></div>		';
-		optionsHTML += '<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
-		const inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" />';
+
+		optionsHTML +=
+			'<div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper"/><label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">Auto select the correct scraper when pasting the URL</label></div>		';
+		optionsHTML +=
+			'<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
+		const inputHTML =
+			'<input type="text" name="yadg_input" id="yadg_input" size="60" />';
 		const responseDivHTML = '<div id="yadg_response"></div>';
-		const toggleOptionsLinkHTML = '<a id="yadg_toggle_options" href="#">Toggle options</a>';
-		const scraperInfoLink = '<a id="yadg_scraper_info" href="https://yadg.cc/available-scrapers" target="_blank" title="Get additional information on the available scrapers">[?]</a>';
+		const toggleOptionsLinkHTML =
+			'<a id="yadg_toggle_options" href="#">Toggle options</a>';
+		const scraperInfoLink =
+			'<a id="yadg_scraper_info" href="https://yadg.cc/available-scrapers" target="_blank" title="Get additional information on the available scrapers">[?]</a>';
 
 		switch (this.currentLocation) {
 			case 'nwcd_upload':
@@ -1447,7 +1651,16 @@ factory = {
 			case 'pth_upload': {
 				const tr = document.createElement('tr');
 				tr.className = 'yadg_tr';
-				tr.innerHTML = '<td class="label">YADG:</td><td>' + inputHTML + scraperSelectHTML + scraperInfoLink + buttonHTML + toggleOptionsLinkHTML + optionsHTML + responseDivHTML + '</td>';
+				tr.innerHTML =
+					'<td class="label">YADG:</td><td>' +
+					inputHTML +
+					scraperSelectHTML +
+					scraperInfoLink +
+					buttonHTML +
+					toggleOptionsLinkHTML +
+					optionsHTML +
+					responseDivHTML +
+					'</td>';
 				return tr;
 			}
 
@@ -1456,7 +1669,21 @@ factory = {
 			case 'pth_edit': {
 				const div = document.createElement('div');
 				div.className = 'yadg_div';
-				div.innerHTML = '<h3 class="label">YADG:</h3>\n' + inputHTML + '\n' + scraperSelectHTML + '\n' + scraperInfoLink + '\n' + buttonHTML + '\n' + toggleOptionsLinkHTML + '\n' + optionsHTML + '\n' + responseDivHTML;
+				div.innerHTML =
+					'<h3 class="label">YADG:</h3>\n' +
+					inputHTML +
+					'\n' +
+					scraperSelectHTML +
+					'\n' +
+					scraperInfoLink +
+					'\n' +
+					buttonHTML +
+					'\n' +
+					toggleOptionsLinkHTML +
+					'\n' +
+					optionsHTML +
+					'\n' +
+					responseDivHTML;
 				return div;
 			}
 
@@ -1466,7 +1693,19 @@ factory = {
 				const div = document.createElement('div');
 				div.id = 'yadg_div';
 				div.className = 'box';
-				div.innerHTML = '<div class="head"><strong>YADG</strong></div>\n<div class="body">\n<form class="add_form" name="yadg" method="post">\n<input type="text" name="yadg_input" id="yadg_input" />\n' + scraperSelectHTML + '\n' + scraperInfoLink + '\n' + buttonHTML + '\n' + toggleOptionsLinkHTML + '\n' + optionsHTML + '\n' + responseDivHTML;
+				div.innerHTML =
+					'<div class="head"><strong>YADG</strong></div>\n<div class="body">\n<form class="add_form" name="yadg" method="post">\n<input type="text" name="yadg_input" id="yadg_input" />\n' +
+					scraperSelectHTML +
+					'\n' +
+					scraperInfoLink +
+					'\n' +
+					buttonHTML +
+					'\n' +
+					toggleOptionsLinkHTML +
+					'\n' +
+					optionsHTML +
+					'\n' +
+					responseDivHTML;
 				return div;
 			}
 
@@ -1478,28 +1717,63 @@ factory = {
 			case 'pth_request_edit': {
 				const tr = document.createElement('tr');
 				tr.className = 'yadg_tr';
-				tr.innerHTML = '<td class="label">YADG:</td><td>' + inputHTML + scraperSelectHTML + scraperInfoLink + buttonHTML + toggleOptionsLinkHTML + optionsHTML + responseDivHTML + '</td>';
+				tr.innerHTML =
+					'<td class="label">YADG:</td><td>' +
+					inputHTML +
+					scraperSelectHTML +
+					scraperInfoLink +
+					buttonHTML +
+					toggleOptionsLinkHTML +
+					optionsHTML +
+					responseDivHTML +
+					'</td>';
 				return tr;
 			}
 
 			case 'waffles_upload': {
 				const tr = document.createElement('tr');
 				tr.className = 'yadg_tr';
-				tr.innerHTML = '<td class="heading" valign="top" align="right"><label for="yadg_input">YADG:</label></td><td>' + inputHTML + scraperSelectHTML + scraperInfoLink + buttonHTML + toggleOptionsLinkHTML + optionsHTML + responseDivHTML + '</td>';
+				tr.innerHTML =
+					'<td class="heading" valign="top" align="right"><label for="yadg_input">YADG:</label></td><td>' +
+					inputHTML +
+					scraperSelectHTML +
+					scraperInfoLink +
+					buttonHTML +
+					toggleOptionsLinkHTML +
+					optionsHTML +
+					responseDivHTML +
+					'</td>';
 				return tr;
 			}
 
 			case 'waffles_upload_new': {
 				const p = document.createElement('p');
 				p.className = 'yadg_p';
-				p.innerHTML = '<label for="yadg_input">YADG:</label>' + inputHTML + scraperSelectHTML + scraperInfoLink + buttonHTML + toggleOptionsLinkHTML + optionsHTML + responseDivHTML;
+				p.innerHTML =
+					'<label for="yadg_input">YADG:</label>' +
+					inputHTML +
+					scraperSelectHTML +
+					scraperInfoLink +
+					buttonHTML +
+					toggleOptionsLinkHTML +
+					optionsHTML +
+					responseDivHTML;
 				return p;
 			}
 
 			case 'waffles_request': {
 				const tr = document.createElement('tr');
 				tr.className = 'yadg_tr';
-				tr.innerHTML = '<td style="text-align:left;width:100px;">YADG:</td><td style="text-align:left;">' + inputHTML + scraperSelectHTML + scraperInfoLink + buttonHTML + toggleOptionsLinkHTML + optionsHTML + responseDivHTML + '</td>';
+				tr.innerHTML =
+					'<td style="text-align:left;width:100px;">YADG:</td><td style="text-align:left;">' +
+					inputHTML +
+					scraperSelectHTML +
+					scraperInfoLink +
+					buttonHTML +
+					toggleOptionsLinkHTML +
+					optionsHTML +
+					responseDivHTML +
+					'</td>';
 				return tr;
 			}
 
@@ -1509,12 +1783,13 @@ factory = {
 		}
 	},
 
+	// eslint-disable-next-line complexity
 	insertIntoPage(element) {
 		switch (this.currentLocation) {
 			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'pth_upload': {
-				const yearTr = document.getElementById('year_tr');
+				const yearTr = document.querySelector('#year_tr');
 				yearTr.parentNode.insertBefore(element, yearTr);
 				break;
 			}
@@ -1523,15 +1798,21 @@ factory = {
 			case 'ops_edit':
 			case 'pth_edit': {
 				const [summaryInput] = document.getElementsByName('summary');
-				summaryInput.parentNode.insertBefore(element, summaryInput.nextSibling.nextSibling);
+				summaryInput.parentNode.insertBefore(
+					element,
+					summaryInput.nextSibling.nextSibling
+				);
 				break;
 			}
 
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
 			case 'pth_torrent_overview': {
-				const [addArtistsBox] = document.getElementsByClassName('box_addartists');
-				addArtistsBox.parentNode.insertBefore(element, addArtistsBox.nextSibling.nextSibling);
+				const [addArtistsBox] = document.querySelectorAll('.box_addartists');
+				addArtistsBox.parentNode.insertBefore(
+					element,
+					addArtistsBox.nextSibling.nextSibling
+				);
 				break;
 			}
 
@@ -1541,19 +1822,22 @@ factory = {
 			case 'ops_request_edit':
 			case 'pth_request':
 			case 'pth_request_edit': {
-				const artistTr = document.getElementById('artist_tr');
+				const artistTr = document.querySelector('#artist_tr');
 				artistTr.parentNode.insertBefore(element, artistTr);
 				break;
 			}
 
 			case 'waffles_upload': {
 				const [submitButton] = document.getElementsByName('submit');
-				submitButton.parentNode.parentNode.parentNode.insertBefore(element, submitButton.parentNode.parentNode);
+				submitButton.parentNode.parentNode.parentNode.insertBefore(
+					element,
+					submitButton.parentNode.parentNode
+				);
 				break;
 			}
 
 			case 'waffles_upload_new': {
-				const h4s = document.getElementsByTagName('h4');
+				const h4s = document.querySelectorAll('h4');
 				let div;
 				for (let i = 0; i < h4s.length; i++) {
 					if (h4s[i].innerHTML.indexOf('read the rules') !== -1) {
@@ -1561,13 +1845,17 @@ factory = {
 						break;
 					}
 				}
-				div.appendChild(element);
+
+				div.append(element);
 				break;
 			}
 
 			case 'waffles_request': {
 				const [categorySelect] = document.getElementsByName('category');
-				categorySelect.parentNode.parentNode.parentNode.insertBefore(element, categorySelect.parentNode.parentNode);
+				categorySelect.parentNode.parentNode.parentNode.insertBefore(
+					element,
+					categorySelect.parentNode.parentNode
+				);
 				break;
 			}
 
@@ -1576,20 +1864,27 @@ factory = {
 		}
 	},
 
+	// eslint-disable-next-line complexity
 	getDescriptionBox() {
 		switch (this.currentLocation) {
 			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'pth_upload':
 				if (factory.getDescriptionTargetSelect().value === 'album') {
-					return document.getElementById('album_desc');
+					return document.querySelector('#album_desc');
 				}
+
 				if (factory.getDescriptionTargetSelect().value === 'release') {
-					return document.getElementById('release_desc');
+					return document.querySelector('#release_desc');
 				}
+
 				if (factory.getDescriptionTargetSelect().value === 'both') {
-					return [document.getElementById('album_desc'), document.getElementById('release_desc')];
+					return [
+						document.querySelector('#album_desc'),
+						document.querySelector('#release_desc')
+					];
 				}
+
 				break;
 
 			case 'nwcd_edit':
@@ -1603,6 +1898,7 @@ factory = {
 				if (!{}.hasOwnProperty.call(this, 'dummybox')) {
 					this.dummybox = document.createElement('div');
 				}
+
 				return this.dummybox;
 
 			case 'nwcd_request':
@@ -1614,10 +1910,10 @@ factory = {
 				return document.getElementsByName('description')[0];
 
 			case 'waffles_upload':
-				return document.getElementById('descr');
+				return document.querySelector('#descr');
 
 			case 'waffles_upload_new':
-				return document.getElementById('id_descr');
+				return document.querySelector('#id_descr');
 
 			case 'waffles_request':
 				return document.getElementsByName('information')[0];
@@ -1632,38 +1928,41 @@ factory = {
 		const currentTarget = factory.getTargetSelect().value;
 		switch (this.currentLocation) {
 			case 'pth_upload': {
-				const f = function (rawData) { // eslint-disable-line complexity
+				// eslint-disable-next-line complexity
+				const f = function (rawData) {
 					let albumTitleInput;
 					let yearInput;
 					let labelInput;
 					let catalogInput;
 					if (currentTarget === 'other') {
-						albumTitleInput = document.getElementById('title');
-						yearInput = document.getElementById('remaster_year');
-						labelInput = document.getElementById('remaster_record_label');
-						catalogInput = document.getElementById('remaster_catalogue_number');
+						albumTitleInput = document.querySelector('#title');
+						yearInput = document.querySelector('#remaster_year');
+						labelInput = document.querySelector('#remaster_record_label');
+						catalogInput = document.querySelector('#remaster_catalogue_number');
 						unsafeWindow.CheckYear(); // eslint-disable-line new-cap
 					} else {
-						albumTitleInput = document.getElementById('title');
-						yearInput = document.getElementById('year');
-						labelInput = document.getElementById('remaster_record_label');
-						catalogInput = document.getElementById('remaster_catalogue_number');
+						albumTitleInput = document.querySelector('#title');
+						yearInput = document.querySelector('#year');
+						labelInput = document.querySelector('#remaster_record_label');
+						catalogInput = document.querySelector('#remaster_catalogue_number');
 					}
 
 					if (/itunes/.test(rawData.url)) {
-						const releaseTypeInput = document.getElementById('releasetype');
+						const releaseTypeInput = document.querySelector('#releasetype');
 						switch (true) {
 							case /.+ - Single$/.test(rawData.title):
 								rawData.title = rawData.title.replace(/ - Single$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 9;
 								}
+
 								break;
 							case /.+ - EP$/.test(rawData.title):
 								rawData.title = rawData.title.replace(/ - EP$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 5;
 								}
+
 								break;
 							default:
 								break;
@@ -1671,7 +1970,7 @@ factory = {
 					}
 
 					let artistInputs = document.getElementsByName('artists[]');
-					const tagsInput = document.getElementById('tags');
+					const tagsInput = document.querySelector('#tags');
 					const data = yadg.prepareRawResponse(rawData);
 					let nullArtistCount = 0;
 
@@ -1683,7 +1982,9 @@ factory = {
 						} else {
 							let inputIdx = 0;
 
-							yadgUtil.addRemoveArtistBoxes(data.effective_artist_count - artistInputs.length);
+							yadgUtil.addRemoveArtistBoxes(
+								data.effective_artist_count - artistInputs.length
+							);
 
 							artistInputs = document.getElementsByName('artists[]');
 
@@ -1693,6 +1994,7 @@ factory = {
 									nullArtistCount++;
 									continue;
 								}
+
 								const artistTypes = data.artists[artistKey];
 
 								for (let j = 0; j < artistTypes.length; j++) {
@@ -1709,21 +2011,23 @@ factory = {
 									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
 									if (artistType === 'main') {
-										typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[1];
 									} else if (artistType === 'guest') {
-										typeSelect.selectedIndex = optionOffsets[2]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[2];
 									} else if (artistType === 'remixer') {
-										typeSelect.selectedIndex = optionOffsets[3]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[3];
 									} else {
-									// We don't know this artist type, default to "main"
-										typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+										// We don't know this artist type, default to "main"
+										typeSelect.selectedIndex = optionOffsets[1];
 									}
+
 									// Next artist input
 									inputIdx += 1;
 								}
 							}
+
 							if (nullArtistCount > 0) {
-								yadgUtil.addRemoveArtistBoxes(nullArtistCount *= -1);
+								yadgUtil.addRemoveArtistBoxes((nullArtistCount *= -1));
 							}
 						}
 					}
@@ -1743,55 +2047,74 @@ factory = {
 					if (yearInput.getAttribute('disabled') !== 'disabled') {
 						yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
 					}
+
 					if (albumTitleInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(data.title, albumTitleInput, data.title !== false);
+						yadgUtil.setValueIfSet(
+							data.title,
+							albumTitleInput,
+							data.title !== false
+						);
 					}
+
 					if (labelInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(data.label, labelInput, data.label !== false);
+						yadgUtil.setValueIfSet(
+							data.label,
+							labelInput,
+							data.label !== false
+						);
 					}
+
 					if (catalogInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(data.catalog, catalogInput, data.catalog !== false);
+						yadgUtil.setValueIfSet(
+							data.catalog,
+							catalogInput,
+							data.catalog !== false
+						);
 					}
 				};
+
 				return f;
 			}
 
 			case 'ops_upload': {
-				const f = function (rawData) { // eslint-disable-line complexity
+				// eslint-disable-next-line complexity
+				const f = function (rawData) {
 					let albumTitleInput;
 					let yearInput;
 					let labelInput;
 					let catalogInput;
 					if (currentTarget === 'other') {
-						const remaster = document.getElementById('remaster');
-						albumTitleInput = document.getElementById('title');
-						yearInput = document.getElementById('remaster_year');
-						labelInput = document.getElementById('remaster_record_label');
-						catalogInput = document.getElementById('remaster_catalogue_number');
+						const remaster = document.querySelector('#remaster');
+						albumTitleInput = document.querySelector('#title');
+						yearInput = document.querySelector('#remaster_year');
+						labelInput = document.querySelector('#remaster_record_label');
+						catalogInput = document.querySelector('#remaster_catalogue_number');
 						remaster.checked = 'checked';
 						unsafeWindow.Remaster(); // eslint-disable-line new-cap
 						unsafeWindow.CheckYear(); // eslint-disable-line new-cap
 					} else {
-						albumTitleInput = document.getElementById('title');
-						yearInput = document.getElementById('year');
-						labelInput = document.getElementById('record_label');
-						catalogInput = document.getElementById('catalogue_number');
+						albumTitleInput = document.querySelector('#title');
+						yearInput = document.querySelector('#year');
+						labelInput = document.querySelector('#record_label');
+						catalogInput = document.querySelector('#catalogue_number');
 					}
 
 					if (/itunes/.test(rawData.url)) {
-						const releaseTypeInput = document.getElementById('releasetype');
+						const releaseTypeInput = document.querySelector('#releasetype');
 						switch (true) {
 							case /.+ - Single$/.test(rawData.title):
 								rawData.title = rawData.title.replace(/ - Single$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 9;
 								}
+
 								break;
 							case /.+ - EP$/.test(rawData.title):
 								rawData.title = rawData.title.replace(/ - EP$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 5;
 								}
+
 								break;
 							default:
 								break;
@@ -1799,7 +2122,7 @@ factory = {
 					}
 
 					let artistInputs = document.getElementsByName('artists[]');
-					const tagsInput = document.getElementById('tags');
+					const tagsInput = document.querySelector('#tags');
 					const data = yadg.prepareRawResponse(rawData);
 					let nullArtistCount = 0;
 
@@ -1811,7 +2134,9 @@ factory = {
 						} else {
 							let inputIdx = 0;
 
-							yadgUtil.addRemoveArtistBoxes(data.effective_artist_count - artistInputs.length);
+							yadgUtil.addRemoveArtistBoxes(
+								data.effective_artist_count - artistInputs.length
+							);
 
 							artistInputs = document.getElementsByName('artists[]');
 
@@ -1821,6 +2146,7 @@ factory = {
 									nullArtistCount++;
 									continue;
 								}
+
 								const artistTypes = data.artists[artistKey];
 
 								for (let j = 0; j < artistTypes.length; j++) {
@@ -1837,21 +2163,23 @@ factory = {
 									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
 									if (artistType === 'main') {
-										typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[1];
 									} else if (artistType === 'guest') {
-										typeSelect.selectedIndex = optionOffsets[2]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[2];
 									} else if (artistType === 'remixer') {
-										typeSelect.selectedIndex = optionOffsets[3]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[3];
 									} else {
-									// We don't know this artist type, default to "main"
-										typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+										// We don't know this artist type, default to "main"
+										typeSelect.selectedIndex = optionOffsets[1];
 									}
+
 									// Next artist input
 									inputIdx += 1;
 								}
 							}
+
 							if (nullArtistCount > 0) {
-								yadgUtil.addRemoveArtistBoxes(nullArtistCount *= -1);
+								yadgUtil.addRemoveArtistBoxes((nullArtistCount *= -1));
 							}
 						}
 					}
@@ -1871,53 +2199,72 @@ factory = {
 					if (yearInput.getAttribute('disabled') !== 'disabled') {
 						yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
 					}
+
 					if (albumTitleInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(data.title, albumTitleInput, data.title !== false);
+						yadgUtil.setValueIfSet(
+							data.title,
+							albumTitleInput,
+							data.title !== false
+						);
 					}
+
 					if (labelInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(data.label, labelInput, data.label !== false);
+						yadgUtil.setValueIfSet(
+							data.label,
+							labelInput,
+							data.label !== false
+						);
 					}
+
 					if (catalogInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(data.catalog, catalogInput, data.catalog !== false);
+						yadgUtil.setValueIfSet(
+							data.catalog,
+							catalogInput,
+							data.catalog !== false
+						);
 					}
 				};
+
 				return f;
 			}
 
 			case 'nwcd_upload': {
-				const f = function (rawData) { // eslint-disable-line complexity
+				// eslint-disable-next-line complexity
+				const f = function (rawData) {
 					let albumTitleInput;
 					let yearInput;
 					let labelInput;
 					let catalogInput;
 					if (currentTarget === 'other') {
-						albumTitleInput = document.getElementById('title');
-						yearInput = document.getElementById('remaster_year');
-						labelInput = document.getElementById('remaster_record_label');
-						catalogInput = document.getElementById('remaster_catalogue_number');
+						albumTitleInput = document.querySelector('#title');
+						yearInput = document.querySelector('#remaster_year');
+						labelInput = document.querySelector('#remaster_record_label');
+						catalogInput = document.querySelector('#remaster_catalogue_number');
 						unsafeWindow.CheckYear(); // eslint-disable-line new-cap
 					} else {
-						const unknownCheckbox = document.getElementById('unknown');
-						albumTitleInput = document.getElementById('title');
-						yearInput = document.getElementById('year');
+						const unknownCheckbox = document.querySelector('#unknown');
+						albumTitleInput = document.querySelector('#title');
+						yearInput = document.querySelector('#year');
 						unknownCheckbox.checked = 'checked';
 						unsafeWindow.ToggleUnknown(); // eslint-disable-line new-cap
 					}
 
 					if (/itunes/.test(rawData.url)) {
-						const releaseTypeInput = document.getElementById('releasetype');
+						const releaseTypeInput = document.querySelector('#releasetype');
 						switch (true) {
 							case /.+ - Single$/.test(rawData.title):
 								rawData.title = rawData.title.replace(/ - Single$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 9;
 								}
+
 								break;
 							case /.+ - EP$/.test(rawData.title):
 								rawData.title = rawData.title.replace(/ - EP$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 5;
 								}
+
 								break;
 							default:
 								break;
@@ -1925,7 +2272,7 @@ factory = {
 					}
 
 					let artistInputs = document.getElementsByName('artists[]');
-					const tagsInput = document.getElementById('tags');
+					const tagsInput = document.querySelector('#tags');
 					const data = yadg.prepareRawResponse(rawData);
 					let nullArtistCount = 0;
 
@@ -1937,7 +2284,9 @@ factory = {
 						} else {
 							let inputIdx = 0;
 
-							yadgUtil.addRemoveArtistBoxes(data.effective_artist_count - artistInputs.length);
+							yadgUtil.addRemoveArtistBoxes(
+								data.effective_artist_count - artistInputs.length
+							);
 
 							artistInputs = document.getElementsByName('artists[]');
 
@@ -1947,6 +2296,7 @@ factory = {
 									nullArtistCount++;
 									continue;
 								}
+
 								const artistTypes = data.artists[artistKey];
 
 								for (let j = 0; j < artistTypes.length; j++) {
@@ -1963,21 +2313,23 @@ factory = {
 									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
 									if (artistType === 'main') {
-										typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[1];
 									} else if (artistType === 'guest') {
-										typeSelect.selectedIndex = optionOffsets[2]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[2];
 									} else if (artistType === 'remixer') {
-										typeSelect.selectedIndex = optionOffsets[3]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[3];
 									} else {
-									// We don't know this artist type, default to "main"
-										typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+										// We don't know this artist type, default to "main"
+										typeSelect.selectedIndex = optionOffsets[1];
 									}
+
 									// Next artist input
 									inputIdx += 1;
 								}
 							}
+
 							if (nullArtistCount > 0) {
-								yadgUtil.addRemoveArtistBoxes(nullArtistCount *= -1);
+								yadgUtil.addRemoveArtistBoxes((nullArtistCount *= -1));
 							}
 						}
 					}
@@ -1997,20 +2349,36 @@ factory = {
 					if (yearInput.getAttribute('disabled') !== 'disabled') {
 						yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
 					}
+
 					if (albumTitleInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(data.title, albumTitleInput, data.title !== false);
+						yadgUtil.setValueIfSet(
+							data.title,
+							albumTitleInput,
+							data.title !== false
+						);
 					}
+
 					if (labelInput) {
 						if (labelInput.getAttribute('disabled') !== 'disabled') {
-							yadgUtil.setValueIfSet(data.label, labelInput, data.label !== false);
+							yadgUtil.setValueIfSet(
+								data.label,
+								labelInput,
+								data.label !== false
+							);
 						}
 					}
+
 					if (catalogInput) {
 						if (catalogInput.getAttribute('disabled') !== 'disabled') {
-							yadgUtil.setValueIfSet(data.catalog, catalogInput, data.catalog !== false);
+							yadgUtil.setValueIfSet(
+								data.catalog,
+								catalogInput,
+								data.catalog !== false
+							);
 						}
 					}
 				};
+
 				return f;
 			}
 
@@ -2028,13 +2396,30 @@ factory = {
 					if (yearInput && yearInput.getAttribute('disabled') !== 'disabled') {
 						yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
 					}
-					if (labelInput && labelInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(data.label, labelInput, data.label !== false);
+
+					if (
+						labelInput &&
+						labelInput.getAttribute('disabled') !== 'disabled'
+					) {
+						yadgUtil.setValueIfSet(
+							data.label,
+							labelInput,
+							data.label !== false
+						);
 					}
-					if (catalogInput && catalogInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(data.catalog, catalogInput, data.catalog !== false);
+
+					if (
+						catalogInput &&
+						catalogInput.getAttribute('disabled') !== 'disabled'
+					) {
+						yadgUtil.setValueIfSet(
+							data.catalog,
+							catalogInput,
+							data.catalog !== false
+						);
 					}
 				};
+
 				return f;
 			}
 
@@ -2052,7 +2437,9 @@ factory = {
 					} else {
 						let inputIdx = 0;
 
-						yadgUtil.addRemoveArtistBoxes(data.effective_artist_count - artistInputs.length);
+						yadgUtil.addRemoveArtistBoxes(
+							data.effective_artist_count - artistInputs.length
+						);
 
 						artistInputs = document.getElementsByName('aliasname[]');
 
@@ -2074,14 +2461,14 @@ factory = {
 								const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
 								if (artistType === 'main') {
-									typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+									typeSelect.selectedIndex = optionOffsets[1];
 								} else if (artistType === 'guest') {
-									typeSelect.selectedIndex = optionOffsets[2]; // eslint-disable-line prefer-destructuring
+									typeSelect.selectedIndex = optionOffsets[2];
 								} else if (artistType === 'remixer') {
-									typeSelect.selectedIndex = optionOffsets[3]; // eslint-disable-line prefer-destructuring
+									typeSelect.selectedIndex = optionOffsets[3];
 								} else {
 									// We don't know this artist type, default to "main"
-									typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+									typeSelect.selectedIndex = optionOffsets[1];
 								}
 
 								// Next artist input
@@ -2090,6 +2477,7 @@ factory = {
 						}
 					}
 				};
+
 				return f;
 			}
 
@@ -2105,7 +2493,7 @@ factory = {
 					const [yearInput] = document.getElementsByName('year');
 					const [labelInput] = document.getElementsByName('recordlabel');
 					const [catalogInput] = document.getElementsByName('cataloguenumber');
-					const tagsInput = document.getElementById('tags');
+					const tagsInput = document.querySelector('#tags');
 					const data = yadg.prepareRawResponse(rawData);
 					let nullArtistCount = 0;
 
@@ -2117,7 +2505,9 @@ factory = {
 						} else {
 							let inputIdx = 0;
 
-							yadgUtil.addRemoveArtistBoxes(data.effective_artist_count - artistInputs.length);
+							yadgUtil.addRemoveArtistBoxes(
+								data.effective_artist_count - artistInputs.length
+							);
 
 							artistInputs = document.getElementsByName('artists[]');
 
@@ -2143,35 +2533,48 @@ factory = {
 									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
 									if (artistType === 'main') {
-										typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[1];
 									} else if (artistType === 'guest') {
-										typeSelect.selectedIndex = optionOffsets[2]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[2];
 									} else if (artistType === 'remixer') {
-										typeSelect.selectedIndex = optionOffsets[3]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[3];
 									} else {
 										// We don't know this artist type, default to "main"
-										typeSelect.selectedIndex = optionOffsets[1]; // eslint-disable-line prefer-destructuring
+										typeSelect.selectedIndex = optionOffsets[1];
 									}
 
 									// Next artist input
 									inputIdx += 1;
 								}
 							}
+
 							if (nullArtistCount > 0) {
-								yadgUtil.addRemoveArtistBoxes(nullArtistCount *= -1);
+								yadgUtil.addRemoveArtistBoxes((nullArtistCount *= -1));
 							}
 						}
+
 						if (data.tags === false) {
 							tagsInput.value = '';
 						} else {
 							tagsInput.value = data.tag_string.toLowerCase();
 						}
-						yadgUtil.setValueIfSet(data.title, albumTitleInput, data.title !== false);
+
+						yadgUtil.setValueIfSet(
+							data.title,
+							albumTitleInput,
+							data.title !== false
+						);
 					}
+
 					yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
 					yadgUtil.setValueIfSet(data.label, labelInput, data.label !== false);
-					yadgUtil.setValueIfSet(data.catalog, catalogInput, data.catalog !== false);
+					yadgUtil.setValueIfSet(
+						data.catalog,
+						catalogInput,
+						data.catalog !== false
+					);
 				};
+
 				return f;
 			}
 
@@ -2180,8 +2583,8 @@ factory = {
 					const [artistInput] = document.getElementsByName('artist');
 					const [albumTitleInput] = document.getElementsByName('album');
 					const [yearInput] = document.getElementsByName('year');
-					const vaCheckbox = document.getElementById('va');
-					const tagsInput = document.getElementById('tags');
+					const vaCheckbox = document.querySelector('#va');
+					const tagsInput = document.querySelector('#tags');
 					const data = yadg.prepareRawResponse(rawData);
 
 					if (data.artists === false) {
@@ -2196,7 +2599,11 @@ factory = {
 					}
 
 					yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
-					yadgUtil.setValueIfSet(data.title, albumTitleInput, data.title !== false);
+					yadgUtil.setValueIfSet(
+						data.title,
+						albumTitleInput,
+						data.title !== false
+					);
 
 					if (data.tags === false) {
 						tagsInput.value = '';
@@ -2208,22 +2615,24 @@ factory = {
 						formatName();
 					});
 				};
+
 				return f;
 			}
 
 			case 'waffles_upload_new': {
 				const f = function (rawData) {
-					const artistInput = document.getElementById('id_artist');
-					const albumTitleInput = document.getElementById('id_album');
-					const yearInput = document.getElementById('id_year');
-					const vaCheckbox = document.getElementById('id_va');
-					const tagsInput = document.getElementById('id_tags');
+					const artistInput = document.querySelector('#id_artist');
+					const albumTitleInput = document.querySelector('#id_album');
+					const yearInput = document.querySelector('#id_year');
+					const vaCheckbox = document.querySelector('#id_va');
+					const tagsInput = document.querySelector('#id_tags');
 					const data = yadg.prepareRawResponse(rawData);
 
 					if (data.artists === false) {
 						if (vaCheckbox.checked) {
 							vaCheckbox.click();
 						}
+
 						artistInput.value = '';
 					} else if (data.is_various) {
 						if (!vaCheckbox.checked) {
@@ -2233,11 +2642,16 @@ factory = {
 						if (vaCheckbox.checked) {
 							vaCheckbox.click();
 						}
+
 						artistInput.value = data.flat_artistString;
 					}
 
 					yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
-					yadgUtil.setValueIfSet(data.title, albumTitleInput, data.title !== false);
+					yadgUtil.setValueIfSet(
+						data.title,
+						albumTitleInput,
+						data.title !== false
+					);
 
 					if (data.tags === false) {
 						tagsInput.value = '';
@@ -2245,6 +2659,7 @@ factory = {
 						tagsInput.value = data.tag_string_nodots.toLowerCase();
 					}
 				};
+
 				return f;
 			}
 
@@ -2264,8 +2679,13 @@ factory = {
 					}
 
 					yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
-					yadgUtil.setValueIfSet(data.title, albumTitleInput, data.title !== false);
+					yadgUtil.setValueIfSet(
+						data.title,
+						albumTitleInput,
+						data.title !== false
+					);
 				};
+
 				return f;
 			}
 
@@ -2284,10 +2704,16 @@ yadgTemplates = {
 		if (id in this._templates) {
 			callback(this._templates[id]);
 		} else if (id in this._templateUrls) {
-			const request = new requester(this._templateUrls[id], 'GET', template => { // eslint-disable-line new-cap
-				yadgTemplates.addTemplate(template);
-				callback(template);
-			}, null, yadgTemplates.errorTemplate);
+			const request = new Requester(
+				this._templateUrls[id],
+				'GET',
+				template => {
+					yadgTemplates.addTemplate(template);
+					callback(template);
+				},
+				null,
+				yadgTemplates.errorTemplate
+			);
 			request.send();
 		} else {
 			this.errorTemplate();
@@ -2322,7 +2748,11 @@ yadgRenderer = {
 				yadgSandbox.resetSandbox();
 				yadgSandbox.initializeSwig(template.dependencies);
 			}
-			template.code = template.code.replace('https://what.cd', 'https://' + window.location.hostname);
+
+			template.code = template.code.replace(
+				'https://what.cd',
+				'https://' + window.location.hostname
+			);
 			yadgSandbox.renderTemplate(template.code, data, callback, errorCallback);
 		});
 	},
@@ -2346,20 +2776,24 @@ yadg = {
 	yadgHost: 'https://yadg.cc',
 	baseURI: '/api/v2/',
 
-	standardError: 'Sorry, an error occured. Please try again. If this error persists check on <a href="https://yadg.cc">yadg.cc</a> before reporting an error with the userscript.',
-	authenticationError: 'Your API token is invalid. Please provide a valid API token or remove the current one.',
+	standardError:
+		'Sorry, an error occured. Please try again. If this error persists check on <a href="https://yadg.cc">yadg.cc</a> before reporting an error with the userscript.',
+	authenticationError:
+		'Your API token is invalid. Please provide a valid API token or remove the current one.',
 	lastStateError: false,
 
 	isBusy: false,
 
 	init() {
-		this.scraperSelect = document.getElementById('yadg_scraper');
-		this.formatSelect = document.getElementById('yadg_format');
-		this.input = document.getElementById('yadg_input');
-		this.targetSelect = document.getElementById('yadg_target');
-		this.targetDescriptionSelect = document.getElementById('yadg_description_target');
-		this.responseDiv = document.getElementById('yadg_response');
-		this.button = document.getElementById('yadg_submit');
+		this.scraperSelect = document.querySelector('#yadg_scraper');
+		this.formatSelect = document.querySelector('#yadg_format');
+		this.input = document.querySelector('#yadg_input');
+		this.targetSelect = document.querySelector('#yadg_target');
+		this.targetDescriptionSelect = document.querySelector(
+			'#yadg_description_target'
+		);
+		this.responseDiv = document.querySelector('#yadg_response');
+		this.button = document.querySelector('#yadg_submit');
 	},
 
 	getBaseURL() {
@@ -2369,7 +2803,7 @@ yadg = {
 	getScraperList(callback) {
 		const url = this.getBaseURL() + 'scrapers/';
 
-		const request = new requester(url, 'GET', callback); // eslint-disable-line new-cap
+		const request = new Requester(url, 'GET', callback);
 
 		request.send();
 	},
@@ -2381,10 +2815,11 @@ yadg = {
 	},
 
 	getTemplates(url, templates, callback) {
-		const request = new requester(url, 'GET', data => { // eslint-disable-line new-cap
+		const request = new Requester(url, 'GET', data => {
 			for (let i = 0; i < data.results.length; i++) {
 				templates.push(data.results[i]);
 			}
+
 			if (data.next === null) {
 				callback(templates);
 			} else {
@@ -2405,27 +2840,40 @@ yadg = {
 			data = params;
 		} else {
 			data = {
-				scraper: this.scraperSelect.options[this.scraperSelect.selectedIndex].value,
+				scraper: this.scraperSelect.options[this.scraperSelect.selectedIndex]
+					.value,
 				input: this.input.value
 			};
 		}
+
 		const url = this.getBaseURL() + 'query/';
 
 		if (data.input !== '') {
-			const request = new requester(url, 'POST', result => { // eslint-disable-line new-cap
-				yadg.getResult(result.url);
-			}, data);
+			const request = new Requester(
+				url,
+				'POST',
+				result => {
+					yadg.getResult(result.url);
+				},
+				data
+			);
 			this.busyStart();
 			request.send();
 		}
 	},
 
 	getResult(resultUrl) {
-		const request = new requester(resultUrl, 'GET', response => { // eslint-disable-line new-cap
+		const request = new Requester(resultUrl, 'GET', response => {
 			if (response.status === 'done') {
 				if (response.data.type === 'ReleaseResult') {
-					const templateId = yadg.formatSelect.options[yadg.formatSelect.selectedIndex].value;
-					yadgRenderer.render(templateId, response, factory.setDescriptionBoxValue, factory.setDescriptionBoxValue);
+					const templateId =
+						yadg.formatSelect.options[yadg.formatSelect.selectedIndex].value;
+					yadgRenderer.render(
+						templateId,
+						response,
+						factory.setDescriptionBoxValue,
+						factory.setDescriptionBoxValue
+					);
 
 					if (yadg.lastStateError === true) {
 						yadg.responseDiv.innerHTML = '';
@@ -2452,44 +2900,54 @@ yadg = {
 						a.params = queryParams;
 						a.href = releaseUrl;
 
-						a.addEventListener('click', function (e) {
-							e.preventDefault();
-							yadg.makeRequest(this.params);
-							if (factory.getFetchImageCheckbox().checked) {
-								fetchImage(this.href, data => {
-									insertImage(data, () => {
-										if (factory.getAutoRehostCheckbox() && factory.getAutoRehostCheckbox().checked) {
-											pthImgIt();
-										}
+						a.addEventListener(
+							'click',
+							function (e) {
+								e.preventDefault();
+								yadg.makeRequest(this.params);
+								if (factory.getFetchImageCheckbox().checked) {
+									fetchImage(this.href, data => {
+										insertImage(data, () => {
+											if (
+												factory.getAutoRehostCheckbox() &&
+												factory.getAutoRehostCheckbox().checked
+											) {
+												pthImgIt();
+											}
+										});
 									});
-								});
-							}
-						}, false);
+								}
+							},
+							false
+						);
 
-						li.appendChild(a);
-						li.appendChild(document.createElement('br'));
+						li.append(a);
+						li.append(document.createElement('br'));
 						if (info) {
-							li.appendChild(document.createTextNode(info));
+							li.append(document.createTextNode(info));
 						}
 
-						ul.appendChild(li);
+						ul.append(li);
 					}
 
 					if (ul.childNodes.length === 0) {
 						yadg.printError('Sorry, there were no matches.');
 					} else {
 						yadg.responseDiv.innerHTML = '';
-						yadg.responseDiv.appendChild(ul);
+						yadg.responseDiv.append(ul);
 						yadg.lastStateError = false;
 
 						// We got a ListResult so clear the last ReleaseResult from the render cache
 						yadgRenderer.clearCached();
 					}
 				} else if (response.data.type === 'NotFoundResult') {
-					yadg.printError('I could not find the release with the given ID. You may want to try again with another one.');
+					yadg.printError(
+						'I could not find the release with the given ID. You may want to try again with another one.'
+					);
 				} else {
 					yadg.printError('Something weird happened. Please try again');
 				}
+
 				yadg.busyStop();
 			} else if (response.status === 'failed') {
 				yadg.failedCallback();
@@ -2497,6 +2955,7 @@ yadg = {
 				const delay = function () {
 					yadg.getResult(response.url);
 				};
+
 				window.setTimeout(delay, 1000);
 			}
 		});
@@ -2544,7 +3003,8 @@ yadg = {
 		this.isBusy = false;
 	},
 
-	prepareRawResponse(rawData) { // eslint-disable-line complexity
+	// eslint-disable-next-line complexity
+	prepareRawResponse(rawData) {
 		const result = {};
 
 		result.artists = false;
@@ -2570,6 +3030,7 @@ yadg = {
 				}
 			}
 		}
+
 		if (rawData.discs.length > 0) {
 			for (let k = 0; k < rawData.discs.length; k++) {
 				const disc = rawData.discs[k];
@@ -2599,6 +3060,7 @@ yadg = {
 				}
 			}
 		}
+
 		for (let i = 0; i < rawData.releaseEvents.length; i++) {
 			const event = rawData.releaseEvents[i];
 			if (event.date) {
@@ -2610,24 +3072,30 @@ yadg = {
 				}
 			}
 		}
+
 		if (rawData.title) {
 			result.title = rawData.title;
 		}
+
 		if (rawData.labelIds.length > 0) {
 			const [labelId] = rawData.labelIds;
 			if (labelId.label) {
 				result.label = labelId.label;
 			}
+
 			if (labelId.catalogueNrs.length > 0) {
 				[result.catalog] = labelId.catalogueNrs;
 			}
 		}
+
 		if (rawData.genres.length > 0) {
 			result.genre = rawData.genres;
 		}
+
 		if (rawData.styles.length > 0) {
 			result.style = rawData.styles;
 		}
+
 		if (result.genre !== false && result.style !== false) {
 			result.tags = rawData.genres.concat(rawData.styles);
 		} else if (result.genre !== false) {
@@ -2678,6 +3146,7 @@ yadg = {
 					} else if (artistString !== '' && i < result.artists_length - 1) {
 						artistString += ' & ';
 					}
+
 					artistString += result.artist_keys[i];
 				}
 			}
@@ -2690,7 +3159,8 @@ yadg = {
 };
 
 yadgSandbox.init(() => {
-	if (factory.init()) { // Returns true if we run on a valid location
+	if (factory.init()) {
+		// Returns true if we run on a valid location
 		yadg.init();
 	}
 });
