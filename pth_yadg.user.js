@@ -1947,7 +1947,7 @@ factory = {
 						catalogInput = document.querySelector('#remaster_catalogue_number');
 					}
 
-					if (/itunes/.test(rawData.url)) {
+					if (/music.apple/.test(rawData.url)) {
 						const releaseTypeInput = document.querySelector('#releasetype');
 						switch (true) {
 							case /.+ - Single$/.test(rawData.title):
