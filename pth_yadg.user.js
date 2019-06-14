@@ -18,6 +18,9 @@
 // @include        http*://*notwhat.cd/upload.php*
 // @include        http*://*notwhat.cd/requests.php*
 // @include        http*://*notwhat.cd/torrents.php*
+// @include        http*://*dicmusic.club/upload.php*
+// @include        http*://*dicmusic.club/requests.php*
+// @include        http*://*dicmusic.club/torrents.php*
 // @include        http*://*waffles.ch/upload.php*
 // @include        http*://*waffles.ch/requests.php*
 // @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
