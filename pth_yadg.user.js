@@ -1964,6 +1964,7 @@ factory = {
 		}
 	},
 
+	// eslint-disable-next-line complexity
 	getFormFillFunction() {
 		const currentTarget = factory.getTargetSelect().value;
 		switch (this.currentLocation) {
@@ -2421,6 +2422,7 @@ factory = {
 
 				return f;
 			}
+
 			case 'dic_upload': {
 				// eslint-disable-next-line complexity
 				const f = function (rawData) {
@@ -2574,6 +2576,7 @@ factory = {
 
 				return f;
 			}
+
 			case 'nwcd_edit':
 			case 'ops_edit':
 			case 'dic_edit':
