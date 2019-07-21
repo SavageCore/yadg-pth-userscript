@@ -3038,6 +3038,12 @@ yadg = {
 		if (params) {
 			data = params;
 		} else {
+			// If beta.musicbrainz.org link strip query params and remove beta
+			if (this.input.value.indexOf('beta.musicbrainz.org') !== -1) {
+				this.input.value = this.input.value.replace(/beta./, '');
+				this.input.value = this.input.value.replace(/\?.*$/, '');
+			}
+
 			data = {
 				scraper: this.scraperSelect.options[this.scraperSelect.selectedIndex]
 					.value,
