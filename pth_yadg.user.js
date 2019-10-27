@@ -355,8 +355,8 @@ function insertImage(img, callback) {
 			input.parentNode.parentNode.insertAdjacentHTML(
 				'beforebegin',
 				'<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="' +
-					img +
-					'" width="300px" /></tr></td>'
+				img +
+				'" width="300px" /></tr></td>'
 			);
 			callback();
 			break;
@@ -386,8 +386,8 @@ function insertImage(img, callback) {
 			imageInputElement.parentNode.parentNode.insertAdjacentHTML(
 				'beforebegin',
 				'<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="' +
-					img +
-					'" width="300px" /></tr></td>'
+				img +
+				'" width="300px" /></tr></td>'
 			);
 			callback();
 			break;
@@ -541,8 +541,8 @@ function LocalStorageWrapper(applicationPrefix) {
 
 		try {
 			const allKeys = that.getAllKeys();
-			for (let i = 0; i < allKeys.length; ++i) {
-				const checkedKey = makeChecks(allKeys[i]);
+			for (const key of allKeys) {
+				const checkedKey = makeChecks(allKeys[key]);
 				const combinedKey = that.getKeyPrefix() + delimiter + checkedKey;
 				localStorage.removeItem(combinedKey);
 			}
@@ -1088,7 +1088,7 @@ factory = {
 		if (
 			lastChecked === null ||
 			new Date().getTime() - new Date(lastChecked).getTime() >
-				factory.CACHE_TIMEOUT
+			factory.CACHE_TIMEOUT
 		) {
 			// Update the scraper and formats list
 			factory.UPDATE_PROGRESS = 1;
@@ -1179,8 +1179,7 @@ factory = {
 				'waffles_upload_new',
 				'waffles_request'
 			];
-			for (let i = 0; i < locations.length; i++) {
-				const loc = locations[i];
+			for (const loc of locations) {
 				const replaceDescSettingKey = factory.makeReplaceDescriptionSettingsKey(
 					loc
 				);
@@ -1387,7 +1386,7 @@ factory = {
 			}
 
 			if (
-				factory.currentLocation !== 'pth_torrent_overview' ||
+				factory.currentLocation !== 'pth_torrent_overview' || factory.currentLocation !==
 				'ops_torrent_overview'
 			) {
 				if (descBox.parentNode.nextSibling.nextSibling) {
@@ -1403,14 +1402,14 @@ factory = {
 				}
 			}
 		} else if (Array.isArray(descBox)) {
-			for (let i = 0; i < descBox.length; i++) {
-				if (descBox[i].getAttribute('disabled') === 'disabled') {
+			for (const element of descBox) {
+				if (element.getAttribute('disabled') === 'disabled') {
 					continue;
 				}
 
-				descBox[i].value = value;
+				element.value = value;
 				const previewBtn =
-					descBox[i].parentNode.nextSibling.nextSibling.firstChild.nextSibling;
+					element.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
 				if (
 					previewBtn &&
 					previewBtn.value === 'Preview' &&
@@ -1535,41 +1534,41 @@ factory = {
 
 		const nonUtility = [];
 		const saveTemplates = [];
-		for (let i = 0; i < templates.length; i++) {
+		for (const element of templates) {
 			if (factory.UPDATE_PROGRESS > 0) {
-				if (templates[i].name === 'What') {
-					templates[i].name = 'RED';
-					templates[i].nameFormatted = 'RED';
-				} else if (templates[i].name === 'What (Tracks only)') {
-					templates[i].name = 'RED (Tracks only)';
-					templates[i].nameFormatted = 'RED (Tracks only)';
+				if (element.name === 'What') {
+					element.name = 'RED';
+					element.nameFormatted = 'RED';
+				} else if (element.name === 'What (Tracks only)') {
+					element.name = 'RED (Tracks only)';
+					element.nameFormatted = 'RED (Tracks only)';
 				}
 
-				yadgTemplates.addTemplate(templates[i]);
+				yadgTemplates.addTemplate(element);
 
 				saveTemplates.push({
-					id: templates[i].id,
-					url: templates[i].url,
-					name: templates[i].name,
-					nameFormatted: templates[i].nameFormatted,
-					owner: templates[i].owner,
-					default: templates[i].default,
-					isUtility: templates[i].isUtility
+					id: element.id,
+					url: element.url,
+					name: element.name,
+					nameFormatted: element.nameFormatted,
+					owner: element.owner,
+					default: element.default,
+					isUtility: element.isUtility
 				});
 			} else {
-				if (templates[i].name === 'What') {
-					templates[i].name = 'PTH';
-					templates[i].nameFormatted = 'PTH';
-				} else if (templates[i].name === 'What (Tracks only)') {
-					templates[i].name = 'PTH (Tracks only)';
-					templates[i].nameFormatted = 'PTH (Tracks only)';
+				if (element.name === 'What') {
+					element.name = 'PTH';
+					element.nameFormatted = 'PTH';
+				} else if (element.name === 'What (Tracks only)') {
+					element.name = 'PTH (Tracks only)';
+					element.nameFormatted = 'PTH (Tracks only)';
 				}
 
-				yadgTemplates.addTemplateUrl(templates[i].id, templates[i].url);
+				yadgTemplates.addTemplateUrl(element.id, element.url);
 			}
 
-			if (!templates[i].isUtility) {
-				nonUtility.push(templates[i]);
+			if (!element.isUtility) {
+				nonUtility.push(element);
 			}
 		}
 
@@ -1591,25 +1590,25 @@ factory = {
 	setSelect(select, data) {
 		select.options.length = data.length;
 
-		for (let i = 0; i < data.length; i++) {
+		for (const [i, element] of data.entries()) {
 			// We are not using the javascript constructor to create an Option instance because this will create an
 			// incompatibility with jQuery in Chrome which will make it impossible to add a new artist field on redacted.ch
 			const o = document.createElement('option');
-			if ('nameFormatted' in data[i]) {
-				o.text = data[i].nameFormatted;
+			if ('nameFormatted' in element) {
+				o.text = element.nameFormatted;
 			} else {
-				o.text = data[i].name;
+				o.text = element.name;
 			}
 
-			o.value = data[i].value || data[i].id;
-			o.selected = data[i].default;
+			o.value = element.value || element.id;
+			o.selected = element.default;
 			select.options[i] = o;
-			if (data[i].default) {
+			if (element.default) {
 				select.selectedIndex = i;
 			}
 
-			if (data[i].url) {
-				o.setAttribute('data-url', data[i].url);
+			if (element.url) {
+				o.dataset.url = element.url;
 			}
 		}
 	},
@@ -1645,7 +1644,7 @@ factory = {
 		const scraperSelectHTML =
 			'<select name="yadg_scraper" id="yadg_scraper"></select>';
 		let optionsHTML =
-					'<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Allmusic, Bandcamp, Beatport, Deezer, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
+			'<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Allmusic, Bandcamp, Beatport, Deezer, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
 		optionsHTML +=
 			'<div id="yadg_options_coversize"><label for="yadg_coversize" id="yadg_coversize_label">Cover size: </label><select name="yadg_coversize" id="yadg_coversize"><option value="large">Large</option><option value="medium">Medium</option></select></div>';
 		if (document.querySelectorAll('.rehost_it_cover')[0]) {
@@ -1874,9 +1873,9 @@ factory = {
 			case 'waffles_upload_new': {
 				const h4s = document.querySelectorAll('h4');
 				let div;
-				for (let i = 0; i < h4s.length; i++) {
-					if (h4s[i].innerHTML.indexOf('read the rules') !== -1) {
-						div = h4s[i].parentNode;
+				for (const h4 of h4s) {
+					if (h4s[h4].innerHTML.includes('read the rules')) {
+						div = h4s[h4].parentNode;
 						break;
 					}
 				}
@@ -2017,8 +2016,8 @@ factory = {
 
 					if (artistInputs[0].getAttribute('disabled') !== 'disabled') {
 						if (data.artists === false) {
-							for (let i = 0; i < artistInputs.length; i++) {
-								artistInputs[i].value = '';
+							for (const element of artistInputs) {
+								element.value = '';
 							}
 						} else {
 							let inputIdx = 0;
@@ -2038,8 +2037,7 @@ factory = {
 
 								const artistTypes = data.artists[artistKey];
 
-								for (let j = 0; j < artistTypes.length; j++) {
-									const artistType = artistTypes[j];
+								for (const artistType of artistTypes) {
 									const artistInput = artistInputs[inputIdx];
 									let typeSelect = artistInput.nextSibling;
 
@@ -2169,8 +2167,8 @@ factory = {
 
 					if (artistInputs[0].getAttribute('disabled') !== 'disabled') {
 						if (data.artists === false) {
-							for (let i = 0; i < artistInputs.length; i++) {
-								artistInputs[i].value = '';
+							for (const element of artistInputs) {
+								element.value = '';
 							}
 						} else {
 							let inputIdx = 0;
@@ -2190,8 +2188,7 @@ factory = {
 
 								const artistTypes = data.artists[artistKey];
 
-								for (let j = 0; j < artistTypes.length; j++) {
-									const artistType = artistTypes[j];
+								for (const artistType of artistTypes) {
 									const artistInput = artistInputs[inputIdx];
 									let typeSelect = artistInput.nextSibling;
 
@@ -2319,8 +2316,8 @@ factory = {
 
 					if (artistInputs[0].getAttribute('disabled') !== 'disabled') {
 						if (data.artists === false) {
-							for (let i = 0; i < artistInputs.length; i++) {
-								artistInputs[i].value = '';
+							for (const element of artistInputs) {
+								element.value = '';
 							}
 						} else {
 							let inputIdx = 0;
@@ -2340,8 +2337,7 @@ factory = {
 
 								const artistTypes = data.artists[artistKey];
 
-								for (let j = 0; j < artistTypes.length; j++) {
-									const artistType = artistTypes[j];
+								for (const artistType of artistTypes) {
 									const artistInput = artistInputs[inputIdx];
 									let typeSelect = artistInput.nextSibling;
 
@@ -2473,8 +2469,8 @@ factory = {
 
 					if (artistInputs[0].getAttribute('disabled') !== 'disabled') {
 						if (data.artists === false) {
-							for (let i = 0; i < artistInputs.length; i++) {
-								artistInputs[i].value = '';
+							for (const element of artistInputs) {
+								element.value = '';
 							}
 						} else {
 							let inputIdx = 0;
@@ -2494,8 +2490,7 @@ factory = {
 
 								const artistTypes = data.artists[artistKey];
 
-								for (let j = 0; j < artistTypes.length; j++) {
-									const artistType = artistTypes[j];
+								for (const artistType of artistTypes) {
 									const artistInput = artistInputs[inputIdx];
 									let typeSelect = artistInput.nextSibling;
 
@@ -2628,8 +2623,8 @@ factory = {
 					const data = yadg.prepareRawResponse(rawData);
 
 					if (data.artists === false) {
-						for (let i = 0; i < artistInputs.length; i++) {
-							artistInputs[i].value = '';
+						for (const element of artistInputs) {
+							element.value = '';
 						}
 					} else {
 						let inputIdx = 0;
@@ -2644,8 +2639,7 @@ factory = {
 							const artistKey = data.artist_keys[i];
 							const artistTypes = data.artists[artistKey];
 
-							for (let j = 0; j < artistTypes.length; j++) {
-								const artistType = artistTypes[j];
+							for (const artistType of artistTypes) {
 								const artistInput = artistInputs[inputIdx];
 								let typeSelect = artistInput.nextSibling;
 
@@ -2698,8 +2692,8 @@ factory = {
 
 					if (!/groupid=\d+/.test(document.location.search)) {
 						if (data.artists === false) {
-							for (let i = 0; i < artistInputs.length; i++) {
-								artistInputs[i].value = '';
+							for (const element of artistInputs) {
+								element.value = '';
 							}
 						} else {
 							let inputIdx = 0;
@@ -2718,8 +2712,7 @@ factory = {
 									continue;
 								}
 
-								for (let j = 0; j < artistTypes.length; j++) {
-									const artistType = artistTypes[j];
+								for (const artistType of artistTypes) {
 									const artistInput = artistInputs[inputIdx];
 									let typeSelect = artistInput.nextSibling;
 
@@ -2890,7 +2883,7 @@ factory = {
 
 			default:
 				// That should actually never happen
-				return function () {};
+				return function () { };
 		}
 	}
 };
@@ -3039,7 +3032,7 @@ yadg = {
 			data = params;
 		} else {
 			// If beta.musicbrainz.org link strip query params and remove beta
-			if (this.input.value.indexOf('beta.musicbrainz.org') !== -1) {
+			if (this.input.value.includes('beta.musicbrainz.org')) {
 				this.input.value = this.input.value.replace(/beta./, '');
 				this.input.value = this.input.value.replace(/\?.*$/, '');
 			}
@@ -3092,11 +3085,9 @@ yadg = {
 					ul.id = 'yadg_release_list';
 
 					const releaseList = response.data.items;
-					for (let i = 0; i < releaseList.length; i++) {
-						const {name} = releaseList[i];
-						const {info} = releaseList[i];
-						const {queryParams} = releaseList[i];
-						const releaseUrl = releaseList[i].url;
+					for (const element of releaseList) {
+						const {name, info, queryParams} = element;
+						const releaseUrl = element.url;
 
 						const li = document.createElement('li');
 						const a = document.createElement('a');
@@ -3345,7 +3336,7 @@ yadg = {
 			let artistString = '';
 
 			for (let i = 0; i < result.artists_length; i++) {
-				if (result.artists[result.artist_keys[i]].indexOf('main') !== -1) {
+				if (result.artists[result.artist_keys[i]].includes('main')) {
 					if (artistString !== '' && i < result.artists_length - 2) {
 						artistString += ', ';
 					} else if (artistString !== '' && i < result.artists_length - 1) {
