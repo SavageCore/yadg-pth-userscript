@@ -2427,7 +2427,7 @@ factory = {
 					let labelInput;
 					let catalogInput;
 					if (currentTarget === 'other') {
-						albumTitleInput = document.querySelector('#remaster_title');
+						albumTitleInput = document.querySelector('#title');
 						yearInput = document.querySelector('#remaster_year');
 						labelInput = document.querySelector('#remaster_record_label');
 						catalogInput = document.querySelector('#remaster_catalogue_number');
