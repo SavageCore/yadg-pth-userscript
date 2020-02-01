@@ -542,7 +542,7 @@ function LocalStorageWrapper(applicationPrefix) {
 		try {
 			const allKeys = that.getAllKeys();
 			for (const key of allKeys) {
-				const checkedKey = makeChecks(allKeys[key]);
+				const checkedKey = makeChecks(key);
 				const combinedKey = that.getKeyPrefix() + delimiter + checkedKey;
 				localStorage.removeItem(combinedKey);
 			}
