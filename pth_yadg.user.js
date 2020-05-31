@@ -23,6 +23,9 @@
 // @include        http*://*dicmusic.club/torrents.php*
 // @include        http*://*waffles.ch/upload.php*
 // @include        http*://*waffles.ch/requests.php*
+// @include        http*://*d3si.net/upload.php*
+// @include        http*://*d3si.net/requests.php*
+// @include        http*://*d3si.net/torrents.php*
 // @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
 // ==/UserScript==
 
@@ -851,6 +854,26 @@ factory = {
 			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/torrents\.php\?id=.*/i
 		},
 		{
+			name: 'd3si_upload',
+			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/upload\.php.*/i
+		},
+		{
+			name: 'd3si_edit',
+			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/torrents\.php\?action=editgroup&groupid=.*/i
+		},
+		{
+			name: 'd3si_request',
+			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/requests\.php\?action=new/i
+		},
+		{
+			name: 'd3si_request_edit',
+			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/requests\.php\?action=edit&id=.*/i
+		},
+		{
+			name: 'd3si_torrent_overview',
+			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/torrents\.php\?id=.*/i
+		},
+		{
 			name: 'ops_upload',
 			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/upload\.php.*/i
 		},
@@ -1177,7 +1200,9 @@ factory = {
 				'dic_request',
 				'waffles_upload',
 				'waffles_upload_new',
-				'waffles_request'
+				'waffles_request',
+				'd3si_upload',
+				'd3si_request'
 			];
 			for (const loc of locations) {
 				const replaceDescSettingKey = factory.makeReplaceDescriptionSettingsKey(
@@ -1664,7 +1689,7 @@ factory = {
 		const inputHTML =
 			'<input type="text" name="yadg_input" id="yadg_input" size="60" />';
 		const responseDivHTML = '<div id="yadg_response"></div>';
-		const toggleOptionsLinkHTML =
+		const toggleOptionsLinkHTML = 
 			'<a id="yadg_toggle_options" href="#">Toggle options</a>';
 		const scraperInfoLink =
 			'<a id="yadg_scraper_info" href="https://yadg.cc/available-scrapers" target="_blank" title="Get additional information on the available scrapers">[?]</a>';
@@ -1673,6 +1698,7 @@ factory = {
 			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'dic_upload':
+			case 'd3si_upload':
 			case 'pth_upload': {
 				const tr = document.createElement('tr');
 				tr.className = 'yadg_tr';
@@ -1692,6 +1718,7 @@ factory = {
 			case 'nwcd_edit':
 			case 'ops_edit':
 			case 'dic_edit':
+			case 'd3si_edit':
 			case 'pth_edit': {
 				const div = document.createElement('div');
 				div.className = 'yadg_div';
@@ -1716,6 +1743,7 @@ factory = {
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
 			case 'dic_torrent_overview':
+			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
 				const div = document.createElement('div');
 				div.id = 'yadg_div';
@@ -1742,6 +1770,8 @@ factory = {
 			case 'ops_request_edit':
 			case 'dic_request':
 			case 'dic_request_edit':
+			case 'd3si_request':
+			case 'd3si_request_edit':
 			case 'pth_request':
 			case 'pth_request_edit': {
 				const tr = document.createElement('tr');
@@ -1818,6 +1848,7 @@ factory = {
 			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'dic_upload':
+			case 'd3si_upload':
 			case 'pth_upload': {
 				const yearTr = document.querySelector('#year_tr');
 				yearTr.parentNode.insertBefore(element, yearTr);
@@ -1827,6 +1858,7 @@ factory = {
 			case 'nwcd_edit':
 			case 'ops_edit':
 			case 'dic_edit':
+			case 'd3si_edit':
 			case 'pth_edit': {
 				const [summaryInput] = document.getElementsByName('summary');
 				summaryInput.parentNode.insertBefore(
@@ -1839,6 +1871,7 @@ factory = {
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
 			case 'dic_torrent_overview':
+			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
 				const [addArtistsBox] = document.querySelectorAll('.box_addartists');
 				addArtistsBox.parentNode.insertBefore(
@@ -1854,6 +1887,8 @@ factory = {
 			case 'ops_request_edit':
 			case 'dic_request':
 			case 'dic_request_edit':
+			case 'd3si_request':
+			case 'd3si_request_edit':
 			case 'pth_request':
 			case 'pth_request_edit': {
 				const artistTr = document.querySelector('#artist_tr');
@@ -1904,6 +1939,7 @@ factory = {
 			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'dic_upload':
+			case 'd3si_upload':
 			case 'pth_upload':
 				if (factory.getDescriptionTargetSelect().value === 'album') {
 					return document.querySelector('#album_desc');
@@ -1925,12 +1961,14 @@ factory = {
 			case 'nwcd_edit':
 			case 'ops_edit':
 			case 'dic_edit':
+			case 'd3si_edit':
 			case 'pth_edit':
 				return document.getElementsByName('body')[0];
 
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
 			case 'dic_torrent_overview':
+			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview':
 				if (!{}.hasOwnProperty.call(this, 'dummybox')) {
 					this.dummybox = document.createElement('div');
@@ -1944,6 +1982,8 @@ factory = {
 			case 'ops_request_edit':
 			case 'dic_request':
 			case 'dic_request_edit':
+			case 'd3si_request':
+			case 'd3si_request_edit':
 			case 'pth_request':
 			case 'pth_request_edit':
 				return document.getElementsByName('description')[0];
@@ -1967,6 +2007,7 @@ factory = {
 	getFormFillFunction() {
 		const currentTarget = factory.getTargetSelect().value;
 		switch (this.currentLocation) {
+			case 'd3si_upload':
 			case 'pth_upload': {
 				// eslint-disable-next-line complexity
 				const f = function (rawData) {
@@ -2575,6 +2616,7 @@ factory = {
 			case 'nwcd_edit':
 			case 'ops_edit':
 			case 'dic_edit':
+			case 'd3si_edit':
 			case 'pth_edit': {
 				const f = function (rawData) {
 					const [summaryInput] = document.getElementsByName('summary');
@@ -2617,6 +2659,7 @@ factory = {
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
 			case 'dic_torrent_overview':
+			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
 				const f = function (rawData) {
 					let artistInputs = document.getElementsByName('aliasname[]');
@@ -2678,6 +2721,8 @@ factory = {
 			case 'ops_request_edit':
 			case 'dic_request':
 			case 'dic_request_edit':
+			case 'd3si_request':
+			case 'd3si_request_edit':
 			case 'pth_request':
 			case 'pth_request_edit': {
 				const f = function (rawData) {
@@ -3268,30 +3313,30 @@ yadg = {
 				}
 			}
 		}
-
+ 
 		if (rawData.title) {
 			result.title = rawData.title;
 		}
-
+ 
 		if (rawData.labelIds.length > 0) {
 			const [labelId] = rawData.labelIds;
 			if (labelId.label) {
 				result.label = labelId.label;
 			}
-
+ 
 			if (labelId.catalogueNrs.length > 0) {
 				[result.catalog] = labelId.catalogueNrs;
 			}
 		}
-
+ 
 		if (rawData.genres.length > 0) {
 			result.genre = rawData.genres;
 		}
-
+ 
 		if (rawData.styles.length > 0) {
 			result.style = rawData.styles;
 		}
-
+ 
 		if (result.genre !== false && result.style !== false) {
 			result.tags = rawData.genres.concat(rawData.styles);
 		} else if (result.genre !== false) {
@@ -3299,7 +3344,7 @@ yadg = {
 		} else if (result.style !== false) {
 			result.tags = rawData.styles;
 		}
-
+ 
 		if (result.tags !== false) {
 			result.tag_string = ''; // eslint-disable-line camelcase
 			result.tag_string_nodots = ''; // eslint-disable-line camelcase
