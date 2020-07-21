@@ -1689,7 +1689,7 @@ factory = {
 		const inputHTML =
 			'<input type="text" name="yadg_input" id="yadg_input" size="60" />';
 		const responseDivHTML = '<div id="yadg_response"></div>';
-		const toggleOptionsLinkHTML = 
+		const toggleOptionsLinkHTML =
 			'<a id="yadg_toggle_options" href="#">Toggle options</a>';
 		const scraperInfoLink =
 			'<a id="yadg_scraper_info" href="https://yadg.cc/available-scrapers" target="_blank" title="Get additional information on the available scrapers">[?]</a>';
@@ -3313,30 +3313,30 @@ yadg = {
 				}
 			}
 		}
- 
+
 		if (rawData.title) {
 			result.title = rawData.title;
 		}
- 
+
 		if (rawData.labelIds.length > 0) {
 			const [labelId] = rawData.labelIds;
 			if (labelId.label) {
 				result.label = labelId.label;
 			}
- 
+
 			if (labelId.catalogueNrs.length > 0) {
 				[result.catalog] = labelId.catalogueNrs;
 			}
 		}
- 
+
 		if (rawData.genres.length > 0) {
 			result.genre = rawData.genres;
 		}
- 
+
 		if (rawData.styles.length > 0) {
 			result.style = rawData.styles;
 		}
- 
+
 		if (result.genre !== false && result.style !== false) {
 			result.tags = rawData.genres.concat(rawData.styles);
 		} else if (result.genre !== false) {
@@ -3344,7 +3344,7 @@ yadg = {
 		} else if (result.style !== false) {
 			result.tags = rawData.styles;
 		}
- 
+
 		if (result.tags !== false) {
 			result.tag_string = ''; // eslint-disable-line camelcase
 			result.tag_string_nodots = ''; // eslint-disable-line camelcase
