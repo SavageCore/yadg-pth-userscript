@@ -48,7 +48,6 @@ let yadgRenderer; // eslint-disable-line prefer-const
 let yadgTemplates; // eslint-disable-line prefer-const
 let autoRehost;
 let autoPreview;
-let descriptionTarget; // eslint-disable-line no-unused-vars
 
 // --------- USER SETTINGS END ---------
 
@@ -97,11 +96,11 @@ function fetchImage(target, callback) {
 			break;
 		case /music.apple/.test(link): {
 			const regex = /apple\.com\/(?:([a-z]{2,3})\/)?.*\/(?:(\d+)|id(\d*))/;
-			const res = regex.exec(link);
-			const id = res[2] | res[3];
+			const result = regex.exec(link);
+			const id = result[2] | result[3];
 			let country = 'us';
-			if (res[1]) {
-				[, country] = res;
+			if (result[1]) {
+				[, country] = result;
 			}
 
 			GM.xmlHttpRequest({
@@ -144,10 +143,10 @@ function fetchImage(target, callback) {
 						const container = document.implementation.createHTMLDocument()
 							.documentElement;
 						container.innerHTML = response.responseText;
-						const [imgElem] = container.querySelectorAll(
+						const [imgElement_] = container.querySelectorAll(
 							'#tralbumArt > a > img'
 						);
-						if (!imgElem) {
+						if (!imgElement_) {
 							if (typeof callback === 'function') {
 								callback(false);
 							}
@@ -156,7 +155,7 @@ function fetchImage(target, callback) {
 						}
 
 						let originalImg;
-						const scaledImg = imgElem.src;
+						const scaledImg = imgElement_.src;
 						const settingCover = factory.getCoverSize().value;
 						if (settingCover === 'large') {
 							originalImg = scaledImg.replace(/_16/, '_0');
@@ -164,9 +163,9 @@ function fetchImage(target, callback) {
 							originalImg = scaledImg.replace(/_16/, '_10');
 						}
 
-						const tempImg = new Image();
-						tempImg.src = originalImg;
-						tempImg.addEventListener('load', function () {
+						const temporaryImg = new Image();
+						temporaryImg.src = originalImg;
+						temporaryImg.addEventListener('load', function () {
 							if (this.width === this.height) {
 								img = originalImg;
 							} else {
@@ -409,10 +408,10 @@ function insertImage(img, callback) {
 //
 // Source from: https://github.com/gergob/localstoragewrapper
 //
-function LocalStorageWrapper(applicationPrefix) {
+function LocalStorageWrapper(appPrefix) {
 	'use strict';
 
-	if (applicationPrefix === undefined) {
+	if (appPrefix === undefined) {
 		throw new Error('applicationPrefix parameter should be defined');
 	}
 
@@ -420,9 +419,9 @@ function LocalStorageWrapper(applicationPrefix) {
 
 	// If the passed in value for prefix is not string, it should be converted
 	const keyPrefix =
-		typeof applicationPrefix === 'string' ?
-			applicationPrefix :
-			JSON.stringify(applicationPrefix);
+		typeof appPrefix === 'string' ?
+			appPrefix :
+			JSON.stringify(appPrefix);
 
 	const localStorage = window.localStorage || unsafeWindow.localStorage;
 
@@ -575,7 +574,7 @@ const yadgUtil = {
 		script.setAttribute('type', 'application/javascript');
 		script.textContent = '(' + fn + ')();';
 		document.body.append(script); // Run the script
-		document.body.removeChild(script); // Clean up
+		script.remove(); // Clean up
 	},
 
 	// Handle for updating page css, taken from one of hateradio's scripts
@@ -1007,8 +1006,8 @@ factory = {
 		const button = document.querySelector('#yadg_submit');
 		button.addEventListener(
 			'click',
-			e => {
-				e.preventDefault();
+			event => {
+				event.preventDefault();
 				yadg.makeRequest();
 				if (factory.getFetchImageCheckbox().checked) {
 					fetchImage(null, data => {
@@ -1031,8 +1030,8 @@ factory = {
 		// Add the action for the options toggle
 		const toggleLink = document.querySelector('#yadg_toggle_options');
 		if (toggleLink !== null) {
-			toggleLink.addEventListener('click', e => {
-				e.preventDefault();
+			toggleLink.addEventListener('click', event => {
+				event.preventDefault();
 
 				const optionsDiv = document.querySelector('#yadg_options');
 				const {display} = optionsDiv.style;
@@ -1086,8 +1085,8 @@ factory = {
 		// add the action to the save settings link
 		const saveSettingsLink = document.querySelector('#yadg_save_settings');
 		if (saveSettingsLink !== null) {
-			saveSettingsLink.addEventListener('click', e => {
-				e.preventDefault();
+			saveSettingsLink.addEventListener('click', event => {
+				event.preventDefault();
 
 				factory.saveSettings();
 
@@ -1098,8 +1097,8 @@ factory = {
 		// Add the action to the clear cache link
 		const clearCacheLink = document.querySelector('#yadg_clear_cache');
 		if (clearCacheLink !== null) {
-			clearCacheLink.addEventListener('click', e => {
-				e.preventDefault();
+			clearCacheLink.addEventListener('click', event => {
+				event.preventDefault();
 
 				yadgUtil.storage.removeAll();
 
@@ -1224,7 +1223,6 @@ factory = {
 		const fetchImage = yadgUtil.settings.getItem(factory.KEY_FETCH_IMAGE);
 		autoRehost = yadgUtil.settings.getItem(factory.KEY_AUTO_REHOST);
 		autoPreview = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
-		descriptionTarget = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
 		const autoSelectScraper = yadgUtil.settings.getItem(
 			factory.KEY_AUTO_SELECT_SCRAPER
 		);
@@ -2117,8 +2115,8 @@ factory = {
 							tagsInput.value = '';
 						} else {
 							const tagsArray = data.tag_string.split(', ');
-							const tagsUnique = tagsArray.filter((elem, index, self) => {
-								return index === self.indexOf(elem);
+							const tagsUnique = tagsArray.filter((element, index, self) => {
+								return index === self.indexOf(element);
 							});
 							tagsInput.value = tagsUnique.join(',').toLowerCase();
 						}
@@ -2268,8 +2266,8 @@ factory = {
 							tagsInput.value = '';
 						} else {
 							const tagsArray = data.tag_string.split(', ');
-							const tagsUnique = tagsArray.filter((elem, index, self) => {
-								return index === self.indexOf(elem);
+							const tagsUnique = tagsArray.filter((element, index, self) => {
+								return index === self.indexOf(element);
 							});
 							tagsInput.value = tagsUnique.join(',').toLowerCase();
 						}
@@ -2417,8 +2415,8 @@ factory = {
 							tagsInput.value = '';
 						} else {
 							const tagsArray = data.tag_string.split(', ');
-							const tagsUnique = tagsArray.filter((elem, index, self) => {
-								return index === self.indexOf(elem);
+							const tagsUnique = tagsArray.filter((element, index, self) => {
+								return index === self.indexOf(element);
 							});
 							tagsInput.value = tagsUnique.join(',').toLowerCase();
 						}
@@ -2570,8 +2568,8 @@ factory = {
 							tagsInput.value = '';
 						} else {
 							const tagsArray = data.tag_string.split(', ');
-							const tagsUnique = tagsArray.filter((elem, index, self) => {
-								return index === self.indexOf(elem);
+							const tagsUnique = tagsArray.filter((element, index, self) => {
+								return index === self.indexOf(element);
 							});
 							tagsInput.value = tagsUnique.join(',').toLowerCase();
 						}
@@ -3067,14 +3065,14 @@ yadg = {
 		request.send();
 	},
 
-	makeRequest(params) {
+	makeRequest(parameters) {
 		if (this.isBusy) {
 			return;
 		}
 
 		let data;
-		if (params) {
-			data = params;
+		if (parameters) {
+			data = parameters;
 		} else {
 			// If beta.musicbrainz.org link strip query params and remove beta
 			if (this.input.value.includes('beta.musicbrainz.org')) {
@@ -3143,8 +3141,8 @@ yadg = {
 
 						a.addEventListener(
 							'click',
-							function (e) {
-								e.preventDefault();
+							event => {
+								event.preventDefault();
 								yadg.makeRequest(this.params);
 								if (factory.getFetchImageCheckbox().checked) {
 									fetchImage(this.href, data => {

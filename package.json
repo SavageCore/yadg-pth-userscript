@@ -3,7 +3,7 @@
     "test": "xo"
   },
   "devDependencies": {
-    "xo": "^0.25.3"
+    "xo": "^0.32.1"
   },
   "xo": {
     "plugins": [
@@ -22,5 +22,6 @@
     "type": "git",
     "url": "git://github.com/SavageCore/yadg-pth-userscript.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {}
 }
