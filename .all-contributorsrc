@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "gbmf",
+      "name": "gbmf",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/5228520?v=4",
+      "profile": "https://github.com/gbmf",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "yadg-pth-userscript",
+  "projectOwner": "SavageCore",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
