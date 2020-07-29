@@ -48,6 +48,7 @@ let yadgRenderer; // eslint-disable-line prefer-const
 let yadgTemplates; // eslint-disable-line prefer-const
 let autoRehost;
 let autoPreview;
+let descriptionTarget;
 
 // --------- USER SETTINGS END ---------
 
@@ -1223,6 +1224,7 @@ factory = {
 		const fetchImage = yadgUtil.settings.getItem(factory.KEY_FETCH_IMAGE);
 		autoRehost = yadgUtil.settings.getItem(factory.KEY_AUTO_REHOST);
 		autoPreview = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
+		descriptionTarget = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW); // eslint-disable-line no-unused-vars
 		const autoSelectScraper = yadgUtil.settings.getItem(
 			factory.KEY_AUTO_SELECT_SCRAPER
 		);
@@ -3141,7 +3143,7 @@ yadg = {
 
 						a.addEventListener(
 							'click',
-							event => {
+							function (event) {
 								event.preventDefault();
 								yadg.makeRequest(this.params);
 								if (factory.getFetchImageCheckbox().checked) {
