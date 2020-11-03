@@ -63,12 +63,7 @@ function fetchImage(target, callback) {
 		return;
 	}
 
-	let link;
-	if (target === null) {
-		link = unsafeWindow.$('#yadg_input').val();
-	} else {
-		link = target;
-	}
+	const link = target === null ? unsafeWindow.$('#yadg_input').val() : target;
 
 	switch (true) {
 		case /discogs/.test(link):
@@ -110,19 +105,14 @@ function fetchImage(target, callback) {
 				onload(response) {
 					if (response.status === 200) {
 						const data = JSON.parse(response.responseText);
-						let hires;
 						const settingCover = factory.getCoverSize().value;
-						if (settingCover === 'large') {
-							hires = data.results[0].artworkUrl100.replace(
-								'100x100bb',
-								'100000x100000-999'
-							);
-						} else {
-							hires = data.results[0].artworkUrl100.replace(
-								'100x100bb',
-								'700x700bb'
-							);
-						}
+						const hires = settingCover === 'large' ? data.results[0].artworkUrl100.replace(
+							'100x100bb',
+							'100000x100000-999'
+						) : data.results[0].artworkUrl100.replace(
+							'100x100bb',
+							'700x700bb'
+						);
 
 						if (typeof callback === 'function') {
 							callback(hires);
@@ -155,23 +145,14 @@ function fetchImage(target, callback) {
 							return false;
 						}
 
-						let originalImg;
 						const scaledImg = imgElement_.src;
 						const settingCover = factory.getCoverSize().value;
-						if (settingCover === 'large') {
-							originalImg = scaledImg.replace(/_16/, '_0');
-						} else {
-							originalImg = scaledImg.replace(/_16/, '_10');
-						}
+						const originalImg = settingCover === 'large' ? scaledImg.replace(/_16/, '_0') : scaledImg.replace(/_16/, '_10');
 
 						const temporaryImg = new Image();
 						temporaryImg.src = originalImg;
 						temporaryImg.addEventListener('load', function () {
-							if (this.width === this.height) {
-								img = originalImg;
-							} else {
-								img = scaledImg;
-							}
+							img = this.width === this.height ? originalImg : scaledImg;
 
 							if (typeof callback === 'function') {
 								callback(img);
@@ -292,16 +273,11 @@ function fetchImage(target, callback) {
 				onload(response) {
 					if (response.status === 200) {
 						const data = JSON.parse(response.responseText);
-						let cover;
 						const settingCover = factory.getCoverSize().value;
-						if (settingCover === 'large') {
-							cover = data.cover_xl.replace(
-								'1000x1000-000000-80-0-0.jpg',
-								'1400x1400-000000-100-0-0.jpg'
-							);
-						} else {
-							cover = data.cover_xl;
-						}
+						const cover = settingCover === 'large' ? data.cover_xl.replace(
+							'1000x1000-000000-80-0-0.jpg',
+							'1400x1400-000000-100-0-0.jpg'
+						) : data.cover_xl;
 
 						if (typeof callback === 'function') {
 							callback(cover);
