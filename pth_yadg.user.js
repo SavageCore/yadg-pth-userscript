@@ -26,6 +26,7 @@
 // @include        http*://*d3si.net/upload.php*
 // @include        http*://*d3si.net/requests.php*
 // @include        http*://*d3si.net/torrents.php*
+// @updateURL      https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.meta.js
 // @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
 // ==/UserScript==
 
