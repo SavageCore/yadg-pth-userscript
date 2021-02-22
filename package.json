@@ -3,7 +3,7 @@
     "test": "xo"
   },
   "devDependencies": {
-    "xo": "^0.34.2"
+    "xo": "^0.38.1"
   },
   "xo": {
     "plugins": [
