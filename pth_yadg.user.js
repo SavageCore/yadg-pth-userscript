@@ -81,7 +81,7 @@ function fetchImage(target, callback) {
 								JSON.parse(
 									container
 										.querySelectorAll(
-											'div.image_gallery.image_gallery_large'
+											'.image_gallery.image_gallery_large'
 										)[0]
 										.getAttribute('data-images')
 								)[0].full
