@@ -22,6 +22,5 @@
     "type": "git",
     "url": "git://github.com/SavageCore/yadg-pth-userscript.git"
   },
-  "license": "MIT",
-  "dependencies": {}
+  "license": "MIT"
 }
