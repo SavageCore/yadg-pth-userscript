@@ -3327,7 +3327,7 @@ yadg = {
 			result.tag_string_nodots = ''; // eslint-disable-line camelcase
 
 			for (let i = 0; i < result.tags.length; i++) {
-				result.tag_string += result.tags[i].replace(/\s+/g, '.'); // eslint-disable-line camelcase
+				result.tag_string += result.tags[i].replace(/\s+/g, '.').replace(/\bn\b|&/, 'and'); // eslint-disable-line camelcase
 				result.tag_string_nodots += result.tags[i].replace(/\s+/g, ' '); // eslint-disable-line camelcase
 				if (i !== result.tags.length - 1) {
 					result.tag_string += ', '; // eslint-disable-line camelcase
