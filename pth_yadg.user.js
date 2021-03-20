@@ -437,10 +437,9 @@ function LocalStorageWrapper(appPrefix) {
 	// saves the value associated to the key into the localStorage
 	//
 	const addItem = function (key, value) {
-		const that = this;
 		try {
 			const checkedKey = makeChecks(key);
-			const combinedKey = that.getKeyPrefix() + delimiter + checkedKey;
+			const combinedKey = this.getKeyPrefix() + delimiter + checkedKey;
 			localStorage.setItem(combinedKey, JSON.stringify(value));
 		} catch (error) {
 			console.log(error);
@@ -452,11 +451,10 @@ function LocalStorageWrapper(appPrefix) {
 	// gets the value of the object saved to the key passed as parameter
 	//
 	const getItem = function (key) {
-		const that = this;
 		let result;
 		try {
 			const checkedKey = makeChecks(key);
-			const combinedKey = that.getKeyPrefix() + delimiter + checkedKey;
+			const combinedKey = this.getKeyPrefix() + delimiter + checkedKey;
 			const resultAsJSON = localStorage.getItem(combinedKey);
 			result = JSON.parse(resultAsJSON);
 		} catch (error) {
@@ -498,11 +496,10 @@ function LocalStorageWrapper(appPrefix) {
 	// removes the value associated to the key from the localStorage
 	//
 	const removeItem = function (key) {
-		const that = this;
 		let result = false;
 		try {
 			const checkedKey = makeChecks(key);
-			const combinedKey = that.getKeyPrefix() + delimiter + checkedKey;
+			const combinedKey = this.getKeyPrefix() + delimiter + checkedKey;
 			localStorage.removeItem(combinedKey);
 			result = true;
 		} catch (error) {
@@ -517,13 +514,11 @@ function LocalStorageWrapper(appPrefix) {
 	// removes all the values from the localStorage
 	//
 	const removeAll = function () {
-		const that = this;
-
 		try {
-			const allKeys = that.getAllKeys();
+			const allKeys = this.getAllKeys();
 			for (const key of allKeys) {
 				const checkedKey = makeChecks(key);
-				const combinedKey = that.getKeyPrefix() + delimiter + checkedKey;
+				const combinedKey = this.getKeyPrefix() + delimiter + checkedKey;
 				localStorage.removeItem(combinedKey);
 			}
 		} catch (error) {
@@ -740,8 +735,8 @@ const yadgSandbox = {
 				callback(out);
 			},
 			input: {template, data},
-			onerror(err) {
-				error(err);
+			onerror(error_) {
+				error(error_);
 			}
 		});
 	},
@@ -1087,7 +1082,7 @@ factory = {
 		const lastChecked = yadgUtil.storage.getItem(factory.KEY_LAST_CHECKED);
 		if (
 			lastChecked === null ||
-			new Date().getTime() - new Date(lastChecked).getTime() >
+			Date.now() - new Date(lastChecked).getTime() >
 			factory.CACHE_TIMEOUT
 		) {
 			// Update the scraper and formats list
@@ -1141,18 +1136,18 @@ factory = {
 	// Disable fields when groupid set
 	inputsOff(url) {
 		if (/groupid=\d+/.test(url)) {
-			[
+			for (const i of [
 				'artists[]',
 				'importance[]',
 				'title',
 				'releasetype',
 				'genre_tags',
 				'tags'
-			].forEach(i => {
-				document.getElementsByName(i).forEach(i => {
-					i.readOnly = true;
-				});
-			});
+			]) {
+				for (const element of document.getElementsByName(i)) {
+					element.readOnly = true;
+				}
+			}
 		}
 	},
 
@@ -1229,7 +1224,7 @@ factory = {
 			}
 		}
 
-		if (autoPreview && window.location.href.match(/\/upload\.php/)) {
+		if (autoPreview && /\/upload\.php/.test(window.location.href)) {
 			const autoPreviewCheckbox = factory.getAutoPreviewCheckbox();
 			autoPreviewCheckbox.checked = true;
 		}
@@ -1278,7 +1273,7 @@ factory = {
 			autoRehost = autoRehostCheckbox.checked;
 		}
 
-		if (window.location.href.match(/\/upload\.php/)) {
+		if (/\/upload\.php/.test(window.location.href)) {
 			autoPreview = autoPreviewCheckbox.checked;
 		}
 
@@ -1355,7 +1350,7 @@ factory = {
 
 		if (autoPreview) {
 			yadgUtil.settings.addItem(factory.KEY_AUTO_PREVIEW, true);
-		} else if (!autoPreview && window.location.href.match(/\/upload\.php/)) {
+		} else if (!autoPreview && /\/upload\.php/.test(window.location.href)) {
 			yadgUtil.settings.removeItem(factory.KEY_AUTO_PREVIEW);
 		}
 
@@ -1387,20 +1382,18 @@ factory = {
 				descBox.value = value;
 			}
 
-			if (
+			if ((
 				factory.currentLocation !== 'pth_torrent_overview' || factory.currentLocation !==
 				'ops_torrent_overview'
-			) {
-				if (descBox.parentNode.nextSibling.nextSibling) {
-					const previewBtn =
+			) && descBox.parentNode.nextSibling.nextSibling) {
+				const previewBtn =
 						descBox.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
-					if (
-						previewBtn &&
+				if (
+					previewBtn &&
 						previewBtn.value === 'Preview' &&
 						factory.getAutoPreviewCheckbox().checked
-					) {
-						previewBtn.click();
-					}
+				) {
+					previewBtn.click();
 				}
 			}
 		} else if (Array.isArray(descBox)) {
@@ -1654,7 +1647,7 @@ factory = {
 				'<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://redacted.ch/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
 		}
 
-		if (window.location.href.match(/\/upload\.php/)) {
+		if (/\/upload\.php/.test(window.location.href)) {
 			optionsHTML +=
 				'<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
 		}
@@ -2413,24 +2406,20 @@ factory = {
 						);
 					}
 
-					if (labelInput) {
-						if (labelInput.getAttribute('disabled') !== 'disabled') {
-							yadgUtil.setValueIfSet(
-								data.label,
-								labelInput,
-								data.label !== false
-							);
-						}
+					if (labelInput && labelInput.getAttribute('disabled') !== 'disabled') {
+						yadgUtil.setValueIfSet(
+							data.label,
+							labelInput,
+							data.label !== false
+						);
 					}
 
-					if (catalogInput) {
-						if (catalogInput.getAttribute('disabled') !== 'disabled') {
-							yadgUtil.setValueIfSet(
-								data.catalog,
-								catalogInput,
-								data.catalog !== false
-							);
-						}
+					if (catalogInput && catalogInput.getAttribute('disabled') !== 'disabled') {
+						yadgUtil.setValueIfSet(
+							data.catalog,
+							catalogInput,
+							data.catalog !== false
+						);
 					}
 				};
 
@@ -2566,24 +2555,20 @@ factory = {
 						);
 					}
 
-					if (labelInput) {
-						if (labelInput.getAttribute('disabled') !== 'disabled') {
-							yadgUtil.setValueIfSet(
-								data.label,
-								labelInput,
-								data.label !== false
-							);
-						}
+					if (labelInput && labelInput.getAttribute('disabled') !== 'disabled') {
+						yadgUtil.setValueIfSet(
+							data.label,
+							labelInput,
+							data.label !== false
+						);
 					}
 
-					if (catalogInput) {
-						if (catalogInput.getAttribute('disabled') !== 'disabled') {
-							yadgUtil.setValueIfSet(
-								data.catalog,
-								catalogInput,
-								data.catalog !== false
-							);
-						}
+					if (catalogInput && catalogInput.getAttribute('disabled') !== 'disabled') {
+						yadgUtil.setValueIfSet(
+							data.catalog,
+							catalogInput,
+							data.catalog !== false
+						);
 					}
 				};
 
@@ -2905,7 +2890,7 @@ factory = {
 
 			default:
 				// That should actually never happen
-				return function () { };
+				return function () {};
 		}
 	}
 };
