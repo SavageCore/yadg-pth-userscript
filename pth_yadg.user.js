@@ -1353,55 +1353,33 @@ factory = {
 
 	setDescriptionBoxValue(value) {
 		const descBox = factory.getDescriptionBox();
-		const replaceDescCheckbox = factory.getReplaceDescriptionCheckbox();
-		let replaceDesc = false;
+		const replaceDesc = factory.getReplaceDescriptionCheckbox().checked;
+		const skipAutoPreview = ['pth_torrent_overview', 'ops_torrent_overview']
+			.includes(factory.currentLocation);
 
-		if (replaceDescCheckbox !== null) {
-			replaceDesc = replaceDescCheckbox.checked;
-		}
-
-		if (descBox !== null && !Array.isArray(descBox)) {
-			if (descBox.getAttribute('disabled') === 'disabled') {
-				return;
+		const boxes = Array.isArray(descBox) ? descBox : [descBox];
+		for (const box of boxes) {
+			const disabled = box.getAttribute('disabled');
+			if (disabled === 'disabled') {
+				continue;
 			}
 
-			if (!replaceDesc && /\S/.test(descBox.value)) {
-				// Check if the current description contains more than whitespace
-				descBox.value += '\n\n' + value;
+			if (replaceDesc) {
+				box.value = value;
 			} else {
-				descBox.value = value;
+				const blankline = /\S/.test(box.value) ? '\n\n' : '';
+				box.value += blankline + value;
 			}
 
-			if ((
-				factory.currentLocation !== 'pth_torrent_overview' || factory.currentLocation
-				!== 'ops_torrent_overview'
-			) && descBox.parentNode.nextSibling.nextSibling) {
-				const previewBtn
-					= descBox.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
-				if (
-					previewBtn
-					&& previewBtn.value === 'Preview'
-					&& factory.getAutoPreviewCheckbox().checked
-				) {
-					previewBtn.click();
-				}
+			if (skipAutoPreview) {
+				continue;
 			}
-		} else if (Array.isArray(descBox)) {
-			for (const element of descBox) {
-				if (element.getAttribute('disabled') === 'disabled') {
-					continue;
-				}
 
-				element.value = value;
-				const previewBtn
-					= element.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
-				if (
-					previewBtn
-					&& previewBtn.value === 'Preview'
-					&& factory.getAutoPreviewCheckbox().checked
-				) {
-					previewBtn.click();
-				}
+			const div = box.parentNode.nextSibling.nextSibling;
+			const button = div.firstChild.nextSibling;
+			const autoPreviewChecked = factory.getAutoPreviewCheckbox().checked;
+			if (button && autoPreviewChecked) {
+				button.click();
 			}
 		}
 	},
