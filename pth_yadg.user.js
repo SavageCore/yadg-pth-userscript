@@ -78,16 +78,12 @@ function fetchImage(target, callback) {
 						const container = document.implementation.createHTMLDocument()
 							.documentElement;
 						container.innerHTML = response.responseText;
-						if (typeof callback === 'function') {
-							callback(
-								JSON.parse(
-									container
-										.querySelectorAll(
-											'.image_gallery.image_gallery_large',
-										)[0]
-										.getAttribute('data-images'),
-								)[0].full,
-							);
+						const script = container.querySelector('#release_schema');
+						try {
+							const data = JSON.parse(script.textContent);
+							callback(data.image);
+						} catch {
+							callback(false);
 						}
 					}
 				},
