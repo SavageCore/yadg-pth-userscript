@@ -1352,8 +1352,9 @@ factory = {
 	setDescriptionBoxValue(value) {
 		const descBox = factory.getDescriptionBox();
 		const replaceDesc = factory.getReplaceDescriptionCheckbox().checked;
-		const skipAutoPreview = ['pth_torrent_overview', 'ops_torrent_overview']
-			.includes(factory.currentLocation);
+		const skipAutoPreview = ['pth_torrent_overview',
+			'ops_torrent_overview',
+			'dic_torrent_overview'].includes(factory.currentLocation);
 
 		const boxes = Array.isArray(descBox) ? descBox : [descBox];
 		for (const box of boxes) {
