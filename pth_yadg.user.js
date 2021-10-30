@@ -1259,6 +1259,7 @@ factory = {
 		const replaceDescription = replaceDescCheckbox.checked;
 		const fetchImage = fetchImageCheckbox.checked;
 		const autoSelectScraper = autoSelectScraperCheckbox.checked;
+		const autoPreview = autoPreviewCheckbox.checked;
 		if (autoRehostCheckbox) {
 			autoRehost = autoRehostCheckbox.checked;
 		}
