@@ -33,11 +33,11 @@
 // --------- USER SETTINGS START ---------
 
 /*	global window	unsafeWindow document GM JSandbox formatName AddArtistField RemoveArtistField Blob alert Image */
-/*	eslint max-depth: ['off'], block-scoped-var: 'off', no-loop-func: 'off', no-alert: 'off' */
+/*	eslint max-depth: 'off', block-scoped-var: 'off', no-loop-func: 'off', no-alert: 'off', unicorn/prefer-module: 'off', no-bitwise: 'off' */
 
 /*
- Here you can set site specific default templates.
- You can find a list of available templates at: https://yadg.cc/api/v2/templates/
+Here you can set site specific default templates.
+You can find a list of available templates at: https://yadg.cc/api/v2/templates/
 */
 const defaultPTHFormat = 5;
 const defaultWafflesFormat = 9;
@@ -49,7 +49,6 @@ let yadgRenderer; // eslint-disable-line prefer-const
 let yadgTemplates; // eslint-disable-line prefer-const
 let autoRehost;
 let autoPreview;
-let descriptionTarget;
 
 // --------- USER SETTINGS END ---------
 
@@ -81,14 +80,14 @@ function fetchImage(target, callback) {
 								JSON.parse(
 									container
 										.querySelectorAll(
-											'.image_gallery.image_gallery_large'
+											'.image_gallery.image_gallery_large',
 										)[0]
-										.getAttribute('data-images')
-								)[0].full
+										.getAttribute('data-images'),
+								)[0].full,
 							);
 						}
 					}
-				}
+				},
 			});
 			break;
 		case /music.apple/.test(link): {
@@ -109,17 +108,17 @@ function fetchImage(target, callback) {
 						const settingCover = factory.getCoverSize().value;
 						const hires = settingCover === 'large' ? data.results[0].artworkUrl100.replace(
 							'100x100bb',
-							'100000x100000-999'
+							'100000x100000-999',
 						) : data.results[0].artworkUrl100.replace(
 							'100x100bb',
-							'700x700bb'
+							'700x700bb',
 						);
 
 						if (typeof callback === 'function') {
 							callback(hires);
 						}
 					}
-				}
+				},
 			});
 			break;
 		}
@@ -136,7 +135,7 @@ function fetchImage(target, callback) {
 							.documentElement;
 						container.innerHTML = response.responseText;
 						const [imgElement_] = container.querySelectorAll(
-							'#tralbumArt > a > img'
+							'#tralbumArt > a > img',
 						);
 						if (!imgElement_) {
 							if (typeof callback === 'function') {
@@ -160,7 +159,7 @@ function fetchImage(target, callback) {
 							}
 						});
 					}
-				}
+				},
 			});
 			break;
 		}
@@ -177,12 +176,12 @@ function fetchImage(target, callback) {
 						if (typeof callback === 'function') {
 							callback(
 								container.querySelectorAll(
-									'div.interior-release-chart-artwork-parent > img'
-								)[0].src
+									'div.interior-release-chart-artwork-parent > img',
+								)[0].src,
 							);
 						}
 					}
-				}
+				},
 			});
 			break;
 		case /musicbrainz/.test(link): {
@@ -190,7 +189,7 @@ function fetchImage(target, callback) {
 			const {1: id} = regex.exec(link);
 			GM.xmlHttpRequest({
 				headers: {
-					'User-Agent': 'YADG/1.4.41 (yadg.cc)'
+					'User-Agent': 'YADG/1.4.41 (yadg.cc)',
 				},
 				method: 'GET',
 				url: 'http://coverartarchive.org/release/' + id + '/',
@@ -201,7 +200,7 @@ function fetchImage(target, callback) {
 							callback(data.images[0].image);
 						}
 					}
-				}
+				},
 			});
 			break;
 		}
@@ -219,7 +218,7 @@ function fetchImage(target, callback) {
 							callback(container.querySelector('.img-fluid-fill').src);
 						}
 					}
-				}
+				},
 			});
 			break;
 		case /metal-archives/.test(link):
@@ -234,13 +233,13 @@ function fetchImage(target, callback) {
 
 						const parser = document.createElement('a');
 						parser.href = container.querySelectorAll('#cover > img')[0].src;
-						const imgLink =
-							parser.protocol + '//' + parser.hostname + parser.pathname;
+						const imgLink
+							= parser.protocol + '//' + parser.hostname + parser.pathname;
 						if (typeof callback === 'function') {
 							callback(imgLink);
 						}
 					}
-				}
+				},
 			});
 			break;
 		case /allmusic/.test(link):
@@ -261,7 +260,7 @@ function fetchImage(target, callback) {
 							}
 						}
 					}
-				}
+				},
 			});
 			break;
 		case /deezer/.test(link): {
@@ -277,14 +276,14 @@ function fetchImage(target, callback) {
 						const settingCover = factory.getCoverSize().value;
 						const cover = settingCover === 'large' ? data.cover_xl.replace(
 							'1000x1000-000000-80-0-0.jpg',
-							'1400x1400-000000-100-0-0.jpg'
+							'1400x1400-000000-100-0-0.jpg',
 						) : data.cover_xl;
 
 						if (typeof callback === 'function') {
 							callback(cover);
 						}
 					}
-				}
+				},
 			});
 			break;
 		}
@@ -307,7 +306,7 @@ function pthImgIt() {
 		case (window.location.href.match(/torrents\.php\?action=editgroup/) || {})
 			.input: {
 			imgElement = document.querySelectorAll(
-				'#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)'
+				'#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)',
 			)[0].value;
 			break;
 		}
@@ -334,9 +333,9 @@ function insertImage(img, callback) {
 
 			input.parentNode.parentNode.insertAdjacentHTML(
 				'beforebegin',
-				'<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="' +
-				img +
-				'" width="300px" /></tr></td>'
+				'<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="'
+				+ img
+				+ '" width="300px" /></tr></td>',
 			);
 			callback();
 			break;
@@ -345,14 +344,14 @@ function insertImage(img, callback) {
 		case (window.location.href.match(/torrents\.php\?action=editgroup/) || {})
 			.input: {
 			const [imageInputElement] = document.querySelectorAll(
-				'#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)'
+				'#content > div > div:nth-child(2) > form > div > input[type="text"]:nth-child(5)',
 			);
 			imageInputElement.value = img;
 			imageInputElement.parentNode.insertAdjacentHTML(
 				'beforebegin',
-				'<div id="yadg_image_preview_div"><img id="yadg_image_preview" src="' +
-					img +
-					'" width="300px" /></div>'
+				'<div id="yadg_image_preview_div"><img id="yadg_image_preview" src="'
+					+ img
+					+ '" width="300px" /></div>',
 			);
 			callback();
 			break;
@@ -360,14 +359,14 @@ function insertImage(img, callback) {
 
 		case (window.location.href.match(/requests\.php\?/) || {}).input: {
 			const [imageInputElement] = document.querySelectorAll(
-				'#image_tr > td:nth-child(2) > input[type="text"]:nth-child(1)'
+				'#image_tr > td:nth-child(2) > input[type="text"]:nth-child(1)',
 			);
 			imageInputElement.value = img;
 			imageInputElement.parentNode.parentNode.insertAdjacentHTML(
 				'beforebegin',
-				'<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="' +
-				img +
-				'" width="300px" /></tr></td>'
+				'<tr id="yadg_image_preview_tr"><td class="label">Album Art Preview:</td><td><img id="yadg_image_preview" src="'
+				+ img
+				+ '" width="300px" /></tr></td>',
 			);
 			callback();
 			break;
@@ -396,10 +395,10 @@ function LocalStorageWrapper(appPrefix) {
 	const delimiter = '_';
 
 	// If the passed in value for prefix is not string, it should be converted
-	const keyPrefix =
-		typeof appPrefix === 'string' ?
-			appPrefix :
-			JSON.stringify(appPrefix);
+	const keyPrefix
+		= typeof appPrefix === 'string'
+			? appPrefix
+			: JSON.stringify(appPrefix);
 
 	const localStorage = window.localStorage || unsafeWindow.localStorage;
 
@@ -423,7 +422,7 @@ function LocalStorageWrapper(appPrefix) {
 
 		if (!isLocalStorageAvailable()) {
 			throw new Error(
-				'LocalStorage is not supported by your browser, data cannot be saved'
+				'LocalStorage is not supported by your browser, data cannot be saved',
 			);
 		}
 
@@ -478,7 +477,7 @@ function LocalStorageWrapper(appPrefix) {
 
 		if (!isLocalStorageAvailable()) {
 			throw new Error(
-				'LocalStorage is not supported by your browser, data cannot be saved'
+				'LocalStorage is not supported by your browser, data cannot be saved',
 			);
 		}
 
@@ -535,7 +534,7 @@ function LocalStorageWrapper(appPrefix) {
 		getItem,
 		getAllKeys,
 		removeItem,
-		removeAll
+		removeAll,
 	};
 }
 
@@ -556,7 +555,7 @@ const yadgUtil = {
 			this.style = document.createElement('style');
 			this.style.type = 'text/css';
 			(document.head || document.querySelectorAll('head')[0]).append(
-				this.style
+				this.style,
 			);
 		}
 
@@ -564,11 +563,7 @@ const yadgUtil = {
 	},
 
 	setValueIfSet(value, input, cond) {
-		if (cond) {
-			input.value = value;
-		} else {
-			input.value = '';
-		}
+		input.value = cond ? value : '';
 	},
 
 	// Negative count will remove, positive count will add given number of artist boxes
@@ -601,7 +596,7 @@ const yadgUtil = {
 
 	storage: new LocalStorageWrapper('yadg'),
 
-	settings: new LocalStorageWrapper('yadgSettings')
+	settings: new LocalStorageWrapper('yadgSettings'),
 };
 
 // Very simple wrapper for XmlHttpRequest
@@ -627,7 +622,7 @@ function Requester(url, method, callback, data, errorCallback) {
 					errorCallback();
 				}
 			},
-			onerror: errorCallback
+			onerror: errorCallback,
 		};
 		if (method === 'POST') {
 			details.data = JSON.stringify(this.data);
@@ -635,12 +630,12 @@ function Requester(url, method, callback, data, errorCallback) {
 
 		const headers = {
 			Accept: 'application/json',
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
 		};
 
 		if (yadgUtil.settings.getItem(factory.KEY_API_TOKEN)) {
-			headers.Authorization =
-				'Token ' + yadgUtil.settings.getItem(factory.KEY_API_TOKEN);
+			headers.Authorization
+				= 'Token ' + yadgUtil.settings.getItem(factory.KEY_API_TOKEN);
 		}
 
 		details.headers = headers;
@@ -665,7 +660,7 @@ const yadgSandbox = {
 					const URL = window.URL || window.webkitURL;
 					if (!URL || !URL.createObjectURL) {
 						throw new Error(
-							'No no valid implementation of window.URL.createObjectURL found.'
+							'No no valid implementation of window.URL.createObjectURL found.',
 						);
 					}
 
@@ -678,7 +673,7 @@ const yadgSandbox = {
 			},
 			onerror() {
 				yadgSandbox.initCallbackError();
-			}
+			},
 		});
 	},
 
@@ -701,10 +696,10 @@ const yadgSandbox = {
 								yadgSandbox.swigCustomScript = response.responseText;
 								callback();
 							}
-						}
+						},
 					});
 				}
-			}
+			},
 		});
 	},
 
@@ -717,18 +712,18 @@ const yadgSandbox = {
 		yadgSandbox.exec({data: this.swigScript, onerror: yadg.failedCallback});
 		yadgSandbox.exec({
 			data: this.swigCustomScript,
-			onerror: yadg.failedCallback
+			onerror: yadg.failedCallback,
 		});
 		yadgSandbox.exec({
 			data:
 				'var myswig = new swig.Swig({ loader: swig.loaders.memory(input.templates), autoescape: false }), i=0; yadg_filters.register_filters(myswig);',
-			input: {templates: dependencies}
+			input: {templates: dependencies},
 		});
 	},
 
 	renderTemplate(template, data, callback, error) {
-		const evalString =
-			'myswig.render(input.template, { locals: input.data, filename: \'scratchpad\' + (i++) })';
+		const evalString
+			= 'myswig.render(input.template, { locals: input.data, filename: \'scratchpad\' + (i++) })';
 		this.eval({
 			data: evalString,
 			callback(out) {
@@ -737,7 +732,7 @@ const yadgSandbox = {
 			input: {template, data},
 			onerror(error_) {
 				error(error_);
-			}
+			},
 		});
 	},
 
@@ -770,15 +765,15 @@ const yadgSandbox = {
 		const lastWarning = yadgUtil.storage.getItem(this.KEY_LAST_WARNING);
 		const now = new Date();
 		if (
-			lastWarning === null ||
-			now.getTime() - new Date(lastWarning).getTime() > factory.CACHE_TIMEOUT
+			lastWarning === null
+			|| now.getTime() - new Date(lastWarning).getTime() > factory.CACHE_TIMEOUT
 		) {
 			console.log(
-				'Could not load the necessary script files for executing YADG. If this error persists you might need to update the user script. You will only get this message once a day.'
+				'Could not load the necessary script files for executing YADG. If this error persists you might need to update the user script. You will only get this message once a day.',
 			);
 			yadgUtil.storage.addItem(this.KEY_LAST_WARNING, now);
 		}
-	}
+	},
 };
 
 factory = {
@@ -807,112 +802,112 @@ factory = {
 	locations: [
 		{
 			name: 'pth_upload',
-			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/upload\.php.*/i
+			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/upload\.php.*/i,
 		},
 		{
 			name: 'pth_edit',
-			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/torrents\.php\?action=editgroup&groupid=.*/i
+			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/torrents\.php\?action=editgroup&groupid=.*/i,
 		},
 		{
 			name: 'pth_request',
-			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/requests\.php\?action=new/i
+			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/requests\.php\?action=new/i,
 		},
 		{
 			name: 'pth_request_edit',
-			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/requests\.php\?action=edit&id=.*/i
+			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/requests\.php\?action=edit&id=.*/i,
 		},
 		{
 			name: 'pth_torrent_overview',
-			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/torrents\.php\?id=.*/i
+			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/torrents\.php\?id=.*/i,
 		},
 		{
 			name: 'd3si_upload',
-			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/upload\.php.*/i
+			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/upload\.php.*/i,
 		},
 		{
 			name: 'd3si_edit',
-			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/torrents\.php\?action=editgroup&groupid=.*/i
+			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/torrents\.php\?action=editgroup&groupid=.*/i,
 		},
 		{
 			name: 'd3si_request',
-			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/requests\.php\?action=new/i
+			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/requests\.php\?action=new/i,
 		},
 		{
 			name: 'd3si_request_edit',
-			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/requests\.php\?action=edit&id=.*/i
+			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/requests\.php\?action=edit&id=.*/i,
 		},
 		{
 			name: 'd3si_torrent_overview',
-			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/torrents\.php\?id=.*/i
+			regex: /http(s)?:\/\/(.*\.)?d3si\.net\/torrents\.php\?id=.*/i,
 		},
 		{
 			name: 'ops_upload',
-			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/upload\.php.*/i
+			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/upload\.php.*/i,
 		},
 		{
 			name: 'ops_edit',
-			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/torrents\.php\?action=editgroup&groupid=.*/i
+			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/torrents\.php\?action=editgroup&groupid=.*/i,
 		},
 		{
 			name: 'ops_request',
-			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/requests\.php\?action=new/i
+			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/requests\.php\?action=new/i,
 		},
 		{
 			name: 'ops_request_edit',
-			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/requests\.php\?action=edit&id=.*/i
+			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/requests\.php\?action=edit&id=.*/i,
 		},
 		{
 			name: 'ops_torrent_overview',
-			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/torrents\.php\?id=.*/i
+			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/torrents\.php\?id=.*/i,
 		},
 		{
 			name: 'nwcd_upload',
-			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/upload\.php.*/i
+			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/upload\.php.*/i,
 		},
 		{
 			name: 'nwcd_edit',
-			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/torrents\.php\?action=editgroup&groupid=.*/i
+			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/torrents\.php\?action=editgroup&groupid=.*/i,
 		},
 		{
 			name: 'nwcd_request',
-			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/requests\.php\?action=new/i
+			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/requests\.php\?action=new/i,
 		},
 		{
 			name: 'nwcd_request_edit',
-			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/requests\.php\?action=edit&id=.*/i
+			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/requests\.php\?action=edit&id=.*/i,
 		},
 		{
 			name: 'nwcd_torrent_overview',
-			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/torrents\.php\?id=.*/i
+			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/torrents\.php\?id=.*/i,
 		},
 		{
 			name: 'dic_upload',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/upload\.php.*/i
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/upload\.php.*/i,
 		},
 		{
 			name: 'dic_edit',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/torrents\.php\?action=editgroup&groupid=.*/i
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/torrents\.php\?action=editgroup&groupid=.*/i,
 		},
 		{
 			name: 'dic_request',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/requests\.php\?action=new/i
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/requests\.php\?action=new/i,
 		},
 		{
 			name: 'dic_request_edit',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/requests\.php\?action=edit&id=.*/i
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/requests\.php\?action=edit&id=.*/i,
 		},
 		{
 			name: 'dic_torrent_overview',
-			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/torrents\.php\?id=.*/i
+			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/torrents\.php\?id=.*/i,
 		},
 		{
 			name: 'waffles_upload',
-			regex: /http(s)?:\/\/(.*\.)?waffles\.ch\/upload\.php.*/i
+			regex: /http(s)?:\/\/(.*\.)?waffles\.ch\/upload\.php.*/i,
 		},
 		{
 			name: 'waffles_request',
-			regex: /http(s)?:\/\/(.*\.)?waffles\.ch\/requests\.php\?do=add/i
-		}
+			regex: /http(s)?:\/\/(.*\.)?waffles\.ch\/requests\.php\?do=add/i,
+		},
 	],
 
 	determineLocation(uri) {
@@ -987,8 +982,8 @@ factory = {
 						if (data) {
 							insertImage(data, () => {
 								if (
-									factory.getAutoRehostCheckbox() &&
-									factory.getAutoRehostCheckbox().checked
+									factory.getAutoRehostCheckbox()
+									&& factory.getAutoRehostCheckbox().checked
 								) {
 									pthImgIt();
 								}
@@ -997,7 +992,7 @@ factory = {
 					});
 				}
 			},
-			false
+			false,
 		);
 
 		// Add the action for the options toggle
@@ -1009,11 +1004,7 @@ factory = {
 				const optionsDiv = document.querySelector('#yadg_options');
 				const {display} = optionsDiv.style;
 
-				if (display === 'none' || display === '') {
-					optionsDiv.style.display = 'block';
-				} else {
-					optionsDiv.style.display = 'none';
-				}
+				optionsDiv.style.display = display === 'none' || display === '' ? 'block' : 'none';
 			});
 		}
 
@@ -1022,14 +1013,10 @@ factory = {
 		if (coverSizeSetting !== null) {
 			coverSizeSetting.addEventListener('click', () => {
 				const optionsCoverSize = document.querySelector(
-					'#yadg_options_coversize'
+					'#yadg_options_coversize',
 				);
 				const {display} = optionsCoverSize.style;
-				if (display === 'none' || display === '') {
-					optionsCoverSize.style.display = 'block';
-				} else {
-					optionsCoverSize.style.display = 'none';
-				}
+				optionsCoverSize.style.display = display === 'none' || display === '' ? 'block' : 'none';
 			});
 		}
 
@@ -1041,7 +1028,7 @@ factory = {
 					yadgRenderer.renderCached(
 						this.value,
 						factory.setDescriptionBoxValue,
-						factory.setDescriptionBoxValue
+						factory.setDescriptionBoxValue,
 					);
 				}
 			});
@@ -1081,9 +1068,9 @@ factory = {
 
 		const lastChecked = yadgUtil.storage.getItem(factory.KEY_LAST_CHECKED);
 		if (
-			lastChecked === null ||
-			Date.now() - new Date(lastChecked).getTime() >
-			factory.CACHE_TIMEOUT
+			lastChecked === null
+			|| Date.now() - new Date(lastChecked).getTime()
+			> factory.CACHE_TIMEOUT
 		) {
 			// Update the scraper and formats list
 			factory.UPDATE_PROGRESS = 1;
@@ -1091,10 +1078,10 @@ factory = {
 			yadg.getFormatsList(factory.setFormatSelect);
 		} else {
 			factory.setScraperSelect(
-				yadgUtil.storage.getItem(factory.KEY_SCRAPER_LIST)
+				yadgUtil.storage.getItem(factory.KEY_SCRAPER_LIST),
 			);
 			factory.setFormatSelect(
-				yadgUtil.storage.getItem(factory.KEY_FORMAT_LIST)
+				yadgUtil.storage.getItem(factory.KEY_FORMAT_LIST),
 			);
 		}
 
@@ -1142,7 +1129,7 @@ factory = {
 				'title',
 				'releasetype',
 				'genre_tags',
-				'tags'
+				'tags',
 			]) {
 				for (const element of document.getElementsByName(i)) {
 					element.readOnly = true;
@@ -1174,11 +1161,11 @@ factory = {
 				'waffles_upload_new',
 				'waffles_request',
 				'd3si_upload',
-				'd3si_request'
+				'd3si_request',
 			];
 			for (const loc of locations) {
 				const replaceDescSettingKey = factory.makeReplaceDescriptionSettingsKey(
-					loc
+					loc,
 				);
 
 				yadgUtil.settings.addItem(replaceDescSettingKey, true);
@@ -1191,14 +1178,13 @@ factory = {
 	populateSettings() {
 		const apiToken = yadgUtil.settings.getItem(factory.KEY_API_TOKEN);
 		const replaceDesc = yadgUtil.settings.getItem(
-			factory.getReplaceDescriptionSettingKey()
+			factory.getReplaceDescriptionSettingKey(),
 		);
 		const fetchImage = yadgUtil.settings.getItem(factory.KEY_FETCH_IMAGE);
 		autoRehost = yadgUtil.settings.getItem(factory.KEY_AUTO_REHOST);
 		autoPreview = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
-		descriptionTarget = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW); // eslint-disable-line no-unused-vars
 		const autoSelectScraper = yadgUtil.settings.getItem(
-			factory.KEY_AUTO_SELECT_SCRAPER
+			factory.KEY_AUTO_SELECT_SCRAPER,
 		);
 		const coverSize = yadgUtil.settings.getItem(factory.KEY_COVER_SIZE);
 
@@ -1239,7 +1225,7 @@ factory = {
 			coverSizeOption.value = coverSize;
 			if (factory.getFetchImageCheckbox().checked) {
 				const optionsCoverSize = document.querySelector(
-					'#yadg_options_coversize'
+					'#yadg_options_coversize',
 				);
 				optionsCoverSize.style.display = 'block';
 			}
@@ -1282,8 +1268,8 @@ factory = {
 		}
 
 		if (templateSelect.options.length > 0) {
-			currentTemplate =
-				templateSelect.options[templateSelect.selectedIndex].value;
+			currentTemplate
+				= templateSelect.options[templateSelect.selectedIndex].value;
 		}
 
 		if (targetSelect.options.length > 0) {
@@ -1291,8 +1277,8 @@ factory = {
 		}
 
 		if (descriptionTargetSelect.options.length > 0) {
-			currentDescriptionTarget =
-				descriptionTargetSelect.options[descriptionTargetSelect.selectedIndex]
+			currentDescriptionTarget
+				= descriptionTargetSelect.options[descriptionTargetSelect.selectedIndex]
 					.value;
 		}
 
@@ -1315,7 +1301,7 @@ factory = {
 		if (currentDescriptionTarget !== null) {
 			yadgUtil.settings.addItem(
 				factory.KEY_DESCRIPTION_TARGET,
-				currentDescriptionTarget
+				currentDescriptionTarget,
 			);
 		}
 
@@ -1383,15 +1369,15 @@ factory = {
 			}
 
 			if ((
-				factory.currentLocation !== 'pth_torrent_overview' || factory.currentLocation !==
-				'ops_torrent_overview'
+				factory.currentLocation !== 'pth_torrent_overview' || factory.currentLocation
+				!== 'ops_torrent_overview'
 			) && descBox.parentNode.nextSibling.nextSibling) {
-				const previewBtn =
-						descBox.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
+				const previewBtn
+					= descBox.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
 				if (
-					previewBtn &&
-						previewBtn.value === 'Preview' &&
-						factory.getAutoPreviewCheckbox().checked
+					previewBtn
+					&& previewBtn.value === 'Preview'
+					&& factory.getAutoPreviewCheckbox().checked
 				) {
 					previewBtn.click();
 				}
@@ -1403,12 +1389,12 @@ factory = {
 				}
 
 				element.value = value;
-				const previewBtn =
-					element.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
+				const previewBtn
+					= element.parentNode.nextSibling.nextSibling.firstChild.nextSibling;
 				if (
-					previewBtn &&
-					previewBtn.value === 'Preview' &&
-					factory.getAutoPreviewCheckbox().checked
+					previewBtn
+					&& previewBtn.value === 'Preview'
+					&& factory.getAutoPreviewCheckbox().checked
 				) {
 					previewBtn.click();
 				}
@@ -1425,7 +1411,7 @@ factory = {
 		const formatOffsets = yadgUtil.getOptionOffsets(formatSelect);
 
 		const defaultFormat = yadgUtil.settings.getItem(
-			factory.KEY_DEFAULT_TEMPLATE
+			factory.KEY_DEFAULT_TEMPLATE,
 		);
 		if (defaultFormat !== null && defaultFormat in formatOffsets) {
 			formatSelect.selectedIndex = formatOffsets[defaultFormat];
@@ -1462,31 +1448,27 @@ factory = {
 		const targetOffsets = yadgUtil.getOptionOffsets(targetSelect);
 
 		const defaultTarget = yadgUtil.settings.getItem(factory.KEY_DEFAULT_TARGET);
-		if (defaultTarget !== null && defaultTarget in targetOffsets) {
-			targetSelect.selectedIndex = targetOffsets[defaultTarget];
-		} else {
-			targetSelect.selectedIndex = targetOffsets[defaultPTHTarget];
-		}
+		targetSelect.selectedIndex = defaultTarget !== null && defaultTarget in targetOffsets ? targetOffsets[defaultTarget] : targetOffsets[defaultPTHTarget];
 	},
 
 	setDefaultDescriptionTarget() {
 		const targetDescriptionSelect = factory.getDescriptionTargetSelect();
 		const targetDescriptionOffsets = yadgUtil.getOptionOffsets(
-			targetDescriptionSelect
+			targetDescriptionSelect,
 		);
 
 		const defaultDescriptionTarget = yadgUtil.settings.getItem(
-			factory.KEY_DESCRIPTION_TARGET
+			factory.KEY_DESCRIPTION_TARGET,
 		);
 		if (
-			defaultDescriptionTarget !== null &&
-			defaultDescriptionTarget in targetDescriptionOffsets
+			defaultDescriptionTarget !== null
+			&& defaultDescriptionTarget in targetDescriptionOffsets
 		) {
-			targetDescriptionSelect.selectedIndex =
-				targetDescriptionOffsets[defaultDescriptionTarget];
+			targetDescriptionSelect.selectedIndex
+				= targetDescriptionOffsets[defaultDescriptionTarget];
 		} else {
-			targetDescriptionSelect.selectedIndex =
-				targetDescriptionOffsets[defaultPTHDescriptionTarget];
+			targetDescriptionSelect.selectedIndex
+				= targetDescriptionOffsets[defaultPTHDescriptionTarget];
 		}
 	},
 
@@ -1496,7 +1478,7 @@ factory = {
 
 	setDefaultScraper() {
 		const defaultScraper = yadgUtil.settings.getItem(
-			factory.KEY_DEFAULT_SCRAPER
+			factory.KEY_DEFAULT_SCRAPER,
 		);
 		if (defaultScraper !== null) {
 			const scraperSelect = factory.getScraperSelect();
@@ -1548,7 +1530,7 @@ factory = {
 					nameFormatted: element.nameFormatted,
 					owner: element.owner,
 					default: element.default,
-					isUtility: element.isUtility
+					isUtility: element.isUtility,
 				});
 			} else {
 				if (element.name === 'What') {
@@ -1589,11 +1571,7 @@ factory = {
 			// We are not using the javascript constructor to create an Option instance because this will create an
 			// incompatibility with jQuery in Chrome which will make it impossible to add a new artist field on redacted.ch
 			const o = document.createElement('option');
-			if ('nameFormatted' in element) {
-				o.text = element.nameFormatted;
-			} else {
-				o.text = element.name;
-			}
+			o.text = 'nameFormatted' in element ? element.nameFormatted : element.name;
 
 			o.value = element.value || element.id;
 			o.selected = element.default;
@@ -1611,20 +1589,20 @@ factory = {
 	setStyles() {
 		// General styles
 		yadgUtil.addCSS(
-			'div#yadg_options{ display:none; margin-top:3px; } input#yadg_input,input#yadg_submit,label#yadg_format_label,a#yadg_scraper_info { margin-right: 5px } div#yadg_response { margin-top:3px; } select#yadg_scraper { margin-right: 2px } #yadg_options_template,#yadg_options_api_token,#yadg_options_replace_div { margin-bottom: 3px; } .add_form[name="yadg"] input,.add_form[name="yadg"] select { width: 90%; margin: 2px 0 !important; } input#yadg_submit { position: inherit !important} div#yadg_options_coversize { display:none; padding-left: 16px }'
+			'div#yadg_options{ display:none; margin-top:3px; } input#yadg_input,input#yadg_submit,label#yadg_format_label,a#yadg_scraper_info { margin-right: 5px } div#yadg_response { margin-top:3px; } select#yadg_scraper { margin-right: 2px } #yadg_options_template,#yadg_options_api_token,#yadg_options_replace_div { margin-bottom: 3px; } .add_form[name="yadg"] input,.add_form[name="yadg"] select { width: 90%; margin: 2px 0 !important; } input#yadg_submit { position: inherit !important} div#yadg_options_coversize { display:none; padding-left: 16px }',
 		);
 
 		// Location specific styles will go here
 		switch (this.currentLocation) {
 			case 'waffles_upload':
 				yadgUtil.addCSS(
-					'div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }'
+					'div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }',
 				);
 				break;
 
 			case 'waffles_request':
 				yadgUtil.addCSS(
-					'div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }'
+					'div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }',
 				);
 				break;
 
@@ -1636,33 +1614,33 @@ factory = {
 	// eslint-disable-next-line complexity
 	getInputElements() {
 		const buttonHTML = '<input type="submit" value="Fetch" id="yadg_submit"/>';
-		const scraperSelectHTML =
-			'<select name="yadg_scraper" id="yadg_scraper"></select>';
-		let optionsHTML =
-			'<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Allmusic, Bandcamp, Beatport, Deezer, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
-		optionsHTML +=
-			'<div id="yadg_options_coversize"><label for="yadg_coversize" id="yadg_coversize_label">Cover size: </label><select name="yadg_coversize" id="yadg_coversize"><option value="large">Large</option><option value="medium">Medium</option></select></div>';
+		const scraperSelectHTML
+			= '<select name="yadg_scraper" id="yadg_scraper"></select>';
+		let optionsHTML
+			= '<div id="yadg_options"><div id="yadg_options_template"><label for="yadg_format" id="yadg_format_label">Template:</label><select name="yadg_format" id="yadg_format"></select></div><div id="yadg_options_target"><label for="yadg_target" id="yadg_target_label">Edition:</label><select name="yadg_target" id="yadg_target"><option value="original">Original</option><option value="other">Other</option></select></div><div id="yadg_options_description_target"><label for="yadg_description_target" id="yadg_description_target_label">Description:</label><select name="yadg_description_target" id="yadg_description_target"><option value="album">Album</option><option value="release">Release</option><option value="both">Both</option></select></div><div id="yadg_options_api_token"><label for="yadg_api_token" id="yadg_api_token_label">API token (<a href="https://yadg.cc/api/token" target="_blank">Get one here</a>):</label> <input type="text" name="yadg_api_token" id="yadg_api_token" size="50" /></div><div id="yadg_options_replace_div"><input type="checkbox" name="yadg_options_replace" id="yadg_options_replace" /> <label for="yadg_options_replace" id="yadg_options_replace_label">Replace descriptions on this page</label></div><div id="yadg_options_image_div"><input type="checkbox" name="yadg_options_image" id="yadg_options_image" /> <label for="yadg_options_image" id="yadg_options_image_label">Auto fetch Album Art (Allmusic, Bandcamp, Beatport, Deezer, Discogs, iTunes, Junodownload, Metal-Archives, MusicBrainz)</label></div>';
+		optionsHTML
+			+= '<div id="yadg_options_coversize"><label for="yadg_coversize" id="yadg_coversize_label">Cover size: </label><select name="yadg_coversize" id="yadg_coversize"><option value="large">Large</option><option value="medium">Medium</option></select></div>';
 		if (document.querySelectorAll('.rehost_it_cover')[0]) {
-			optionsHTML +=
-				'<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://redacted.ch/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
+			optionsHTML
+				+= '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://redacted.ch/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
 		}
 
 		if (/\/upload\.php/.test(window.location.href)) {
-			optionsHTML +=
-				'<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
+			optionsHTML
+				+= '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
 		}
 
-		optionsHTML +=
-			'<div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper"/><label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">Auto select the correct scraper when pasting the URL</label></div>		';
-		optionsHTML +=
-			'<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
-		const inputHTML =
-			'<input type="text" name="yadg_input" id="yadg_input" size="60" />';
+		optionsHTML
+			+= '<div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper"/><label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">Auto select the correct scraper when pasting the URL</label></div>		';
+		optionsHTML
+			+= '<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
+		const inputHTML
+			= '<input type="text" name="yadg_input" id="yadg_input" size="60" />';
 		const responseDivHTML = '<div id="yadg_response"></div>';
-		const toggleOptionsLinkHTML =
-			'<a id="yadg_toggle_options" href="#">Toggle options</a>';
-		const scraperInfoLink =
-			'<a id="yadg_scraper_info" href="https://yadg.cc/available-scrapers" target="_blank" title="Get additional information on the available scrapers">[?]</a>';
+		const toggleOptionsLinkHTML
+			= '<a id="yadg_toggle_options" href="#">Toggle options</a>';
+		const scraperInfoLink
+			= '<a id="yadg_scraper_info" href="https://yadg.cc/available-scrapers" target="_blank" title="Get additional information on the available scrapers">[?]</a>';
 
 		switch (this.currentLocation) {
 			case 'nwcd_upload':
@@ -1672,16 +1650,16 @@ factory = {
 			case 'pth_upload': {
 				const tr = document.createElement('tr');
 				tr.className = 'yadg_tr';
-				tr.innerHTML =
-					'<td class="label">YADG:</td><td>' +
-					inputHTML +
-					scraperSelectHTML +
-					scraperInfoLink +
-					buttonHTML +
-					toggleOptionsLinkHTML +
-					optionsHTML +
-					responseDivHTML +
-					'</td>';
+				tr.innerHTML
+					= '<td class="label">YADG:</td><td>'
+					+ inputHTML
+					+ scraperSelectHTML
+					+ scraperInfoLink
+					+ buttonHTML
+					+ toggleOptionsLinkHTML
+					+ optionsHTML
+					+ responseDivHTML
+					+ '</td>';
 				return tr;
 			}
 
@@ -1692,21 +1670,21 @@ factory = {
 			case 'pth_edit': {
 				const div = document.createElement('div');
 				div.className = 'yadg_div';
-				div.innerHTML =
-					'<h3 class="label">YADG:</h3>\n' +
-					inputHTML +
-					'\n' +
-					scraperSelectHTML +
-					'\n' +
-					scraperInfoLink +
-					'\n' +
-					buttonHTML +
-					'\n' +
-					toggleOptionsLinkHTML +
-					'\n' +
-					optionsHTML +
-					'\n' +
-					responseDivHTML;
+				div.innerHTML
+					= '<h3 class="label">YADG:</h3>\n'
+					+ inputHTML
+					+ '\n'
+					+ scraperSelectHTML
+					+ '\n'
+					+ scraperInfoLink
+					+ '\n'
+					+ buttonHTML
+					+ '\n'
+					+ toggleOptionsLinkHTML
+					+ '\n'
+					+ optionsHTML
+					+ '\n'
+					+ responseDivHTML;
 				return div;
 			}
 
@@ -1718,19 +1696,19 @@ factory = {
 				const div = document.createElement('div');
 				div.id = 'yadg_div';
 				div.className = 'box';
-				div.innerHTML =
-					'<div class="head"><strong>YADG</strong></div>\n<div class="body">\n<form class="add_form" name="yadg" method="post">\n<input type="text" name="yadg_input" id="yadg_input" />\n' +
-					scraperSelectHTML +
-					'\n' +
-					scraperInfoLink +
-					'\n' +
-					buttonHTML +
-					'\n' +
-					toggleOptionsLinkHTML +
-					'\n' +
-					optionsHTML +
-					'\n' +
-					responseDivHTML;
+				div.innerHTML
+					= '<div class="head"><strong>YADG</strong></div>\n<div class="body">\n<form class="add_form" name="yadg" method="post">\n<input type="text" name="yadg_input" id="yadg_input" />\n'
+					+ scraperSelectHTML
+					+ '\n'
+					+ scraperInfoLink
+					+ '\n'
+					+ buttonHTML
+					+ '\n'
+					+ toggleOptionsLinkHTML
+					+ '\n'
+					+ optionsHTML
+					+ '\n'
+					+ responseDivHTML;
 				return div;
 			}
 
@@ -1746,63 +1724,63 @@ factory = {
 			case 'pth_request_edit': {
 				const tr = document.createElement('tr');
 				tr.className = 'yadg_tr';
-				tr.innerHTML =
-					'<td class="label">YADG:</td><td>' +
-					inputHTML +
-					scraperSelectHTML +
-					scraperInfoLink +
-					buttonHTML +
-					toggleOptionsLinkHTML +
-					optionsHTML +
-					responseDivHTML +
-					'</td>';
+				tr.innerHTML
+					= '<td class="label">YADG:</td><td>'
+					+ inputHTML
+					+ scraperSelectHTML
+					+ scraperInfoLink
+					+ buttonHTML
+					+ toggleOptionsLinkHTML
+					+ optionsHTML
+					+ responseDivHTML
+					+ '</td>';
 				return tr;
 			}
 
 			case 'waffles_upload': {
 				const tr = document.createElement('tr');
 				tr.className = 'yadg_tr';
-				tr.innerHTML =
-					'<td class="heading" valign="top" align="right"><label for="yadg_input">YADG:</label></td><td>' +
-					inputHTML +
-					scraperSelectHTML +
-					scraperInfoLink +
-					buttonHTML +
-					toggleOptionsLinkHTML +
-					optionsHTML +
-					responseDivHTML +
-					'</td>';
+				tr.innerHTML
+					= '<td class="heading" valign="top" align="right"><label for="yadg_input">YADG:</label></td><td>'
+					+ inputHTML
+					+ scraperSelectHTML
+					+ scraperInfoLink
+					+ buttonHTML
+					+ toggleOptionsLinkHTML
+					+ optionsHTML
+					+ responseDivHTML
+					+ '</td>';
 				return tr;
 			}
 
 			case 'waffles_upload_new': {
 				const p = document.createElement('p');
 				p.className = 'yadg_p';
-				p.innerHTML =
-					'<label for="yadg_input">YADG:</label>' +
-					inputHTML +
-					scraperSelectHTML +
-					scraperInfoLink +
-					buttonHTML +
-					toggleOptionsLinkHTML +
-					optionsHTML +
-					responseDivHTML;
+				p.innerHTML
+					= '<label for="yadg_input">YADG:</label>'
+					+ inputHTML
+					+ scraperSelectHTML
+					+ scraperInfoLink
+					+ buttonHTML
+					+ toggleOptionsLinkHTML
+					+ optionsHTML
+					+ responseDivHTML;
 				return p;
 			}
 
 			case 'waffles_request': {
 				const tr = document.createElement('tr');
 				tr.className = 'yadg_tr';
-				tr.innerHTML =
-					'<td style="text-align:left;width:100px;">YADG:</td><td style="text-align:left;">' +
-					inputHTML +
-					scraperSelectHTML +
-					scraperInfoLink +
-					buttonHTML +
-					toggleOptionsLinkHTML +
-					optionsHTML +
-					responseDivHTML +
-					'</td>';
+				tr.innerHTML
+					= '<td style="text-align:left;width:100px;">YADG:</td><td style="text-align:left;">'
+					+ inputHTML
+					+ scraperSelectHTML
+					+ scraperInfoLink
+					+ buttonHTML
+					+ toggleOptionsLinkHTML
+					+ optionsHTML
+					+ responseDivHTML
+					+ '</td>';
 				return tr;
 			}
 
@@ -1833,7 +1811,7 @@ factory = {
 				const [summaryInput] = document.getElementsByName('summary');
 				summaryInput.parentNode.insertBefore(
 					element,
-					summaryInput.nextSibling.nextSibling
+					summaryInput.nextSibling.nextSibling,
 				);
 				break;
 			}
@@ -1846,7 +1824,7 @@ factory = {
 				const [addArtistsBox] = document.querySelectorAll('.box_addartists');
 				addArtistsBox.parentNode.insertBefore(
 					element,
-					addArtistsBox.nextSibling.nextSibling
+					addArtistsBox.nextSibling.nextSibling,
 				);
 				break;
 			}
@@ -1870,7 +1848,7 @@ factory = {
 				const [submitButton] = document.getElementsByName('submit');
 				submitButton.parentNode.parentNode.parentNode.insertBefore(
 					element,
-					submitButton.parentNode.parentNode
+					submitButton.parentNode.parentNode,
 				);
 				break;
 			}
@@ -1893,7 +1871,7 @@ factory = {
 				const [categorySelect] = document.getElementsByName('category');
 				categorySelect.parentNode.parentNode.parentNode.insertBefore(
 					element,
-					categorySelect.parentNode.parentNode
+					categorySelect.parentNode.parentNode,
 				);
 				break;
 			}
@@ -1922,7 +1900,7 @@ factory = {
 				if (factory.getDescriptionTargetSelect().value === 'both') {
 					return [
 						document.querySelector('#album_desc'),
-						document.querySelector('#release_desc')
+						document.querySelector('#release_desc'),
 					];
 				}
 
@@ -1940,7 +1918,7 @@ factory = {
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview':
-				if (!{}.hasOwnProperty.call(this, 'dummybox')) {
+				if (!Object.prototype.hasOwnProperty.call(this, 'dummybox')) {
 					this.dummybox = document.createElement('div');
 				}
 
@@ -2034,7 +2012,7 @@ factory = {
 							let inputIdx = 0;
 
 							yadgUtil.addRemoveArtistBoxes(
-								data.effective_artist_count - artistInputs.length
+								data.effective_artist_count - artistInputs.length,
 							);
 
 							artistInputs = document.getElementsByName('artists[]');
@@ -2060,15 +2038,29 @@ factory = {
 
 									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
-									if (artistType === 'main') {
-										typeSelect.selectedIndex = optionOffsets[1];
-									} else if (artistType === 'guest') {
-										typeSelect.selectedIndex = optionOffsets[2];
-									} else if (artistType === 'remixer') {
-										typeSelect.selectedIndex = optionOffsets[3];
-									} else {
-										// We don't know this artist type, default to "main"
-										typeSelect.selectedIndex = optionOffsets[1];
+									switch (artistType) {
+										case 'main': {
+											typeSelect.selectedIndex = optionOffsets[1];
+
+											break;
+										}
+
+										case 'guest': {
+											typeSelect.selectedIndex = optionOffsets[2];
+
+											break;
+										}
+
+										case 'remixer': {
+											typeSelect.selectedIndex = optionOffsets[3];
+
+											break;
+										}
+
+										default: {
+											// We don't know this artist type, default to "main"
+											typeSelect.selectedIndex = optionOffsets[1];
+										}
 									}
 
 									// Next artist input
@@ -2087,9 +2079,7 @@ factory = {
 							tagsInput.value = '';
 						} else {
 							const tagsArray = data.tag_string.split(', ');
-							const tagsUnique = tagsArray.filter((element, index, self) => {
-								return index === self.indexOf(element);
-							});
+							const tagsUnique = tagsArray.filter((element, index, self) => index === self.indexOf(element));
 							tagsInput.value = tagsUnique.join(',').toLowerCase();
 						}
 					}
@@ -2102,7 +2092,7 @@ factory = {
 						yadgUtil.setValueIfSet(
 							data.title,
 							albumTitleInput,
-							data.title !== false
+							data.title !== false,
 						);
 					}
 
@@ -2110,7 +2100,7 @@ factory = {
 						yadgUtil.setValueIfSet(
 							data.label,
 							labelInput,
-							data.label !== false
+							data.label !== false,
 						);
 					}
 
@@ -2118,7 +2108,7 @@ factory = {
 						yadgUtil.setValueIfSet(
 							data.catalog,
 							catalogInput,
-							data.catalog !== false
+							data.catalog !== false,
 						);
 					}
 				};
@@ -2185,7 +2175,7 @@ factory = {
 							let inputIdx = 0;
 
 							yadgUtil.addRemoveArtistBoxes(
-								data.effective_artist_count - artistInputs.length
+								data.effective_artist_count - artistInputs.length,
 							);
 
 							artistInputs = document.getElementsByName('artists[]');
@@ -2211,15 +2201,29 @@ factory = {
 
 									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
-									if (artistType === 'main') {
-										typeSelect.selectedIndex = optionOffsets[1];
-									} else if (artistType === 'guest') {
-										typeSelect.selectedIndex = optionOffsets[2];
-									} else if (artistType === 'remixer') {
-										typeSelect.selectedIndex = optionOffsets[3];
-									} else {
-										// We don't know this artist type, default to "main"
-										typeSelect.selectedIndex = optionOffsets[1];
+									switch (artistType) {
+										case 'main': {
+											typeSelect.selectedIndex = optionOffsets[1];
+
+											break;
+										}
+
+										case 'guest': {
+											typeSelect.selectedIndex = optionOffsets[2];
+
+											break;
+										}
+
+										case 'remixer': {
+											typeSelect.selectedIndex = optionOffsets[3];
+
+											break;
+										}
+
+										default: {
+											// We don't know this artist type, default to "main"
+											typeSelect.selectedIndex = optionOffsets[1];
+										}
 									}
 
 									// Next artist input
@@ -2238,9 +2242,7 @@ factory = {
 							tagsInput.value = '';
 						} else {
 							const tagsArray = data.tag_string.split(', ');
-							const tagsUnique = tagsArray.filter((element, index, self) => {
-								return index === self.indexOf(element);
-							});
+							const tagsUnique = tagsArray.filter((element, index, self) => index === self.indexOf(element));
 							tagsInput.value = tagsUnique.join(',').toLowerCase();
 						}
 					}
@@ -2253,7 +2255,7 @@ factory = {
 						yadgUtil.setValueIfSet(
 							data.title,
 							albumTitleInput,
-							data.title !== false
+							data.title !== false,
 						);
 					}
 
@@ -2261,7 +2263,7 @@ factory = {
 						yadgUtil.setValueIfSet(
 							data.label,
 							labelInput,
-							data.label !== false
+							data.label !== false,
 						);
 					}
 
@@ -2269,7 +2271,7 @@ factory = {
 						yadgUtil.setValueIfSet(
 							data.catalog,
 							catalogInput,
-							data.catalog !== false
+							data.catalog !== false,
 						);
 					}
 				};
@@ -2334,7 +2336,7 @@ factory = {
 							let inputIdx = 0;
 
 							yadgUtil.addRemoveArtistBoxes(
-								data.effective_artist_count - artistInputs.length
+								data.effective_artist_count - artistInputs.length,
 							);
 
 							artistInputs = document.getElementsByName('artists[]');
@@ -2360,15 +2362,29 @@ factory = {
 
 									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
-									if (artistType === 'main') {
-										typeSelect.selectedIndex = optionOffsets[1];
-									} else if (artistType === 'guest') {
-										typeSelect.selectedIndex = optionOffsets[2];
-									} else if (artistType === 'remixer') {
-										typeSelect.selectedIndex = optionOffsets[3];
-									} else {
-										// We don't know this artist type, default to "main"
-										typeSelect.selectedIndex = optionOffsets[1];
+									switch (artistType) {
+										case 'main': {
+											typeSelect.selectedIndex = optionOffsets[1];
+
+											break;
+										}
+
+										case 'guest': {
+											typeSelect.selectedIndex = optionOffsets[2];
+
+											break;
+										}
+
+										case 'remixer': {
+											typeSelect.selectedIndex = optionOffsets[3];
+
+											break;
+										}
+
+										default: {
+											// We don't know this artist type, default to "main"
+											typeSelect.selectedIndex = optionOffsets[1];
+										}
 									}
 
 									// Next artist input
@@ -2387,9 +2403,7 @@ factory = {
 							tagsInput.value = '';
 						} else {
 							const tagsArray = data.tag_string.split(', ');
-							const tagsUnique = tagsArray.filter((element, index, self) => {
-								return index === self.indexOf(element);
-							});
+							const tagsUnique = tagsArray.filter((element, index, self) => index === self.indexOf(element));
 							tagsInput.value = tagsUnique.join(',').toLowerCase();
 						}
 					}
@@ -2402,7 +2416,7 @@ factory = {
 						yadgUtil.setValueIfSet(
 							data.title,
 							albumTitleInput,
-							data.title !== false
+							data.title !== false,
 						);
 					}
 
@@ -2410,7 +2424,7 @@ factory = {
 						yadgUtil.setValueIfSet(
 							data.label,
 							labelInput,
-							data.label !== false
+							data.label !== false,
 						);
 					}
 
@@ -2418,7 +2432,7 @@ factory = {
 						yadgUtil.setValueIfSet(
 							data.catalog,
 							catalogInput,
-							data.catalog !== false
+							data.catalog !== false,
 						);
 					}
 				};
@@ -2483,7 +2497,7 @@ factory = {
 							let inputIdx = 0;
 
 							yadgUtil.addRemoveArtistBoxes(
-								data.effective_artist_count - artistInputs.length
+								data.effective_artist_count - artistInputs.length,
 							);
 
 							artistInputs = document.getElementsByName('artists[]');
@@ -2509,15 +2523,29 @@ factory = {
 
 									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
-									if (artistType === 'main') {
-										typeSelect.selectedIndex = optionOffsets[1];
-									} else if (artistType === 'guest') {
-										typeSelect.selectedIndex = optionOffsets[2];
-									} else if (artistType === 'remixer') {
-										typeSelect.selectedIndex = optionOffsets[3];
-									} else {
-										// We don't know this artist type, default to "main"
-										typeSelect.selectedIndex = optionOffsets[1];
+									switch (artistType) {
+										case 'main': {
+											typeSelect.selectedIndex = optionOffsets[1];
+
+											break;
+										}
+
+										case 'guest': {
+											typeSelect.selectedIndex = optionOffsets[2];
+
+											break;
+										}
+
+										case 'remixer': {
+											typeSelect.selectedIndex = optionOffsets[3];
+
+											break;
+										}
+
+										default: {
+											// We don't know this artist type, default to "main"
+											typeSelect.selectedIndex = optionOffsets[1];
+										}
 									}
 
 									// Next artist input
@@ -2536,9 +2564,7 @@ factory = {
 							tagsInput.value = '';
 						} else {
 							const tagsArray = data.tag_string.split(', ');
-							const tagsUnique = tagsArray.filter((element, index, self) => {
-								return index === self.indexOf(element);
-							});
+							const tagsUnique = tagsArray.filter((element, index, self) => index === self.indexOf(element));
 							tagsInput.value = tagsUnique.join(',').toLowerCase();
 						}
 					}
@@ -2551,7 +2577,7 @@ factory = {
 						yadgUtil.setValueIfSet(
 							data.title,
 							albumTitleInput,
-							data.title !== false
+							data.title !== false,
 						);
 					}
 
@@ -2559,7 +2585,7 @@ factory = {
 						yadgUtil.setValueIfSet(
 							data.label,
 							labelInput,
-							data.label !== false
+							data.label !== false,
 						);
 					}
 
@@ -2567,7 +2593,7 @@ factory = {
 						yadgUtil.setValueIfSet(
 							data.catalog,
 							catalogInput,
-							data.catalog !== false
+							data.catalog !== false,
 						);
 					}
 				};
@@ -2593,24 +2619,24 @@ factory = {
 					}
 
 					if (
-						labelInput &&
-						labelInput.getAttribute('disabled') !== 'disabled'
+						labelInput
+						&& labelInput.getAttribute('disabled') !== 'disabled'
 					) {
 						yadgUtil.setValueIfSet(
 							data.label,
 							labelInput,
-							data.label !== false
+							data.label !== false,
 						);
 					}
 
 					if (
-						catalogInput &&
-						catalogInput.getAttribute('disabled') !== 'disabled'
+						catalogInput
+						&& catalogInput.getAttribute('disabled') !== 'disabled'
 					) {
 						yadgUtil.setValueIfSet(
 							data.catalog,
 							catalogInput,
-							data.catalog !== false
+							data.catalog !== false,
 						);
 					}
 				};
@@ -2635,7 +2661,7 @@ factory = {
 						let inputIdx = 0;
 
 						yadgUtil.addRemoveArtistBoxes(
-							data.effective_artist_count - artistInputs.length
+							data.effective_artist_count - artistInputs.length,
 						);
 
 						artistInputs = document.getElementsByName('aliasname[]');
@@ -2656,15 +2682,29 @@ factory = {
 
 								const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
-								if (artistType === 'main') {
-									typeSelect.selectedIndex = optionOffsets[1];
-								} else if (artistType === 'guest') {
-									typeSelect.selectedIndex = optionOffsets[2];
-								} else if (artistType === 'remixer') {
-									typeSelect.selectedIndex = optionOffsets[3];
-								} else {
-									// We don't know this artist type, default to "main"
-									typeSelect.selectedIndex = optionOffsets[1];
+								switch (artistType) {
+									case 'main': {
+										typeSelect.selectedIndex = optionOffsets[1];
+
+										break;
+									}
+
+									case 'guest': {
+										typeSelect.selectedIndex = optionOffsets[2];
+
+										break;
+									}
+
+									case 'remixer': {
+										typeSelect.selectedIndex = optionOffsets[3];
+
+										break;
+									}
+
+									default: {
+										// We don't know this artist type, default to "main"
+										typeSelect.selectedIndex = optionOffsets[1];
+									}
 								}
 
 								// Next artist input
@@ -2706,7 +2746,7 @@ factory = {
 							let inputIdx = 0;
 
 							yadgUtil.addRemoveArtistBoxes(
-								data.effective_artist_count - artistInputs.length
+								data.effective_artist_count - artistInputs.length,
 							);
 
 							artistInputs = document.getElementsByName('artists[]');
@@ -2731,15 +2771,29 @@ factory = {
 
 									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
 
-									if (artistType === 'main') {
-										typeSelect.selectedIndex = optionOffsets[1];
-									} else if (artistType === 'guest') {
-										typeSelect.selectedIndex = optionOffsets[2];
-									} else if (artistType === 'remixer') {
-										typeSelect.selectedIndex = optionOffsets[3];
-									} else {
-										// We don't know this artist type, default to "main"
-										typeSelect.selectedIndex = optionOffsets[1];
+									switch (artistType) {
+										case 'main': {
+											typeSelect.selectedIndex = optionOffsets[1];
+
+											break;
+										}
+
+										case 'guest': {
+											typeSelect.selectedIndex = optionOffsets[2];
+
+											break;
+										}
+
+										case 'remixer': {
+											typeSelect.selectedIndex = optionOffsets[3];
+
+											break;
+										}
+
+										default: {
+											// We don't know this artist type, default to "main"
+											typeSelect.selectedIndex = optionOffsets[1];
+										}
 									}
 
 									// Next artist input
@@ -2752,16 +2806,12 @@ factory = {
 							}
 						}
 
-						if (data.tags === false) {
-							tagsInput.value = '';
-						} else {
-							tagsInput.value = data.tag_string.toLowerCase();
-						}
+						tagsInput.value = data.tags === false ? '' : data.tag_string.toLowerCase();
 
 						yadgUtil.setValueIfSet(
 							data.title,
 							albumTitleInput,
-							data.title !== false
+							data.title !== false,
 						);
 					}
 
@@ -2770,7 +2820,7 @@ factory = {
 					yadgUtil.setValueIfSet(
 						data.catalog,
 						catalogInput,
-						data.catalog !== false
+						data.catalog !== false,
 					);
 				};
 
@@ -2801,14 +2851,10 @@ factory = {
 					yadgUtil.setValueIfSet(
 						data.title,
 						albumTitleInput,
-						data.title !== false
+						data.title !== false,
 					);
 
-					if (data.tags === false) {
-						tagsInput.value = '';
-					} else {
-						tagsInput.value = data.tag_string_nodots.toLowerCase();
-					}
+					tagsInput.value = data.tags === false ? '' : data.tag_string_nodots.toLowerCase();
 
 					yadgUtil.exec(() => {
 						formatName();
@@ -2849,14 +2895,10 @@ factory = {
 					yadgUtil.setValueIfSet(
 						data.title,
 						albumTitleInput,
-						data.title !== false
+						data.title !== false,
 					);
 
-					if (data.tags === false) {
-						tagsInput.value = '';
-					} else {
-						tagsInput.value = data.tag_string_nodots.toLowerCase();
-					}
+					tagsInput.value = data.tags === false ? '' : data.tag_string_nodots.toLowerCase();
 				};
 
 				return f;
@@ -2881,7 +2923,7 @@ factory = {
 					yadgUtil.setValueIfSet(
 						data.title,
 						albumTitleInput,
-						data.title !== false
+						data.title !== false,
 					);
 				};
 
@@ -2892,7 +2934,7 @@ factory = {
 				// That should actually never happen
 				return function () {};
 		}
-	}
+	},
 };
 
 yadgTemplates = {
@@ -2911,7 +2953,7 @@ yadgTemplates = {
 					callback(template);
 				},
 				null,
-				yadgTemplates.errorTemplate
+				yadgTemplates.errorTemplate,
 			);
 			request.send();
 		} else {
@@ -2929,7 +2971,7 @@ yadgTemplates = {
 
 	errorTemplate() {
 		yadg.printError('Could not get template. Please choose another one.', true);
-	}
+	},
 };
 
 yadgRenderer = {
@@ -2950,7 +2992,7 @@ yadgRenderer = {
 
 			template.code = template.code.replace(
 				'https://what.cd',
-				'https://' + window.location.hostname
+				'https://' + window.location.hostname,
 			);
 			yadgSandbox.renderTemplate(template.code, data, callback, errorCallback);
 		});
@@ -2968,7 +3010,7 @@ yadgRenderer = {
 
 	clearCached() {
 		this._lastData = null;
-	}
+	},
 };
 
 yadg = {
@@ -2989,7 +3031,7 @@ yadg = {
 		this.input = document.querySelector('#yadg_input');
 		this.targetSelect = document.querySelector('#yadg_target');
 		this.targetDescriptionSelect = document.querySelector(
-			'#yadg_description_target'
+			'#yadg_description_target',
 		);
 		this.responseDiv = document.querySelector('#yadg_response');
 		this.button = document.querySelector('#yadg_submit');
@@ -3047,7 +3089,7 @@ yadg = {
 			data = {
 				scraper: this.scraperSelect.options[this.scraperSelect.selectedIndex]
 					.value,
-				input: this.input.value
+				input: this.input.value,
 			};
 		}
 
@@ -3060,7 +3102,7 @@ yadg = {
 				result => {
 					yadg.getResult(result.url);
 				},
-				data
+				data,
 			);
 			this.busyStart();
 			request.send();
@@ -3070,85 +3112,99 @@ yadg = {
 	getResult(resultUrl) {
 		const request = new Requester(resultUrl, 'GET', response => {
 			if (response.status === 'done') {
-				if (response.data.type === 'ReleaseResult') {
-					const templateId =
-						yadg.formatSelect.options[yadg.formatSelect.selectedIndex].value;
-					yadgRenderer.render(
-						templateId,
-						response,
-						factory.setDescriptionBoxValue,
-						factory.setDescriptionBoxValue
-					);
-
-					if (yadg.lastStateError === true) {
-						yadg.responseDiv.innerHTML = '';
-						yadg.lastStateError = false;
-					}
-
-					const fillFunc = factory.getFormFillFunction();
-					fillFunc(response.data);
-				} else if (response.data.type === 'ListResult') {
-					const ul = document.createElement('ul');
-					ul.id = 'yadg_release_list';
-
-					const releaseList = response.data.items;
-					for (const element of releaseList) {
-						const {name, info, queryParams} = element;
-						const releaseUrl = element.url;
-
-						const li = document.createElement('li');
-						const a = document.createElement('a');
-
-						a.textContent = name;
-						a.params = queryParams;
-						a.href = releaseUrl;
-
-						a.addEventListener(
-							'click',
-							function (event) {
-								event.preventDefault();
-								yadg.makeRequest(this.params);
-								if (factory.getFetchImageCheckbox().checked) {
-									fetchImage(this.href, data => {
-										insertImage(data, () => {
-											if (
-												factory.getAutoRehostCheckbox() &&
-												factory.getAutoRehostCheckbox().checked
-											) {
-												pthImgIt();
-											}
-										});
-									});
-								}
-							},
-							false
+				switch (response.data.type) {
+					case 'ReleaseResult': {
+						const templateId
+							= yadg.formatSelect.options[yadg.formatSelect.selectedIndex].value;
+						yadgRenderer.render(
+							templateId,
+							response,
+							factory.setDescriptionBoxValue,
+							factory.setDescriptionBoxValue,
 						);
 
-						li.append(a);
-						li.append(document.createElement('br'));
-						if (info) {
-							li.append(document.createTextNode(info));
+						if (yadg.lastStateError === true) {
+							yadg.responseDiv.innerHTML = '';
+							yadg.lastStateError = false;
 						}
 
-						ul.append(li);
+						const fillFunc = factory.getFormFillFunction();
+						fillFunc(response.data);
+
+						break;
 					}
 
-					if (ul.childNodes.length === 0) {
-						yadg.printError('Sorry, there were no matches.');
-					} else {
-						yadg.responseDiv.innerHTML = '';
-						yadg.responseDiv.append(ul);
-						yadg.lastStateError = false;
+					case 'ListResult': {
+						const ul = document.createElement('ul');
+						ul.id = 'yadg_release_list';
 
-						// We got a ListResult so clear the last ReleaseResult from the render cache
-						yadgRenderer.clearCached();
+						const releaseList = response.data.items;
+						for (const element of releaseList) {
+							const {name, info, queryParams} = element;
+							const releaseUrl = element.url;
+
+							const li = document.createElement('li');
+							const a = document.createElement('a');
+
+							a.textContent = name;
+							a.params = queryParams;
+							a.href = releaseUrl;
+
+							a.addEventListener(
+								'click',
+								function (event) {
+									event.preventDefault();
+									yadg.makeRequest(this.params);
+									if (factory.getFetchImageCheckbox().checked) {
+										fetchImage(this.href, data => {
+											insertImage(data, () => {
+												if (
+													factory.getAutoRehostCheckbox()
+													&& factory.getAutoRehostCheckbox().checked
+												) {
+													pthImgIt();
+												}
+											});
+										});
+									}
+								},
+								false,
+							);
+
+							li.append(a);
+							li.append(document.createElement('br'));
+							if (info) {
+								li.append(document.createTextNode(info));
+							}
+
+							ul.append(li);
+						}
+
+						if (ul.childNodes.length === 0) {
+							yadg.printError('Sorry, there were no matches.');
+						} else {
+							yadg.responseDiv.innerHTML = '';
+							yadg.responseDiv.append(ul);
+							yadg.lastStateError = false;
+
+							// We got a ListResult so clear the last ReleaseResult from the render cache
+							yadgRenderer.clearCached();
+						}
+
+						break;
 					}
-				} else if (response.data.type === 'NotFoundResult') {
-					yadg.printError(
-						'I could not find the release with the given ID. You may want to try again with another one.'
-					);
-				} else {
-					yadg.printError('Something weird happened. Please try again');
+
+					case 'NotFoundResult': {
+						yadg.printError(
+							'I could not find the release with the given ID. You may want to try again with another one.',
+						);
+
+						break;
+					}
+
+					default: {
+						yadg.printError('Something weird happened. Please try again');
+					}
 				}
 
 				yadg.busyStop();
@@ -3328,7 +3384,7 @@ yadg = {
 			result.effective_artist_count = 0; // eslint-disable-line camelcase
 
 			for (const i in result.artists) {
-				if ({}.hasOwnProperty.call(result.artists, i)) {
+				if (Object.prototype.hasOwnProperty.call(result.artists, i)) {
 					result.artists_length++;
 					result.artist_keys.push(i);
 					result.effective_artist_count += result.artists[i].length; // eslint-disable-line camelcase
@@ -3358,7 +3414,7 @@ yadg = {
 		}
 
 		return result;
-	}
+	},
 };
 
 yadgSandbox.init(() => {
