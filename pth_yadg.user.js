@@ -1185,6 +1185,7 @@ factory = {
 			factory.getReplaceDescriptionSettingKey(),
 		);
 		const fetchImage = yadgUtil.settings.getItem(factory.KEY_FETCH_IMAGE);
+		const autoPreview = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
 		autoRehost = yadgUtil.settings.getItem(factory.KEY_AUTO_REHOST);
 		autoPreview = yadgUtil.settings.getItem(factory.KEY_AUTO_PREVIEW);
 		const autoSelectScraper = yadgUtil.settings.getItem(
