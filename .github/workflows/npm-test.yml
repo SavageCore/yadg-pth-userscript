@@ -1,0 +1,34 @@
+name: test
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+        node_version:
+          - 12
+          - 14
+          - 16
+        architecture:
+          - x64
+    name: Node ${{ matrix.node_version }} - ${{ matrix.architecture }} on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node_version }}
+          architecture: ${{ matrix.architecture }}
+          cache: "npm"
+      - name: Install latest npm
+        run: npm i -g npm
+      - name: Clean install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm test
