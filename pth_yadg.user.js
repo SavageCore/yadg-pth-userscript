@@ -53,13 +53,17 @@ let autoPreview;
 // --------- USER SETTINGS END ---------
 
 function fetchImage(target, callback) {
-	const dontReplaceCover = document.getElementsByName('image')[0].value;
-	if (/imgur|ptpimg/g.test(dontReplaceCover)) {
+	const input = document.querySelector('[name="image"]');
+	if (input === null) {
 		return;
 	}
 
-	const imgElement = document.querySelector('#image');
-	if (imgElement && imgElement.getAttribute('disabled') === 'disabled') {
+	const disabled = input.getAttribute('disabled');
+	if (disabled === 'disabled') {
+		return;
+	}
+
+	if (/imgur|ptpimg/g.test(input.value)) {
 		return;
 	}
 
