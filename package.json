@@ -1,9 +1,11 @@
 {
   "scripts": {
-    "test": "xo"
+    "test": "xo",
+    "prepare": "husky install"
   },
   "devDependencies": {
-    "xo": "^0.46.3"
+    "xo": "^0.46.3",
+    "husky": "^7.0.0"
   },
   "xo": {
     "plugins": [
