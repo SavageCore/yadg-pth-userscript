@@ -1968,6 +1968,7 @@ factory = {
 					let artistInputs = document.getElementsByName('artists[]');
 					const tagsInput = document.querySelector('#tags');
 					const mediaInput = document.querySelector('#media');
+					const releaseTypeInput = document.querySelector('#releasetype');
 					const data = yadg.prepareRawResponse(rawData);
 					let nullArtistCount = 0;
 
@@ -2085,6 +2086,14 @@ factory = {
 							data.format,
 							mediaInput,
 							data.format !== false,
+						);
+					}
+
+					if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
+						yadgUtil.setValueIfSet(
+							data.releaseType,
+							releaseTypeInput,
+							data.releaseType !== false,
 						);
 					}
 				};
@@ -3253,6 +3262,7 @@ yadg = {
 		result.is_various = false; // eslint-disable-line camelcase
 		result.flat_artistString = false; // eslint-disable-line camelcase
 		result.format = false;
+		result.releaseType = false;
 
 		if (rawData.artists.length > 0) {
 			result.artists = {};
@@ -3421,6 +3431,23 @@ yadg = {
 				result.format = 'Blu-Ray';
 			} else if (format.includes('file')) {
 				result.format = 'WEB';
+			}
+		}
+
+		if (rawData.format) {
+			const format = rawData.format.toLowerCase();
+			if (format.includes('album') || rawData.styles.includes('Album')) {
+				result.releaseType = 1;
+			} else if (format.includes('soundtrack') || rawData.styles.includes('Soundtrack')) {
+				result.releaseType = 3;
+			} else if (format.includes('ep') || rawData.styles.includes('EP')) {
+				result.releaseType = 5;
+			} else if (format.includes('anthology') || rawData.styles.includes('Anthology')) {
+				result.releaseType = 6;
+			} else if (format.includes('compilation') || rawData.styles.includes('Compilation')) {
+				result.releaseType = 7;
+			} else if (format.includes('single') || rawData.styles.includes('Single')) {
+				result.releaseType = 9;
 			}
 		}
 
