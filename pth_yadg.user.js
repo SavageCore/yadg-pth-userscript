@@ -3335,6 +3335,21 @@ yadg = {
 			result.tag_string_nodots = ''; // eslint-disable-line camelcase
 
 			for (let i = 0; i < result.tags.length; i++) {
+				switch (result.tags[i]) {
+					case 'Techno (Peak Time / Driving)':
+						result.tags[i] = 'Techno';
+						break;
+					case 'Techno (Raw / Deep / Hypnotic)':
+						result.tags[i] = 'Dub Techno';
+						break;
+					case 'Minimal / Deep Tech':
+						result.tags[i] = 'Tech House';
+						break;
+
+					default:
+						break;
+				}
+
 				result.tag_string += result.tags[i].replace(/\s+/g, '.').replace(/\bn\b|&/, 'and'); // eslint-disable-line camelcase
 				result.tag_string_nodots += result.tags[i].replace(/\s+/g, ' '); // eslint-disable-line camelcase
 				if (i !== result.tags.length - 1) {
@@ -3342,7 +3357,7 @@ yadg = {
 					result.tag_string_nodots += ', '; // eslint-disable-line camelcase
 				}
 			}
-		}
+	}
 
 		if (result.artists !== false) {
 			// Count the artists
