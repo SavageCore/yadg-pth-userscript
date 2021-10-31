@@ -1967,6 +1967,7 @@ factory = {
 
 					let artistInputs = document.getElementsByName('artists[]');
 					const tagsInput = document.querySelector('#tags');
+					const mediaInput = document.querySelector('#media');
 					const data = yadg.prepareRawResponse(rawData);
 					let nullArtistCount = 0;
 
@@ -2076,6 +2077,14 @@ factory = {
 							data.catalog,
 							catalogInput,
 							data.catalog !== false,
+						);
+					}
+
+					if (mediaInput.getAttribute('disabled') !== 'disabled') {
+						yadgUtil.setValueIfSet(
+							data.format,
+							mediaInput,
+							data.format !== false,
 						);
 					}
 				};
@@ -3243,6 +3252,7 @@ yadg = {
 		result.tags = false;
 		result.is_various = false; // eslint-disable-line camelcase
 		result.flat_artistString = false; // eslint-disable-line camelcase
+		result.format = false;
 
 		if (rawData.artists.length > 0) {
 			result.artists = {};
@@ -3357,7 +3367,7 @@ yadg = {
 					result.tag_string_nodots += ', '; // eslint-disable-line camelcase
 				}
 			}
-	}
+		}
 
 		if (result.artists !== false) {
 			// Count the artists
@@ -3393,6 +3403,25 @@ yadg = {
 			}
 
 			result.flat_artistString = artistString; // eslint-disable-line camelcase
+		}
+
+		if (rawData.format) {
+			const format = rawData.format.toLowerCase();
+			if (format.includes('vinyl')) {
+				result.format = 'Vinyl';
+			} else if (format.includes('cd')) {
+				result.format = 'CD';
+			} else if (format.includes('dvd') || format.includes('dvd-video')) {
+				result.format = 'DVD';
+			} else if (format.includes('sacd')) {
+				result.format = 'SACD';
+			} else if (format.includes('cassettes')) {
+				result.format = 'Cassette';
+			} else if (format.includes('Blu-ray')) {
+				result.format = 'Blu-Ray';
+			} else if (format.includes('file')) {
+				result.format = 'WEB';
+			}
 		}
 
 		return result;
