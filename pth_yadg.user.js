@@ -26,6 +26,7 @@
 // @include        http*://*d3si.net/upload.php*
 // @include        http*://*d3si.net/requests.php*
 // @include        http*://*d3si.net/torrents.php*
+// @match          https://www.deepbassnine.com/upload.php*
 // @updateURL      https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.meta.js
 // @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
 // ==/UserScript==
@@ -909,6 +910,10 @@ factory = {
 			name: 'waffles_request',
 			regex: /http(s)?:\/\/(.*\.)?waffles\.ch\/requests\.php\?do=add/i,
 		},
+		{
+			name: 'db9_upload',
+			regex: /https:\/\/www.deepbassnine\.com\/upload\.php.*/i,
+		},
 	],
 
 	determineLocation(uri) {
@@ -1163,6 +1168,7 @@ factory = {
 				'waffles_request',
 				'd3si_upload',
 				'd3si_request',
+				'db9_upload',
 			];
 			for (const loc of locations) {
 				const replaceDescSettingKey = factory.makeReplaceDescriptionSettingsKey(
@@ -1615,7 +1621,7 @@ factory = {
 		optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
 		optionsHTML += '<div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper"/><label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">Auto select the correct scraper when pasting the URL</label></div>		';
 		optionsHTML += '<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
-		const inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" />';
+		const inputHTML = '<input type="text" value="https://www.discogs.com/release/13801-Various-Drum-Bass-Arena-LP" name="yadg_input" id="yadg_input" size="60" />';
 		const responseDivHTML = '<div id="yadg_response"></div>';
 		const toggleOptionsLinkHTML
 			= '<a id="yadg_toggle_options" href="#">Toggle options</a>';
@@ -1623,6 +1629,7 @@ factory = {
 			= '<a id="yadg_scraper_info" href="https://yadg.cc/available-scrapers" target="_blank" title="Get additional information on the available scrapers">[?]</a>';
 
 		switch (this.currentLocation) {
+			case 'db9_upload':
 			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'dic_upload':
@@ -1773,6 +1780,7 @@ factory = {
 	// eslint-disable-next-line complexity
 	insertIntoPage(element) {
 		switch (this.currentLocation) {
+			case 'db9_upload':
 			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'dic_upload':
@@ -1864,6 +1872,7 @@ factory = {
 	// eslint-disable-next-line complexity
 	getDescriptionBox() {
 		switch (this.currentLocation) {
+			case 'db9_upload':
 			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'dic_upload':
@@ -1935,6 +1944,59 @@ factory = {
 	getFormFillFunction() {
 		const currentTarget = factory.getTargetSelect().value;
 		switch (this.currentLocation) {
+			case 'db9_upload': return rawData => {
+				const title = document.querySelector('#title');
+				const label = document.querySelector('#recordlabel');
+				const catalog = document.querySelector('#catalogue_number');
+				const year = document.querySelector('#year');
+				const releaseType = document.querySelector('#releasetype');
+				const format = document.querySelector('#media');
+				const tags = document.querySelector('#tags');
+
+				const inputs = {
+					title,
+					label,
+					catalog,
+					year,
+					releaseType,
+					format,
+					tag_string: tags, // eslint-disable-line camelcase
+				};
+
+				const data = yadg.prepareRawResponse(rawData);
+
+				console.dir(data);
+
+				for (const name of Object.keys(inputs)) {
+					console.log(name);
+					const input = inputs[name];
+					const value = data[name];
+					if (!input || !value) {
+						continue;
+					}
+
+					const disabled = input.getAttribute('disabled');
+					if (disabled === 'disabled') {
+						continue;
+					}
+
+					input.value = value;
+				}
+
+				const kinds = {main: 1, guest: 2, remixer: 3};
+
+				const {artists} = data;
+
+				for (const name of Object.keys(artists)) {
+					const roles = artists[name];
+					for (const role of roles) {
+						document.querySelector('[name="artists[]"]:last-of-type').value = name;
+						document.querySelector('#artistfields > #importance:last-of-type').value = kinds[role];
+						document.querySelector('#artistfields > a').click();
+					}
+				}
+			};
+
 			case 'd3si_upload':
 			case 'pth_upload': {
 				// eslint-disable-next-line complexity
