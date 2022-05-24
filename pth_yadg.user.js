@@ -52,6 +52,10 @@ let autoRehost;
 // --------- USER SETTINGS END ---------
 
 function fetchImage(link, callback) {
+	if (!link) {
+		return;
+	}
+
 	const input = document.querySelector('[name="image"]');
 	if (input === null) {
 		return;
