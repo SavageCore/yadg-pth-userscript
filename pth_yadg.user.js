@@ -1367,8 +1367,7 @@ factory = {
 				continue;
 			}
 
-			const div = box.parentNode.nextSibling.nextSibling;
-			const button = div.firstChild.nextSibling;
+			const button = document.querySelector('.button_preview_0');
 			const autoPreviewChecked = factory.getAutoPreviewCheckbox().checked;
 			if (button && autoPreviewChecked) {
 				button.click();
