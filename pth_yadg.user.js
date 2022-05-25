@@ -1369,8 +1369,19 @@ factory = {
 				continue;
 			}
 
-			const div = box.parentNode.nextSibling.nextSibling;
-			const button = div.firstChild.nextSibling;
+			const parent = box.parentElement;
+			console.info('Parent %o', parent);
+			if (parent === null) {
+				continue;
+			}
+
+			const td = parent.parentElement;
+			console.info('TD %o', td);
+			if (td === null) {
+				continue;
+			}
+
+			const button = td.querySelector('.button_preview_0, .button_preview_1');
 			const autoPreviewChecked = factory.getAutoPreviewCheckbox().checked;
 			if (button && autoPreviewChecked) {
 				button.click();
