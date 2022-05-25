@@ -847,7 +847,7 @@ factory = {
 		},
 		{
 			name: 'ops_edit',
-			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/torrents\.php\?action=editgroup&groupid=.*/i,
+			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/torrents\.php\?id=\d+&action=editgroup/i,
 		},
 		{
 			name: 'ops_request',
