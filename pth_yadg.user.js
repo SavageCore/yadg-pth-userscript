@@ -51,7 +51,11 @@ let autoRehost;
 
 // --------- USER SETTINGS END ---------
 
-function fetchImage(target, callback) {
+function fetchImage(link, callback) {
+	if (!link) {
+		return;
+	}
+
 	const input = document.querySelector('[name="image"]');
 	if (input === null) {
 		return;
@@ -65,8 +69,6 @@ function fetchImage(target, callback) {
 	if (/imgur|ptpimg/g.test(input.value)) {
 		return;
 	}
-
-	const link = target === null ? unsafeWindow.$('#yadg_input').val() : target;
 
 	switch (true) {
 		case /discogs/.test(link):
@@ -977,7 +979,7 @@ factory = {
 				event.preventDefault();
 				yadg.makeRequest();
 				if (factory.getFetchImageCheckbox().checked) {
-					fetchImage(null, data => {
+					fetchImage(input.value, data => {
 						if (data) {
 							insertImage(data, () => {
 								if (
