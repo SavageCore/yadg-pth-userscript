@@ -27,6 +27,7 @@
 // @include        http*://*d3si.net/requests.php*
 // @include        http*://*d3si.net/torrents.php*
 // @match          https://www.deepbassnine.com/upload.php*
+// @match          https://www.deepbassnine.com/torrents.php*
 // @updateURL      https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.meta.js
 // @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
 // ==/UserScript==
@@ -914,6 +915,10 @@ factory = {
 			name: 'db9_upload',
 			regex: /https:\/\/www.deepbassnine\.com\/upload\.php.*/i,
 		},
+		{
+			name: 'db9_edit',
+			regex: /https:\/\/www.deepbassnine\.com\/torrents\.php\?action=editgroup&groupid=\d+/i,
+		},
 	],
 
 	determineLocation(uri) {
@@ -1652,6 +1657,7 @@ factory = {
 
 			case 'nwcd_edit':
 			case 'ops_edit':
+			case 'db9_edit':
 			case 'dic_edit':
 			case 'd3si_edit':
 			case 'pth_edit': {
@@ -1793,6 +1799,7 @@ factory = {
 
 			case 'nwcd_edit':
 			case 'ops_edit':
+			case 'db9_edit':
 			case 'dic_edit':
 			case 'd3si_edit':
 			case 'pth_edit': {
@@ -1897,6 +1904,7 @@ factory = {
 
 			case 'nwcd_edit':
 			case 'ops_edit':
+			case 'db9_edit':
 			case 'dic_edit':
 			case 'd3si_edit':
 			case 'pth_edit':
@@ -2663,6 +2671,7 @@ factory = {
 
 			case 'nwcd_edit':
 			case 'ops_edit':
+			case 'db9_edit':
 			case 'dic_edit':
 			case 'd3si_edit':
 			case 'pth_edit': {
