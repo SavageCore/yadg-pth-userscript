@@ -924,6 +924,10 @@ factory = {
 			name: 'db9_request',
 			regex: /https:\/\/www.deepbassnine\.com\/requests\.php\?action=new/i,
 		},
+		{
+			name: 'db9_request_edit',
+			regex: /https:\/\/www.deepbassnine\.com\/requests\.php\?action=edit&id=.*/i,
+		},
 	],
 
 	determineLocation(uri) {
@@ -1715,6 +1719,7 @@ factory = {
 			case 'ops_request':
 			case 'ops_request_edit':
 			case 'db9_request':
+			case 'db9_request_edit':
 			case 'dic_request':
 			case 'dic_request_edit':
 			case 'd3si_request':
@@ -1835,6 +1840,7 @@ factory = {
 			case 'ops_request':
 			case 'ops_request_edit':
 			case 'db9_request':
+			case 'db9_request_edit':
 			case 'dic_request':
 			case 'dic_request_edit':
 			case 'd3si_request':
@@ -1933,6 +1939,7 @@ factory = {
 			case 'ops_request':
 			case 'ops_request_edit':
 			case 'db9_request':
+			case 'db9_request_edit':
 			case 'dic_request':
 			case 'dic_request_edit':
 			case 'd3si_request':
@@ -2794,7 +2801,8 @@ factory = {
 				return f;
 			}
 
-			case 'db9_request': return rawData => {
+			case 'db9_request':
+			case 'db9_request_edit': return rawData => {
 				const title = document.querySelector('#title');
 				const label = document.querySelector('#recordlabel');
 				const catalog = document.querySelector('#catalogue_number');
