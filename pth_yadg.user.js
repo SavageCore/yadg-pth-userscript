@@ -68,7 +68,7 @@ function fetchImage(link, callback) {
 		return;
 	}
 
-	if (/imgur|ptpimg/g.test(input.value)) {
+	if (/imgur|ptpimg|deepbassnine/g.test(input.value)) {
 		return;
 	}
 
