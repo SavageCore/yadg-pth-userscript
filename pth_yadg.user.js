@@ -1187,6 +1187,7 @@ factory = {
 				'd3si_upload',
 				'd3si_request',
 				'db9_upload',
+				'db9_request',
 			];
 			for (const loc of locations) {
 				const replaceDescSettingKey = factory.makeReplaceDescriptionSettingsKey(
