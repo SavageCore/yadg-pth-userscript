@@ -928,6 +928,10 @@ factory = {
 			name: 'db9_request_edit',
 			regex: /https:\/\/www.deepbassnine\.com\/requests\.php\?action=edit&id=.*/i,
 		},
+		{
+			name: 'db9_torrent_overview',
+			regex: /https:\/\/www.deepbassnine\.com\/torrents\.php\?id=.*/i,
+		},
 	],
 
 	determineLocation(uri) {
@@ -1369,7 +1373,8 @@ factory = {
 		const replaceDesc = factory.getReplaceDescriptionCheckbox().checked;
 		const skipAutoPreview = ['pth_torrent_overview',
 			'ops_torrent_overview',
-			'dic_torrent_overview'].includes(factory.currentLocation);
+			'dic_torrent_overview',
+			'db9_torrent_overview'].includes(factory.currentLocation);
 
 		const boxes = Array.isArray(descBox) ? descBox : [descBox];
 		for (const box of boxes) {
@@ -1692,6 +1697,7 @@ factory = {
 
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
+			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
@@ -1824,6 +1830,7 @@ factory = {
 
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
+			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
@@ -1925,6 +1932,7 @@ factory = {
 
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
+			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview':
@@ -2730,6 +2738,7 @@ factory = {
 
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
+			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
