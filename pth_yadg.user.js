@@ -258,7 +258,7 @@ function fetchImage(link, callback) {
 						const data = container.querySelector('[data-largeurl]');
 						// No image available https://www.allmusic.com/album/release/beatles-mr0003843619
 						if (data !== null) {
-							const cover = data.getAttribute('data-largeurl');
+							const cover = data.dataset.largeurl;
 							if (typeof callback === 'function') {
 								callback(cover);
 							}
