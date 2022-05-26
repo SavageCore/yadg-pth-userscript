@@ -1641,7 +1641,7 @@ factory = {
 		optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
 		optionsHTML += '<div id="yadg_options_auto_select_scraper_div"><input type="checkbox" name="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper"/><label for="yadg_options_auto_select_scraper" id="yadg_options_auto_select_scraper_label">Auto select the correct scraper when pasting the URL</label></div>		';
 		optionsHTML += '<div id="yadg_options_links"><a id="yadg_save_settings" href="#" title="Save the currently selected scraper and template as default for this site and save the given API token.">Save settings</a> <span class="yadg_separator">|</span> <a id="yadg_clear_cache" href="#">Clear cache</a></div></div>';
-		const inputHTML = '<input type="text" value="https://www.discogs.com/release/13801-Various-Drum-Bass-Arena-LP" name="yadg_input" id="yadg_input" size="60" />';
+		const inputHTML = '<input type="text" name="yadg_input" id="yadg_input" size="60" />';
 		const responseDivHTML = '<div id="yadg_response"></div>';
 		const toggleOptionsLinkHTML
 			= '<a id="yadg_toggle_options" href="#">Toggle options</a>';
@@ -1997,10 +1997,7 @@ factory = {
 
 				const data = yadg.prepareRawResponse(rawData);
 
-				console.dir(data);
-
 				for (const name of Object.keys(inputs)) {
-					console.log(name);
 					const input = inputs[name];
 					const value = data[name];
 					if (!input || !value) {
@@ -2833,10 +2830,7 @@ factory = {
 
 				const data = yadg.prepareRawResponse(rawData);
 
-				console.dir(data);
-
 				for (const name of Object.keys(inputs)) {
-					console.log(name);
 					const input = inputs[name];
 					const value = data[name];
 					if (!input || !value) {
