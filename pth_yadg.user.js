@@ -26,6 +26,9 @@
 // @include        http*://*d3si.net/upload.php*
 // @include        http*://*d3si.net/requests.php*
 // @include        http*://*d3si.net/torrents.php*
+// @match          https://www.deepbassnine.com/upload.php*
+// @match          https://www.deepbassnine.com/requests.php*
+// @match          https://www.deepbassnine.com/torrents.php*
 // @updateURL      https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.meta.js
 // @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
 // ==/UserScript==
@@ -66,7 +69,7 @@ function fetchImage(link, callback) {
 		return;
 	}
 
-	if (/imgur|ptpimg/g.test(input.value)) {
+	if (/imgur|ptpimg|deepbassnine/g.test(input.value)) {
 		return;
 	}
 
@@ -909,6 +912,26 @@ factory = {
 			name: 'waffles_request',
 			regex: /http(s)?:\/\/(.*\.)?waffles\.ch\/requests\.php\?do=add/i,
 		},
+		{
+			name: 'db9_upload',
+			regex: /https:\/\/www.deepbassnine\.com\/upload\.php.*/i,
+		},
+		{
+			name: 'db9_edit',
+			regex: /https:\/\/www.deepbassnine\.com\/torrents\.php\?action=editgroup&groupid=\d+/i,
+		},
+		{
+			name: 'db9_request',
+			regex: /https:\/\/www.deepbassnine\.com\/requests\.php\?action=new/i,
+		},
+		{
+			name: 'db9_request_edit',
+			regex: /https:\/\/www.deepbassnine\.com\/requests\.php\?action=edit&id=.*/i,
+		},
+		{
+			name: 'db9_torrent_overview',
+			regex: /https:\/\/www.deepbassnine\.com\/torrents\.php\?id=.*/i,
+		},
 	],
 
 	determineLocation(uri) {
@@ -1163,6 +1186,8 @@ factory = {
 				'waffles_request',
 				'd3si_upload',
 				'd3si_request',
+				'db9_upload',
+				'db9_request',
 			];
 			for (const loc of locations) {
 				const replaceDescSettingKey = factory.makeReplaceDescriptionSettingsKey(
@@ -1349,7 +1374,8 @@ factory = {
 		const replaceDesc = factory.getReplaceDescriptionCheckbox().checked;
 		const skipAutoPreview = ['pth_torrent_overview',
 			'ops_torrent_overview',
-			'dic_torrent_overview'].includes(factory.currentLocation);
+			'dic_torrent_overview',
+			'db9_torrent_overview'].includes(factory.currentLocation);
 
 		const boxes = Array.isArray(descBox) ? descBox : [descBox];
 		for (const box of boxes) {
@@ -1623,6 +1649,7 @@ factory = {
 			= '<a id="yadg_scraper_info" href="https://yadg.cc/available-scrapers" target="_blank" title="Get additional information on the available scrapers">[?]</a>';
 
 		switch (this.currentLocation) {
+			case 'db9_upload':
 			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'dic_upload':
@@ -1645,6 +1672,7 @@ factory = {
 
 			case 'nwcd_edit':
 			case 'ops_edit':
+			case 'db9_edit':
 			case 'dic_edit':
 			case 'd3si_edit':
 			case 'pth_edit': {
@@ -1670,6 +1698,7 @@ factory = {
 
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
+			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
@@ -1696,6 +1725,8 @@ factory = {
 			case 'nwcd_request_edit':
 			case 'ops_request':
 			case 'ops_request_edit':
+			case 'db9_request':
+			case 'db9_request_edit':
 			case 'dic_request':
 			case 'dic_request_edit':
 			case 'd3si_request':
@@ -1773,6 +1804,7 @@ factory = {
 	// eslint-disable-next-line complexity
 	insertIntoPage(element) {
 		switch (this.currentLocation) {
+			case 'db9_upload':
 			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'dic_upload':
@@ -1785,6 +1817,7 @@ factory = {
 
 			case 'nwcd_edit':
 			case 'ops_edit':
+			case 'db9_edit':
 			case 'dic_edit':
 			case 'd3si_edit':
 			case 'pth_edit': {
@@ -1798,6 +1831,7 @@ factory = {
 
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
+			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
@@ -1813,6 +1847,8 @@ factory = {
 			case 'nwcd_request_edit':
 			case 'ops_request':
 			case 'ops_request_edit':
+			case 'db9_request':
+			case 'db9_request_edit':
 			case 'dic_request':
 			case 'dic_request_edit':
 			case 'd3si_request':
@@ -1864,6 +1900,7 @@ factory = {
 	// eslint-disable-next-line complexity
 	getDescriptionBox() {
 		switch (this.currentLocation) {
+			case 'db9_upload':
 			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'dic_upload':
@@ -1888,6 +1925,7 @@ factory = {
 
 			case 'nwcd_edit':
 			case 'ops_edit':
+			case 'db9_edit':
 			case 'dic_edit':
 			case 'd3si_edit':
 			case 'pth_edit':
@@ -1895,6 +1933,7 @@ factory = {
 
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
+			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview':
@@ -1908,6 +1947,8 @@ factory = {
 			case 'nwcd_request_edit':
 			case 'ops_request':
 			case 'ops_request_edit':
+			case 'db9_request':
+			case 'db9_request_edit':
 			case 'dic_request':
 			case 'dic_request_edit':
 			case 'd3si_request':
@@ -1935,6 +1976,56 @@ factory = {
 	getFormFillFunction() {
 		const currentTarget = factory.getTargetSelect().value;
 		switch (this.currentLocation) {
+			case 'db9_upload': return rawData => {
+				const title = document.querySelector('#title');
+				const label = document.querySelector('#recordlabel');
+				const catalog = document.querySelector('#catalogue_number');
+				const year = document.querySelector('#year');
+				const releaseType = document.querySelector('#releasetype');
+				const format = document.querySelector('#media');
+				const tags = document.querySelector('#tags');
+
+				const inputs = {
+					title,
+					label,
+					catalog,
+					year,
+					releaseType,
+					format,
+					tag_string: tags, // eslint-disable-line camelcase
+				};
+
+				const data = yadg.prepareRawResponse(rawData);
+
+				for (const name of Object.keys(inputs)) {
+					const input = inputs[name];
+					const value = data[name];
+					if (!input || !value) {
+						continue;
+					}
+
+					const disabled = input.getAttribute('disabled');
+					if (disabled === 'disabled') {
+						continue;
+					}
+
+					input.value = value;
+				}
+
+				const kinds = {main: 1, guest: 2, remixer: 3};
+
+				const {artists} = data;
+
+				for (const name of Object.keys(artists)) {
+					const roles = artists[name];
+					for (const role of roles) {
+						document.querySelector('[name="artists[]"]:last-of-type').value = name;
+						document.querySelector('#artistfields > #importance:last-of-type').value = kinds[role];
+						document.querySelector('#artistfields > a').click();
+					}
+				}
+			};
+
 			case 'd3si_upload':
 			case 'pth_upload': {
 				// eslint-disable-next-line complexity
@@ -2601,6 +2692,7 @@ factory = {
 
 			case 'nwcd_edit':
 			case 'ops_edit':
+			case 'db9_edit':
 			case 'dic_edit':
 			case 'd3si_edit':
 			case 'pth_edit': {
@@ -2644,6 +2736,7 @@ factory = {
 
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
+			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
@@ -2714,6 +2807,57 @@ factory = {
 
 				return f;
 			}
+
+			case 'db9_request':
+			case 'db9_request_edit': return rawData => {
+				const title = document.querySelector('#title');
+				const label = document.querySelector('#recordlabel');
+				const catalog = document.querySelector('#catalogue_number');
+				const year = document.querySelector('#year');
+				const releaseType = document.querySelector('#releasetype');
+				const format = document.querySelector('#media');
+				const tags = document.querySelector('#tags');
+
+				const inputs = {
+					title,
+					label,
+					catalog,
+					year,
+					releaseType,
+					format,
+					tag_string: tags, // eslint-disable-line camelcase
+				};
+
+				const data = yadg.prepareRawResponse(rawData);
+
+				for (const name of Object.keys(inputs)) {
+					const input = inputs[name];
+					const value = data[name];
+					if (!input || !value) {
+						continue;
+					}
+
+					const disabled = input.getAttribute('disabled');
+					if (disabled === 'disabled') {
+						continue;
+					}
+
+					input.value = value;
+				}
+
+				const kinds = {main: 1, guest: 2, remixer: 3};
+
+				const {artists} = data;
+
+				for (const name of Object.keys(artists)) {
+					const roles = artists[name];
+					for (const role of roles) {
+						document.querySelector('[name="artists[]"]:last-of-type').value = name;
+						document.querySelector('#artistfields > #importance:last-of-type').value = kinds[role];
+						document.querySelector('#artistfields > a').click();
+					}
+				}
+			};
 
 			case 'nwcd_request':
 			case 'nwcd_request_edit':
