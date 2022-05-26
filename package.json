@@ -4,7 +4,7 @@
     "prepare": "husky install"
   },
   "devDependencies": {
-    "xo": "^0.46.4",
+    "xo": "^0.49.0",
     "husky": "^8.0.1"
   },
   "xo": {
