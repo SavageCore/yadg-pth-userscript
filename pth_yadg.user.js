@@ -26,9 +26,9 @@
 // @include        http*://*d3si.net/upload.php*
 // @include        http*://*d3si.net/requests.php*
 // @include        http*://*d3si.net/torrents.php*
-// @match          https://www.deepbassnine.com/upload.php*
-// @match          https://www.deepbassnine.com/requests.php*
-// @match          https://www.deepbassnine.com/torrents.php*
+// @include        http*://*.deepbassnine.com/upload.php*
+// @include        http*://*.deepbassnine.com/requests.php*
+// @include        http*://*.deepbassnine.com/torrents.php*
 // @updateURL      https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.meta.js
 // @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
 // ==/UserScript==
@@ -1984,6 +1984,7 @@ factory = {
 				const releaseType = document.querySelector('#releasetype');
 				const format = document.querySelector('#media');
 				const tags = document.querySelector('#tags');
+				const genreTagsInput = document.querySelector('#genre_tags');
 
 				const inputs = {
 					title,
@@ -1999,6 +2000,7 @@ factory = {
 
 				for (const name of Object.keys(inputs)) {
 					const input = inputs[name];
+					const inputName = name;
 					const value = data[name];
 					if (!input || !value) {
 						continue;
@@ -2009,7 +2011,28 @@ factory = {
 						continue;
 					}
 
-					input.value = value;
+					if (inputName === 'tag_string') {
+						const tagsArray = value.split(', ');
+						const tagsUnique = tagsArray.filter((element, index, self) => index === self.indexOf(element));
+						const tagsFiltered = tagsUnique.filter(element => element.toLowerCase() !== 'electronic');
+						const tagsLowercase = tagsFiltered.map(element => element.toLowerCase());
+						for (const element of genreTagsInput.options) {
+							if (tagsLowercase.includes(element.value)) {
+								genreTagsInput.value = element.value;
+
+								const index = tagsLowercase.indexOf(element.value);
+								if (index > -1) {
+									tagsLowercase.splice(index, 1);
+								}
+
+								break;
+							}
+						}
+
+						input.value = tagsLowercase.join(',');
+					} else {
+						input.value = value;
+					}
 				}
 
 				const kinds = {main: 1, guest: 2, remixer: 3};

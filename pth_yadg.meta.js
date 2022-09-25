@@ -26,7 +26,9 @@
 // @include        http*://*d3si.net/upload.php*
 // @include        http*://*d3si.net/requests.php*
 // @include        http*://*d3si.net/torrents.php*
+// @include        http*://*.deepbassnine.com/upload.php*
+// @include        http*://*.deepbassnine.com/requests.php*
+// @include        http*://*.deepbassnine.com/torrents.php*
 // @updateURL      https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.meta.js
 // @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
 // ==/UserScript==
-/* eslint unicorn/no-empty-file: 0 */
