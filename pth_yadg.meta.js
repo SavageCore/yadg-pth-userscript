@@ -32,3 +32,4 @@
 // @updateURL      https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.meta.js
 // @downloadURL    https://github.com/SavageCore/yadg-pth-userscript/raw/master/pth_yadg.user.js
 // ==/UserScript==
+/* eslint unicorn/no-empty-file: 0 */
