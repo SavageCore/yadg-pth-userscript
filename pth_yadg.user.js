@@ -1396,13 +1396,11 @@ factory = {
 			}
 
 			const parent = box.parentElement;
-			console.info('Parent %o', parent);
 			if (parent === null) {
 				continue;
 			}
 
 			const td = parent.parentElement;
-			console.info('TD %o', td);
 			if (td === null) {
 				continue;
 			}
