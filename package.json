@@ -5,7 +5,7 @@
   },
   "devDependencies": {
     "xo": "^0.52.3",
-    "husky": "^8.0.1"
+    "husky": "^8.0.2"
   },
   "xo": {
     "plugins": [
