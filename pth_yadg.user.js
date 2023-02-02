@@ -74,7 +74,7 @@ function fetchImage(link, callback) {
 	}
 
 	switch (true) {
-		case /discogs/.test(link):
+		case /discogs/.test(link): {
 			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
@@ -94,6 +94,8 @@ function fetchImage(link, callback) {
 				},
 			});
 			break;
+		}
+
 		case /music.apple/.test(link): {
 			const regex = /apple\.com\/(?:([a-z]{2,3})\/)?.*\/(?:(\d+)|id(\d*))/;
 			const result = regex.exec(link);
@@ -168,7 +170,7 @@ function fetchImage(link, callback) {
 			break;
 		}
 
-		case /beatport/.test(link):
+		case /beatport/.test(link): {
 			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
@@ -188,6 +190,8 @@ function fetchImage(link, callback) {
 				},
 			});
 			break;
+		}
+
 		case /musicbrainz/.test(link): {
 			const regex = /release\/(.*)/;
 			const {1: id} = regex.exec(link);
@@ -209,7 +213,7 @@ function fetchImage(link, callback) {
 			break;
 		}
 
-		case /junodownload/.test(link):
+		case /junodownload/.test(link): {
 			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
@@ -225,7 +229,9 @@ function fetchImage(link, callback) {
 				},
 			});
 			break;
-		case /metal-archives/.test(link):
+		}
+
+		case /metal-archives/.test(link): {
 			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
@@ -246,7 +252,9 @@ function fetchImage(link, callback) {
 				},
 			});
 			break;
-		case /allmusic/.test(link):
+		}
+
+		case /allmusic/.test(link): {
 			GM.xmlHttpRequest({
 				method: 'GET',
 				url: link,
@@ -267,6 +275,8 @@ function fetchImage(link, callback) {
 				},
 			});
 			break;
+		}
+
 		case /deezer/.test(link): {
 			const regex = /\.com\/(\w+\/)?(album)\/(\d+)/g;
 			const helper = regex.exec(link);
@@ -292,8 +302,9 @@ function fetchImage(link, callback) {
 			break;
 		}
 
-		default:
+		default: {
 			break;
+		}
 	}
 }
 
@@ -315,8 +326,9 @@ function pthImgIt() {
 			break;
 		}
 
-		default:
+		default: {
 			break;
+		}
 	}
 
 	if (pthImgIt && imgElement) {
@@ -376,8 +388,9 @@ function insertImage(img, callback) {
 			break;
 		}
 
-		default:
+		default: {
 			break;
+		}
 	}
 }
 
@@ -1431,13 +1444,15 @@ factory = {
 			switch (this.currentLocation) {
 				case 'waffles_upload':
 				case 'waffles_upload_new':
-				case 'waffles_request':
+				case 'waffles_request': {
 					formatSelect.selectedIndex = formatOffsets[defaultWafflesFormat];
 					break;
+				}
 
-				default:
+				default: {
 					formatSelect.selectedIndex = formatOffsets[defaultPTHFormat];
 					break;
+				}
 			}
 		}
 	},
@@ -1605,20 +1620,23 @@ factory = {
 
 		// Location specific styles will go here
 		switch (this.currentLocation) {
-			case 'waffles_upload':
+			case 'waffles_upload': {
 				yadgUtil.addCSS(
 					'div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }',
 				);
 				break;
+			}
 
-			case 'waffles_request':
+			case 'waffles_request': {
 				yadgUtil.addCSS(
 					'div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }',
 				);
 				break;
+			}
 
-			default:
+			default: {
 				break;
+			}
 		}
 	},
 
@@ -1793,9 +1811,10 @@ factory = {
 				return tr;
 			}
 
-			default:
+			default: {
 				// This should actually never happen
 				return document.createElement('div');
+			}
 		}
 	},
 
@@ -1890,8 +1909,9 @@ factory = {
 				break;
 			}
 
-			default:
+			default: {
 				break;
+			}
 		}
 	},
 
@@ -1903,7 +1923,7 @@ factory = {
 			case 'ops_upload':
 			case 'dic_upload':
 			case 'd3si_upload':
-			case 'pth_upload':
+			case 'pth_upload': {
 				if (factory.getDescriptionTargetSelect().value === 'album') {
 					return document.querySelector('#album_desc');
 				}
@@ -1920,26 +1940,29 @@ factory = {
 				}
 
 				break;
+			}
 
 			case 'nwcd_edit':
 			case 'ops_edit':
 			case 'db9_edit':
 			case 'dic_edit':
 			case 'd3si_edit':
-			case 'pth_edit':
+			case 'pth_edit': {
 				return document.getElementsByName('body')[0];
+			}
 
 			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
 			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
-			case 'pth_torrent_overview':
+			case 'pth_torrent_overview': {
 				if (!Object.prototype.hasOwnProperty.call(this, 'dummybox')) {
 					this.dummybox = document.createElement('div');
 				}
 
 				return this.dummybox;
+			}
 
 			case 'nwcd_request':
 			case 'nwcd_request_edit':
@@ -1952,21 +1975,26 @@ factory = {
 			case 'd3si_request':
 			case 'd3si_request_edit':
 			case 'pth_request':
-			case 'pth_request_edit':
+			case 'pth_request_edit': {
 				return document.getElementsByName('description')[0];
+			}
 
-			case 'waffles_upload':
+			case 'waffles_upload': {
 				return document.querySelector('#descr');
+			}
 
-			case 'waffles_upload_new':
+			case 'waffles_upload_new': {
 				return document.querySelector('#id_descr');
+			}
 
-			case 'waffles_request':
+			case 'waffles_request': {
 				return document.getElementsByName('information')[0];
+			}
 
-			default:
+			default: {
 				// That should actually never happen
 				return document.createElement('div');
+			}
 		}
 	},
 
@@ -1974,7 +2002,7 @@ factory = {
 	getFormFillFunction() {
 		const currentTarget = factory.getTargetSelect().value;
 		switch (this.currentLocation) {
-			case 'db9_upload': return rawData => {
+			case 'db9_upload': { return rawData => {
 				const title = document.querySelector('#title');
 				const label = document.querySelector('#recordlabel');
 				const catalog = document.querySelector('#catalogue_number');
@@ -2046,6 +2074,7 @@ factory = {
 					}
 				}
 			};
+			}
 
 			case 'd3si_upload':
 			case 'pth_upload': {
@@ -2071,22 +2100,27 @@ factory = {
 					if (/music.apple/.test(rawData.url)) {
 						const releaseTypeInput = document.querySelector('#releasetype');
 						switch (true) {
-							case /.+ - Single$/.test(rawData.title):
+							case /.+ - Single$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - Single$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 9;
 								}
 
 								break;
-							case /.+ - EP$/.test(rawData.title):
+							}
+
+							case /.+ - EP$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - EP$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 5;
 								}
 
 								break;
-							default:
+							}
+
+							default: {
 								break;
+							}
 						}
 					}
 
@@ -2252,22 +2286,27 @@ factory = {
 					if (/itunes/.test(rawData.url)) {
 						const releaseTypeInput = document.querySelector('#releasetype');
 						switch (true) {
-							case /.+ - Single$/.test(rawData.title):
+							case /.+ - Single$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - Single$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 9;
 								}
 
 								break;
-							case /.+ - EP$/.test(rawData.title):
+							}
+
+							case /.+ - EP$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - EP$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 5;
 								}
 
 								break;
-							default:
+							}
+
+							default: {
 								break;
+							}
 						}
 					}
 
@@ -2413,22 +2452,27 @@ factory = {
 					if (/itunes/.test(rawData.url)) {
 						const releaseTypeInput = document.querySelector('#releasetype');
 						switch (true) {
-							case /.+ - Single$/.test(rawData.title):
+							case /.+ - Single$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - Single$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 9;
 								}
 
 								break;
-							case /.+ - EP$/.test(rawData.title):
+							}
+
+							case /.+ - EP$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - EP$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 5;
 								}
 
 								break;
-							default:
+							}
+
+							default: {
 								break;
+							}
 						}
 					}
 
@@ -2574,22 +2618,27 @@ factory = {
 					if (/itunes/.test(rawData.url)) {
 						const releaseTypeInput = document.querySelector('#releasetype');
 						switch (true) {
-							case /.+ - Single$/.test(rawData.title):
+							case /.+ - Single$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - Single$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 9;
 								}
 
 								break;
-							case /.+ - EP$/.test(rawData.title):
+							}
+
+							case /.+ - EP$/.test(rawData.title): {
 								rawData.title = rawData.title.replace(/ - EP$/, '');
 								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
 									releaseTypeInput.value = 5;
 								}
 
 								break;
-							default:
+							}
+
+							default: {
 								break;
+							}
 						}
 					}
 
@@ -2830,7 +2879,7 @@ factory = {
 			}
 
 			case 'db9_request':
-			case 'db9_request_edit': return rawData => {
+			case 'db9_request_edit': { return rawData => {
 				const title = document.querySelector('#title');
 				const label = document.querySelector('#recordlabel');
 				const catalog = document.querySelector('#catalogue_number');
@@ -2879,6 +2928,7 @@ factory = {
 					}
 				}
 			};
+			}
 
 			case 'nwcd_request':
 			case 'nwcd_request_edit':
@@ -3093,9 +3143,10 @@ factory = {
 				return f;
 			}
 
-			default:
+			default: {
 				// That should actually never happen
 				return function () {};
+			}
 		}
 	},
 };
@@ -3534,18 +3585,24 @@ yadg = {
 
 			for (let i = 0; i < result.tags.length; i++) {
 				switch (result.tags[i]) {
-					case 'Techno (Peak Time / Driving)':
+					case 'Techno (Peak Time / Driving)': {
 						result.tags[i] = 'Techno';
 						break;
-					case 'Techno (Raw / Deep / Hypnotic)':
+					}
+
+					case 'Techno (Raw / Deep / Hypnotic)': {
 						result.tags[i] = 'Dub Techno';
 						break;
-					case 'Minimal / Deep Tech':
+					}
+
+					case 'Minimal / Deep Tech': {
 						result.tags[i] = 'Tech House';
 						break;
+					}
 
-					default:
+					default: {
 						break;
+					}
 				}
 
 				result.tag_string += result.tags[i].replace(/\s+/g, '.').replace(/\bn\b|&/, 'and'); // eslint-disable-line camelcase
