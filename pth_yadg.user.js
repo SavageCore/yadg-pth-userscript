@@ -1853,10 +1853,13 @@ factory = {
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
 				const [addArtistsBox] = document.querySelectorAll('.box_addartists');
-				addArtistsBox.parentNode.insertBefore(
-					element,
-					addArtistsBox.nextSibling.nextSibling,
-				);
+				if (addArtistsBox) {
+					addArtistsBox.parentNode.insertBefore(
+						element,
+						addArtistsBox.nextSibling.nextSibling,
+					);
+				}
+
 				break;
 			}
 
