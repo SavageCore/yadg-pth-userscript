@@ -179,13 +179,21 @@ function fetchImage(link, callback) {
 						const container = document.implementation.createHTMLDocument()
 							.documentElement;
 						container.innerHTML = response.responseText;
-						if (typeof callback === 'function') {
-							callback(
-								container.querySelectorAll(
-									'div.interior-release-chart-artwork-parent > img',
-								)[0].src,
-							);
-						}
+            try {
+              const script = container.querySelector('#__NEXT_DATA__');
+              const data = JSON.parse(script.textContent);
+              const { dynamic_uri } = data.props.pageProps.release.image;
+              if (!dynamic_uri) {
+                throw new Error('Failed to retrieve Beatport "image" property');
+              }
+              const size = factory.getCoverSize().value;
+              const res = size === 'large' ? 1400 : 500;
+              const uri = dynamic_uri.replace(/{(?:w|h)}}/g, res);
+              callback(uri);
+            } catch (error) {
+              console.log(error);
+              callback(false);
+            }
 					}
 				},
 			});
