@@ -179,12 +179,17 @@ function fetchImage(link, callback) {
 						const container = document.implementation.createHTMLDocument()
 							.documentElement;
 						container.innerHTML = response.responseText;
-						if (typeof callback === 'function') {
-							callback(
-								container.querySelectorAll(
-									'div.interior-release-chart-artwork-parent > img',
-								)[0].src,
-							);
+						try {
+							const script = container.querySelector('#__NEXT_DATA__');
+							const data = JSON.parse(script.textContent);
+							const {dynamic_uri} = data.props.pageProps.release.image; // eslint-disable-line camelcase
+							const size = factory.getCoverSize().value;
+							const resolution = size === 'large' ? 1400 : 500;
+							const uri = dynamic_uri.replace(/{([hw])}/g, resolution); // eslint-disable-line camelcase
+							callback(uri);
+						} catch (error) {
+							console.log(error);
+							callback(false);
 						}
 					}
 				},
