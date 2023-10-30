@@ -35,7 +35,7 @@
 
 // --------- USER SETTINGS START ---------
 
-/*	global window	unsafeWindow document GM JSandbox formatName AddArtistField RemoveArtistField Blob alert Image */
+/*	global window	unsafeWindow document GM JSandbox formatName AddArtistField RemoveArtistField alert Image */
 /*	eslint max-depth: 'off', block-scoped-var: 'off', no-loop-func: 'off', no-alert: 'off', unicorn/prefer-module: 'off', no-bitwise: 'off' */
 
 /*
@@ -185,7 +185,7 @@ function fetchImage(link, callback) {
 							const {dynamic_uri} = data.props.pageProps.release.image; // eslint-disable-line camelcase
 							const size = factory.getCoverSize().value;
 							const resolution = size === 'large' ? 1400 : 500;
-							const uri = dynamic_uri.replace(/{([hw])}/g, resolution); // eslint-disable-line camelcase
+							const uri = dynamic_uri.replaceAll(/{([hw])}/g, resolution); // eslint-disable-line camelcase
 							callback(uri);
 						} catch (error) {
 							console.log(error);
@@ -425,7 +425,7 @@ function LocalStorageWrapper(appPrefix) {
 	const localStorage = window.localStorage || unsafeWindow.localStorage;
 
 	const isLocalStorageAvailable = function () {
-		return typeof localStorage !== 'undefined';
+		return localStorage !== undefined;
 	};
 
 	const getKeyPrefix = function () {
@@ -1159,7 +1159,7 @@ factory = {
 	},
 
 	makeReplaceDescriptionSettingsKey(subKey) {
-		return this.KEY_REPLACE_DESCRIPTION + subKey.replace(/_/g, '');
+		return this.KEY_REPLACE_DESCRIPTION + subKey.replaceAll('_', '');
 	},
 
 	// Disable fields when groupid set
@@ -3613,8 +3613,8 @@ yadg = {
 					}
 				}
 
-				result.tag_string += result.tags[i].replace(/\s+/g, '.').replace(/\bn\b|&/, 'and'); // eslint-disable-line camelcase
-				result.tag_string_nodots += result.tags[i].replace(/\s+/g, ' '); // eslint-disable-line camelcase
+				result.tag_string += result.tags[i].replaceAll(/\s+/g, '.').replace(/\bn\b|&/, 'and'); // eslint-disable-line camelcase
+				result.tag_string_nodots += result.tags[i].replaceAll(/\s+/g, ' '); // eslint-disable-line camelcase
 				if (i !== result.tags.length - 1) {
 					result.tag_string += ', '; // eslint-disable-line camelcase
 					result.tag_string_nodots += ', '; // eslint-disable-line camelcase
