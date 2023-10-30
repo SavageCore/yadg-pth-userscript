@@ -182,10 +182,10 @@ function fetchImage(link, callback) {
 						try {
 							const script = container.querySelector('#__NEXT_DATA__');
 							const data = JSON.parse(script.textContent);
-							const { dynamic_uri } = data.props.pageProps.release.image;  // eslint-disable-line camelcase
+							const {dynamic_uri} = data.props.pageProps.release.image; // eslint-disable-line camelcase
 							const size = factory.getCoverSize().value;
 							const resolution = size === 'large' ? 1400 : 500;
-							const uri = dynamic_uri.replace(/{(?:w|h)}/g, resolution); // eslint-disable-line camelcase
+							const uri = dynamic_uri.replace(/{([hw])}/g, resolution); // eslint-disable-line camelcase
 							callback(uri);
 						} catch (error) {
 							console.log(error);
