@@ -1,34 +1,25 @@
-name: test
+name: Test
 on:
   push:
-    branches: [master]
+    branches:
+      - "*"
   pull_request:
-    branches: [master]
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-        node_version:
-          - 14
-          - 16
-          - 18
-        architecture:
-          - x64
-    name: Node ${{ matrix.node_version }} - ${{ matrix.architecture }} on ${{ matrix.os }}
+  test:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup node
-        uses: actions/setup-node@v2
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 🛠️
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node_version }}
-          architecture: ${{ matrix.architecture }}
-          cache: "npm"
-      - name: Install latest npm
-        run: npm i -g npm
-      - name: Clean install dependencies
-        run: npm ci
-      - name: Run tests
-        run: npm test
+          node-version: "lts/*"
+
+      - name: Install dependencies 📦
+        run: |
+          npm ci
+
+      - name: Test 🧪
+        run: |
+          npm run test
