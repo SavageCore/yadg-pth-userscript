@@ -1,4 +1,4 @@
-# yadg-pth-userscript [![Build Status](https://img.shields.io/github/workflow/status/SavageCore/yadg-pth-userscript/test)](https://github.com/SavageCore/yadg-pth-userscript/actions/workflows/npm-test.yml) [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
+# yadg-pth-userscript [![Build Status](https://img.shields.io/github/actions/workflow/status/SavageCore/yadg-pth-userscript/npm-test.yml?branch=master)](https://github.com/SavageCore/yadg-pth-userscript/actions/workflows/npm-test.yml) [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
