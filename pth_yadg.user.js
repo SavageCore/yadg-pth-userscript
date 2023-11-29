@@ -15,9 +15,6 @@
 // @include        http*://*orpheus.network/upload.php*
 // @include        http*://*orpheus.network/requests.php*
 // @include        http*://*orpheus.network/torrents.php*
-// @include        http*://*notwhat.cd/upload.php*
-// @include        http*://*notwhat.cd/requests.php*
-// @include        http*://*notwhat.cd/torrents.php*
 // @include        http*://*dicmusic.club/upload.php*
 // @include        http*://*dicmusic.club/requests.php*
 // @include        http*://*dicmusic.club/torrents.php*
@@ -883,26 +880,6 @@ factory = {
 			regex: /http(s)?:\/\/(.*\.)?orpheus\.network\/torrents\.php\?id=.*/i,
 		},
 		{
-			name: 'nwcd_upload',
-			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/upload\.php.*/i,
-		},
-		{
-			name: 'nwcd_edit',
-			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/torrents\.php\?action=editgroup&groupid=.*/i,
-		},
-		{
-			name: 'nwcd_request',
-			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/requests\.php\?action=new/i,
-		},
-		{
-			name: 'nwcd_request_edit',
-			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/requests\.php\?action=edit&id=.*/i,
-		},
-		{
-			name: 'nwcd_torrent_overview',
-			regex: /http(s)?:\/\/(.*\.)?notwhat\.cd\/torrents\.php\?id=.*/i,
-		},
-		{
 			name: 'dic_upload',
 			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/upload\.php.*/i,
 		},
@@ -1195,8 +1172,6 @@ factory = {
 				'pth_request',
 				'ops_upload',
 				'ops_request',
-				'nwcd_upload',
-				'nwcd_request',
 				'dic_upload',
 				'dic_request',
 				'waffles_upload',
@@ -1671,7 +1646,6 @@ factory = {
 
 		switch (this.currentLocation) {
 			case 'db9_upload':
-			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'dic_upload':
 			case 'd3si_upload':
@@ -1691,7 +1665,6 @@ factory = {
 				return tr;
 			}
 
-			case 'nwcd_edit':
 			case 'ops_edit':
 			case 'db9_edit':
 			case 'dic_edit':
@@ -1717,7 +1690,6 @@ factory = {
 				return div;
 			}
 
-			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
 			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
@@ -1742,8 +1714,6 @@ factory = {
 				return div;
 			}
 
-			case 'nwcd_request':
-			case 'nwcd_request_edit':
 			case 'ops_request':
 			case 'ops_request_edit':
 			case 'db9_request':
@@ -1827,7 +1797,6 @@ factory = {
 	insertIntoPage(element) {
 		switch (this.currentLocation) {
 			case 'db9_upload':
-			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'dic_upload':
 			case 'd3si_upload':
@@ -1837,7 +1806,6 @@ factory = {
 				break;
 			}
 
-			case 'nwcd_edit':
 			case 'ops_edit':
 			case 'db9_edit':
 			case 'dic_edit':
@@ -1851,7 +1819,6 @@ factory = {
 				break;
 			}
 
-			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
 			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
@@ -1868,8 +1835,6 @@ factory = {
 				break;
 			}
 
-			case 'nwcd_request':
-			case 'nwcd_request_edit':
 			case 'ops_request':
 			case 'ops_request_edit':
 			case 'db9_request':
@@ -1927,7 +1892,6 @@ factory = {
 	getDescriptionBox() {
 		switch (this.currentLocation) {
 			case 'db9_upload':
-			case 'nwcd_upload':
 			case 'ops_upload':
 			case 'dic_upload':
 			case 'd3si_upload':
@@ -1950,7 +1914,6 @@ factory = {
 				break;
 			}
 
-			case 'nwcd_edit':
 			case 'ops_edit':
 			case 'db9_edit':
 			case 'dic_edit':
@@ -1959,7 +1922,6 @@ factory = {
 				return document.getElementsByName('body')[0];
 			}
 
-			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
 			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
@@ -1972,8 +1934,6 @@ factory = {
 				return this.dummybox;
 			}
 
-			case 'nwcd_request':
-			case 'nwcd_request_edit':
 			case 'ops_request':
 			case 'ops_request_edit':
 			case 'db9_request':
@@ -2436,172 +2396,6 @@ factory = {
 				return f;
 			}
 
-			case 'nwcd_upload': {
-				// eslint-disable-next-line complexity
-				const f = function (rawData) {
-					let albumTitleInput;
-					let yearInput;
-					let labelInput;
-					let catalogInput;
-					if (currentTarget === 'other') {
-						albumTitleInput = document.querySelector('#title');
-						yearInput = document.querySelector('#remaster_year');
-						labelInput = document.querySelector('#remaster_record_label');
-						catalogInput = document.querySelector('#remaster_catalogue_number');
-						unsafeWindow.CheckYear(); // eslint-disable-line new-cap
-					} else {
-						const unknownCheckbox = document.querySelector('#unknown');
-						albumTitleInput = document.querySelector('#title');
-						yearInput = document.querySelector('#year');
-						unknownCheckbox.checked = 'checked';
-						unsafeWindow.ToggleUnknown(); // eslint-disable-line new-cap
-					}
-
-					if (/itunes/.test(rawData.url)) {
-						const releaseTypeInput = document.querySelector('#releasetype');
-						switch (true) {
-							case /.+ - Single$/.test(rawData.title): {
-								rawData.title = rawData.title.replace(/ - Single$/, '');
-								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
-									releaseTypeInput.value = 9;
-								}
-
-								break;
-							}
-
-							case /.+ - EP$/.test(rawData.title): {
-								rawData.title = rawData.title.replace(/ - EP$/, '');
-								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
-									releaseTypeInput.value = 5;
-								}
-
-								break;
-							}
-
-							default: {
-								break;
-							}
-						}
-					}
-
-					let artistInputs = document.getElementsByName('artists[]');
-					const tagsInput = document.querySelector('#tags');
-					const data = yadg.prepareRawResponse(rawData);
-					let nullArtistCount = 0;
-
-					if (artistInputs[0].getAttribute('disabled') !== 'disabled') {
-						if (data.artists === false) {
-							for (const element of artistInputs) {
-								element.value = '';
-							}
-						} else {
-							let inputIdx = 0;
-
-							yadgUtil.addRemoveArtistBoxes(
-								data.effective_artist_count - artistInputs.length,
-							);
-
-							artistInputs = document.getElementsByName('artists[]');
-
-							for (let i = 0; i < data.artist_keys.length; i++) {
-								const artistKey = data.artist_keys[i];
-								if (artistKey === 'null') {
-									nullArtistCount++;
-									continue;
-								}
-
-								const artistTypes = data.artists[artistKey];
-
-								for (const artistType of artistTypes) {
-									const artistInput = artistInputs[inputIdx];
-									let typeSelect = artistInput.nextSibling;
-
-									while (typeSelect.tagName !== 'SELECT') {
-										typeSelect = typeSelect.nextSibling;
-									}
-
-									artistInput.value = artistKey;
-
-									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
-
-									switch (artistType) {
-										case 'main': {
-											typeSelect.selectedIndex = optionOffsets[1];
-
-											break;
-										}
-
-										case 'guest': {
-											typeSelect.selectedIndex = optionOffsets[2];
-
-											break;
-										}
-
-										case 'remixer': {
-											typeSelect.selectedIndex = optionOffsets[3];
-
-											break;
-										}
-
-										default: {
-											// We don't know this artist type, default to "main"
-											typeSelect.selectedIndex = optionOffsets[1];
-										}
-									}
-
-									// Next artist input
-									inputIdx += 1;
-								}
-							}
-
-							if (nullArtistCount > 0) {
-								yadgUtil.addRemoveArtistBoxes((nullArtistCount *= -1));
-							}
-						}
-					}
-
-					if (tagsInput.getAttribute('disabled') !== 'disabled') {
-						if (data.tags === false) {
-							tagsInput.value = '';
-						} else {
-							const tagsArray = data.tag_string.split(', ');
-							const tagsUnique = tagsArray.filter((element, index, self) => index === self.indexOf(element));
-							tagsInput.value = tagsUnique.join(',').toLowerCase();
-						}
-					}
-
-					if (yearInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
-					}
-
-					if (albumTitleInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(
-							data.title,
-							albumTitleInput,
-							data.title !== false,
-						);
-					}
-
-					if (labelInput && labelInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(
-							data.label,
-							labelInput,
-							data.label !== false,
-						);
-					}
-
-					if (catalogInput && catalogInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(
-							data.catalog,
-							catalogInput,
-							data.catalog !== false,
-						);
-					}
-				};
-
-				return f;
-			}
-
 			case 'dic_upload': {
 				// eslint-disable-next-line complexity
 				const f = function (rawData) {
@@ -2768,7 +2562,6 @@ factory = {
 				return f;
 			}
 
-			case 'nwcd_edit':
 			case 'ops_edit':
 			case 'db9_edit':
 			case 'dic_edit':
@@ -2812,7 +2605,6 @@ factory = {
 				return f;
 			}
 
-			case 'nwcd_torrent_overview':
 			case 'ops_torrent_overview':
 			case 'db9_torrent_overview':
 			case 'dic_torrent_overview':
@@ -2938,8 +2730,6 @@ factory = {
 			};
 			}
 
-			case 'nwcd_request':
-			case 'nwcd_request_edit':
 			case 'ops_request':
 			case 'ops_request_edit':
 			case 'dic_request':
