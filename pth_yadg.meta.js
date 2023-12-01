@@ -15,9 +15,6 @@
 // @include        http*://*orpheus.network/upload.php*
 // @include        http*://*orpheus.network/requests.php*
 // @include        http*://*orpheus.network/torrents.php*
-// @include        http*://*notwhat.cd/upload.php*
-// @include        http*://*notwhat.cd/requests.php*
-// @include        http*://*notwhat.cd/torrents.php*
 // @include        http*://*dicmusic.club/upload.php*
 // @include        http*://*dicmusic.club/requests.php*
 // @include        http*://*dicmusic.club/torrents.php*
