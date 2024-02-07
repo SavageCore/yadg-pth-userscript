@@ -2198,7 +2198,6 @@ factory = {
 			}
 
 			case 'ops_upload': {
-				// eslint-disable-next-line complexity
 				const f = function (rawData) {
 					let albumTitleInput;
 					let yearInput;
