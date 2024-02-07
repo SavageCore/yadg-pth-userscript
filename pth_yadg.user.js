@@ -1974,7 +1974,6 @@ factory = {
 				const releaseType = document.querySelector('#releasetype');
 				const format = document.querySelector('#media');
 				const tags = document.querySelector('#tags');
-				const genreTagsInput = document.querySelector('#genre_tags');
 
 				const inputs = {
 					title,
@@ -1983,14 +1982,19 @@ factory = {
 					year,
 					releaseType,
 					format,
-					tag_string: tags, // eslint-disable-line camelcase
+					tags,
 				};
 
-				const data = yadg.prepareRawResponse(rawData);
+				const allowedTags = new Set();
+				const officialTags = document.querySelectorAll('#genre_tags option');
+				for (const tag of officialTags) {
+					allowedTags.add(tag.value);
+				}
+
+				const data = yadg.prepareRawResponse(rawData, tag => allowedTags.has(tag));
 
 				for (const name of Object.keys(inputs)) {
 					const input = inputs[name];
-					const inputName = name;
 					const value = data[name];
 					if (!input || !value) {
 						continue;
@@ -2001,28 +2005,7 @@ factory = {
 						continue;
 					}
 
-					if (inputName === 'tag_string') {
-						const tagsArray = value.split(', ');
-						const tagsUnique = tagsArray.filter((element, index, self) => index === self.indexOf(element));
-						const tagsFiltered = tagsUnique.filter(element => element.toLowerCase() !== 'electronic');
-						const tagsLowercase = tagsFiltered.map(element => element.toLowerCase());
-						for (const element of genreTagsInput.options) {
-							if (tagsLowercase.includes(element.value)) {
-								genreTagsInput.value = element.value;
-
-								const index = tagsLowercase.indexOf(element.value);
-								if (index > -1) {
-									tagsLowercase.splice(index, 1);
-								}
-
-								break;
-							}
-						}
-
-						input.value = tagsLowercase.join(',');
-					} else {
-						input.value = value;
-					}
+					input.value = value;
 				}
 
 				const kinds = {main: 1, guest: 2, remixer: 3};
@@ -2221,13 +2204,7 @@ factory = {
 					}
 
 					if (tagsInput.getAttribute('disabled') !== 'disabled') {
-						if (data.tags === false) {
-							tagsInput.value = '';
-						} else {
-							const tagsArray = data.tag_string.split(', ');
-							const tagsUnique = tagsArray.filter((element, index, self) => index === self.indexOf(element));
-							tagsInput.value = tagsUnique.join(',').toLowerCase();
-						}
+						tagsInput.value = data.tags;
 					}
 
 					if (yearInput.getAttribute('disabled') !== 'disabled') {
@@ -2387,13 +2364,7 @@ factory = {
 					}
 
 					if (tagsInput.getAttribute('disabled') !== 'disabled') {
-						if (data.tags === false) {
-							tagsInput.value = '';
-						} else {
-							const tagsArray = data.tag_string.split(', ');
-							const tagsUnique = tagsArray.filter((element, index, self) => index === self.indexOf(element));
-							tagsInput.value = tagsUnique.join(',').toLowerCase();
-						}
+						tagsInput.value = data.tags;
 					}
 
 					if (yearInput.getAttribute('disabled') !== 'disabled') {
@@ -2561,7 +2532,7 @@ factory = {
 					year,
 					releaseType,
 					format,
-					tag_string: tags, // eslint-disable-line camelcase
+					tags,
 				};
 
 				const data = yadg.prepareRawResponse(rawData);
@@ -2683,7 +2654,7 @@ factory = {
 							}
 						}
 
-						tagsInput.value = data.tags === false ? '' : data.tag_string.toLowerCase();
+						tagsInput.value = data.tags;
 
 						yadgUtil.setValueIfSet(
 							data.title,
@@ -3141,7 +3112,7 @@ yadg = {
 	},
 
 	// eslint-disable-next-line complexity
-	prepareRawResponse(rawData) {
+	prepareRawResponse(rawData, filterTags) {
 		const result = {};
 
 		result.artists = false;
@@ -3149,9 +3120,6 @@ yadg = {
 		result.title = false;
 		result.label = false;
 		result.catalog = false;
-		result.genre = false;
-		result.style = false;
-		result.tags = false;
 		result.is_various = false; // eslint-disable-line camelcase
 		result.flat_artistString = false; // eslint-disable-line camelcase
 		result.format = false;
@@ -3227,56 +3195,26 @@ yadg = {
 			}
 		}
 
-		if (rawData.genres.length > 0) {
-			result.genre = rawData.genres;
-		}
+		const badTags = {
+			'Bass / Club': 'Bass',
+			'Breaks / Breakbeat / UK Bass': 'Breaks',
+			'Minimal / Deep Tech': 'Tech House',
+			'Techno (Peak Time / Driving)': 'Techno',
+			'Techno (Raw / Deep / Hypnotic)': 'Dub Techno',
+		};
 
-		if (rawData.styles.length > 0) {
-			result.style = rawData.styles;
-		}
-
-		if (result.genre !== false && result.style !== false) {
-			result.tags = rawData.genres.concat(rawData.styles);
-		} else if (result.genre !== false) {
-			result.tags = rawData.genres;
-		} else if (result.style !== false) {
-			result.tags = rawData.styles;
-		}
-
-		if (result.tags !== false) {
-			result.tag_string = ''; // eslint-disable-line camelcase
-			result.tag_string_nodots = ''; // eslint-disable-line camelcase
-
-			for (let i = 0; i < result.tags.length; i++) {
-				switch (result.tags[i]) {
-					case 'Techno (Peak Time / Driving)': {
-						result.tags[i] = 'Techno';
-						break;
-					}
-
-					case 'Techno (Raw / Deep / Hypnotic)': {
-						result.tags[i] = 'Dub Techno';
-						break;
-					}
-
-					case 'Minimal / Deep Tech': {
-						result.tags[i] = 'Tech House';
-						break;
-					}
-
-					default: {
-						break;
-					}
-				}
-
-				result.tag_string += result.tags[i].replaceAll(/\s+/g, '.').replace(/\bn\b|&/, 'and'); // eslint-disable-line camelcase
-				result.tag_string_nodots += result.tags[i].replaceAll(/\s+/g, ' '); // eslint-disable-line camelcase
-				if (i !== result.tags.length - 1) {
-					result.tag_string += ', '; // eslint-disable-line camelcase
-					result.tag_string_nodots += ', '; // eslint-disable-line camelcase
-				}
+		const tags = new Set();
+		for (const tag of rawData.genres.concat(rawData.styles)) {
+			const name = (badTags[tag] ?? tag).toLowerCase();
+			const clean = name.replaceAll(/\s+/g, '.').replace(/\bn\b|&/, 'and');
+			if (typeof filterTags === 'function' && !filterTags(clean)) {
+				continue;
 			}
+
+			tags.add(clean);
 		}
+
+		result.tags = Array.from(tags).join(', ');
 
 		if (result.artists !== false) {
 			// Count the artists
