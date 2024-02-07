@@ -2061,33 +2061,6 @@ factory = {
 						catalogInput = document.querySelector('#remaster_catalogue_number');
 					}
 
-					if (/music.apple/.test(rawData.url)) {
-						const releaseTypeInput = document.querySelector('#releasetype');
-						switch (true) {
-							case /.+ - Single$/.test(rawData.title): {
-								rawData.title = rawData.title.replace(/ - Single$/, '');
-								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
-									releaseTypeInput.value = 9;
-								}
-
-								break;
-							}
-
-							case /.+ - EP$/.test(rawData.title): {
-								rawData.title = rawData.title.replace(/ - EP$/, '');
-								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
-									releaseTypeInput.value = 5;
-								}
-
-								break;
-							}
-
-							default: {
-								break;
-							}
-						}
-					}
-
 					let artistInputs = document.getElementsByName('artists[]');
 					const tagsInput = document.querySelector('#tags');
 					const mediaInput = document.querySelector('#media');
@@ -2225,7 +2198,6 @@ factory = {
 			}
 
 			case 'ops_upload': {
-				// eslint-disable-next-line complexity
 				const f = function (rawData) {
 					let albumTitleInput;
 					let yearInput;
@@ -2245,33 +2217,6 @@ factory = {
 						yearInput = document.querySelector('#year');
 						labelInput = document.querySelector('#record_label');
 						catalogInput = document.querySelector('#catalogue_number');
-					}
-
-					if (/itunes/.test(rawData.url)) {
-						const releaseTypeInput = document.querySelector('#releasetype');
-						switch (true) {
-							case /.+ - Single$/.test(rawData.title): {
-								rawData.title = rawData.title.replace(/ - Single$/, '');
-								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
-									releaseTypeInput.value = 9;
-								}
-
-								break;
-							}
-
-							case /.+ - EP$/.test(rawData.title): {
-								rawData.title = rawData.title.replace(/ - EP$/, '');
-								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
-									releaseTypeInput.value = 5;
-								}
-
-								break;
-							}
-
-							default: {
-								break;
-							}
-						}
 					}
 
 					let artistInputs = document.getElementsByName('artists[]');
@@ -2411,33 +2356,6 @@ factory = {
 						yearInput = document.querySelector('#year');
 						unknownCheckbox.checked = 'checked';
 						unsafeWindow.ToggleUnknown(); // eslint-disable-line new-cap
-					}
-
-					if (/itunes/.test(rawData.url)) {
-						const releaseTypeInput = document.querySelector('#releasetype');
-						switch (true) {
-							case /.+ - Single$/.test(rawData.title): {
-								rawData.title = rawData.title.replace(/ - Single$/, '');
-								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
-									releaseTypeInput.value = 9;
-								}
-
-								break;
-							}
-
-							case /.+ - EP$/.test(rawData.title): {
-								rawData.title = rawData.title.replace(/ - EP$/, '');
-								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
-									releaseTypeInput.value = 5;
-								}
-
-								break;
-							}
-
-							default: {
-								break;
-							}
-						}
 					}
 
 					let artistInputs = document.getElementsByName('artists[]');
@@ -3477,6 +3395,16 @@ yadg = {
 				result.releaseType = 7;
 			} else if (format.includes('single') || rawData.styles.includes('Single')) {
 				result.releaseType = 9;
+			}
+		}
+
+		if (/music.apple/.test(rawData.url)) {
+			if (/.+ - Single$/.test(rawData.title)) {
+				result.title = rawData.title.replace(/ - Single$/, '');
+				result.releaseType = 9;
+			} else if (/.+ - EP$/.test(rawData.title)) {
+				result.title = rawData.title.replace(/ - EP$/, '');
+				result.releaseType = 5;
 			}
 		}
 
