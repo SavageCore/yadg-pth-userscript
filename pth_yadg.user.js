@@ -2041,187 +2041,57 @@ factory = {
 			}
 
 			case 'd3si_upload':
-			case 'pth_upload': {
-				// eslint-disable-next-line complexity
-				const f = function (rawData) {
-					let albumTitleInput;
-					let yearInput;
-					let labelInput;
-					let catalogInput;
-					if (currentTarget === 'other') {
-						albumTitleInput = document.querySelector('#title');
-						yearInput = document.querySelector('#remaster_year');
-						labelInput = document.querySelector('#remaster_record_label');
-						catalogInput = document.querySelector('#remaster_catalogue_number');
-						unsafeWindow.CheckYear(); // eslint-disable-line new-cap
-					} else {
-						albumTitleInput = document.querySelector('#title');
-						yearInput = document.querySelector('#year');
-						labelInput = document.querySelector('#remaster_record_label');
-						catalogInput = document.querySelector('#remaster_catalogue_number');
-					}
+			case 'pth_upload': { return rawData => {
+				const title = document.querySelector('#title');
+				const tags = document.querySelector('#tags');
+				const label = document.querySelector('#remaster_record_label');
+				const catalog = document.querySelector('#remaster_catalogue_number');
+				const format = document.querySelector('#media');
+				const releaseType = document.querySelector('#releasetype');
 
-					if (/music.apple/.test(rawData.url)) {
-						const releaseTypeInput = document.querySelector('#releasetype');
-						switch (true) {
-							case /.+ - Single$/.test(rawData.title): {
-								rawData.title = rawData.title.replace(/ - Single$/, '');
-								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
-									releaseTypeInput.value = 9;
-								}
+				const yearSelector = currentTarget === 'other' ? '#remaster_year' : '#year';
+				const year = document.querySelector(yearSelector);
 
-								break;
-							}
-
-							case /.+ - EP$/.test(rawData.title): {
-								rawData.title = rawData.title.replace(/ - EP$/, '');
-								if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
-									releaseTypeInput.value = 5;
-								}
-
-								break;
-							}
-
-							default: {
-								break;
-							}
-						}
-					}
-
-					let artistInputs = document.getElementsByName('artists[]');
-					const tagsInput = document.querySelector('#tags');
-					const mediaInput = document.querySelector('#media');
-					const releaseTypeInput = document.querySelector('#releasetype');
-					const data = yadg.prepareRawResponse(rawData);
-					let nullArtistCount = 0;
-
-					if (artistInputs[0].getAttribute('disabled') !== 'disabled') {
-						if (data.artists === false) {
-							for (const element of artistInputs) {
-								element.value = '';
-							}
-						} else {
-							let inputIndex = 0;
-
-							yadgUtil.addRemoveArtistBoxes(
-								data.effective_artist_count - artistInputs.length,
-							);
-
-							artistInputs = document.getElementsByName('artists[]');
-
-							for (let i = 0; i < data.artist_keys.length; i++) {
-								const artistKey = data.artist_keys[i];
-								if (artistKey === 'null') {
-									nullArtistCount++;
-									continue;
-								}
-
-								const artistTypes = data.artists[artistKey];
-
-								for (const artistType of artistTypes) {
-									const artistInput = artistInputs[inputIndex];
-									let typeSelect = artistInput.nextSibling;
-
-									while (typeSelect.tagName !== 'SELECT') {
-										typeSelect = typeSelect.nextSibling;
-									}
-
-									artistInput.value = artistKey;
-
-									const optionOffsets = yadgUtil.getOptionOffsets(typeSelect);
-
-									switch (artistType) {
-										case 'main': {
-											typeSelect.selectedIndex = optionOffsets[1];
-
-											break;
-										}
-
-										case 'guest': {
-											typeSelect.selectedIndex = optionOffsets[2];
-
-											break;
-										}
-
-										case 'remixer': {
-											typeSelect.selectedIndex = optionOffsets[3];
-
-											break;
-										}
-
-										default: {
-											// We don't know this artist type, default to "main"
-											typeSelect.selectedIndex = optionOffsets[1];
-										}
-									}
-
-									// Next artist input
-									inputIndex += 1;
-								}
-							}
-
-							if (nullArtistCount > 0) {
-								yadgUtil.addRemoveArtistBoxes((nullArtistCount *= -1));
-							}
-						}
-					}
-
-					if (tagsInput.getAttribute('disabled') !== 'disabled') {
-						if (data.tags === false) {
-							tagsInput.value = '';
-						} else {
-							const tagsArray = data.tag_string.split(', ');
-							const tagsUnique = tagsArray.filter((element, index, self) => index === self.indexOf(element));
-							tagsInput.value = tagsUnique.join(',').toLowerCase();
-						}
-					}
-
-					if (yearInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
-					}
-
-					if (albumTitleInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(
-							data.title,
-							albumTitleInput,
-							data.title !== false,
-						);
-					}
-
-					if (labelInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(
-							data.label,
-							labelInput,
-							data.label !== false,
-						);
-					}
-
-					if (catalogInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(
-							data.catalog,
-							catalogInput,
-							data.catalog !== false,
-						);
-					}
-
-					if (mediaInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(
-							data.format,
-							mediaInput,
-							data.format !== false,
-						);
-					}
-
-					if (releaseTypeInput.getAttribute('disabled') !== 'disabled') {
-						yadgUtil.setValueIfSet(
-							data.releaseType,
-							releaseTypeInput,
-							data.releaseType !== false,
-						);
-					}
+				const inputs = {
+					title,
+					label,
+					catalog,
+					year,
+					releaseType,
+					format,
+					tags,
 				};
 
-				return f;
+				const data = yadg.prepareRawResponse(rawData);
+
+				for (const name of Object.keys(inputs)) {
+					const input = inputs[name];
+					const value = data[name];
+					if (!input || !value) {
+						continue;
+					}
+
+					const disabled = input.getAttribute('disabled');
+					if (disabled === 'disabled') {
+						continue;
+					}
+
+					input.value = value;
+				}
+
+				const kinds = {main: 1, guest: 2, remixer: 3};
+
+				const {artists} = data;
+
+				for (const name of Object.keys(artists)) {
+					const roles = artists[name];
+					for (const role of roles) {
+						document.querySelector('[name="artists[]"]:last-of-type').value = name;
+						document.querySelector('#artistfields > #importance:last-of-type').value = kinds[role];
+						document.querySelector('#artistfields > a').click();
+					}
+				}
+			};
 			}
 
 			case 'ops_upload': {
