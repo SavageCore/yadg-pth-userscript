@@ -344,9 +344,9 @@ function insertImage(img, callback) {
 			const input = document.querySelector('#image');
 			input.value = img;
 			if (input.getAttribute('autorehost') === 'true') {
-				const evt = document.createEvent('HTMLEvents');
-				evt.initEvent('keyup', false, true);
-				input.dispatchEvent(evt);
+				const event = document.createEvent('HTMLEvents');
+				event.initEvent('keyup', false, true);
+				input.dispatchEvent(event);
 			}
 
 			input.parentNode.parentNode.insertAdjacentHTML(
@@ -560,10 +560,10 @@ function LocalStorageWrapper(appPrefix) {
 // --------- THIRD PARTY CODE AREA END ---------
 
 const yadgUtil = {
-	exec(fn) {
+	exec(function_) {
 		const script = document.createElement('script');
 		script.setAttribute('type', 'application/javascript');
-		script.textContent = '(' + fn + ')();';
+		script.textContent = '(' + function_ + ')();';
 		document.body.append(script); // Run the script
 		script.remove(); // Clean up
 	},
@@ -606,8 +606,8 @@ const yadgUtil = {
 
 	getOptionOffsets(select) {
 		const optionOffsets = {};
-		for (let j = 0; j < select.options.length; j++) {
-			optionOffsets[select.options[j].value] = select.options[j].index;
+		for (let index = 0; index < select.options.length; index++) {
+			optionOffsets[select.options[index].value] = select.options[index].index;
 		}
 
 		return optionOffsets;
@@ -624,9 +624,7 @@ function Requester(url, method, callback, data, errorCallback) {
 	this.data = data;
 	this.url = url;
 	this.method = method;
-	if (!errorCallback) {
-		errorCallback = yadg.failedCallback;
-	}
+	errorCallback ||= yadg.failedCallback;
 
 	this.send = function () {
 		const details = {
@@ -1158,14 +1156,12 @@ factory = {
 	},
 
 	initializeSettings() {
-		let settingsVer = yadgUtil.settings.getItem(factory.KEY_SETTINGS_INIT_VER);
-		const currentVer = 1;
+		let settingsVersion = yadgUtil.settings.getItem(factory.KEY_SETTINGS_INIT_VER);
+		const currentVersion = 1;
 
-		if (!settingsVer) {
-			settingsVer = 0;
-		}
+		settingsVersion ||= 0;
 
-		if (settingsVer < currentVer) {
+		if (settingsVersion < currentVersion) {
 			// Replace descriptions on upload and new request pages
 			const locations = [
 				'pth_upload',
@@ -1191,7 +1187,7 @@ factory = {
 			}
 		}
 
-		yadgUtil.settings.addItem(factory.KEY_SETTINGS_INIT_VER, currentVer);
+		yadgUtil.settings.addItem(factory.KEY_SETTINGS_INIT_VER, currentVersion);
 	},
 
 	populateSettings() {
@@ -1927,7 +1923,7 @@ factory = {
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
-				if (!Object.prototype.hasOwnProperty.call(this, 'dummybox')) {
+				if (!Object.hasOwn(this, 'dummybox')) { // eslint-disable-line no-use-extend-native/no-use-extend-native
 					this.dummybox = document.createElement('div');
 				}
 
@@ -2105,7 +2101,7 @@ factory = {
 								element.value = '';
 							}
 						} else {
-							let inputIdx = 0;
+							let inputIndex = 0;
 
 							yadgUtil.addRemoveArtistBoxes(
 								data.effective_artist_count - artistInputs.length,
@@ -2123,7 +2119,7 @@ factory = {
 								const artistTypes = data.artists[artistKey];
 
 								for (const artistType of artistTypes) {
-									const artistInput = artistInputs[inputIdx];
+									const artistInput = artistInputs[inputIndex];
 									let typeSelect = artistInput.nextSibling;
 
 									while (typeSelect.tagName !== 'SELECT') {
@@ -2160,7 +2156,7 @@ factory = {
 									}
 
 									// Next artist input
-									inputIdx += 1;
+									inputIndex += 1;
 								}
 							}
 
@@ -2289,7 +2285,7 @@ factory = {
 								element.value = '';
 							}
 						} else {
-							let inputIdx = 0;
+							let inputIndex = 0;
 
 							yadgUtil.addRemoveArtistBoxes(
 								data.effective_artist_count - artistInputs.length,
@@ -2307,7 +2303,7 @@ factory = {
 								const artistTypes = data.artists[artistKey];
 
 								for (const artistType of artistTypes) {
-									const artistInput = artistInputs[inputIdx];
+									const artistInput = artistInputs[inputIndex];
 									let typeSelect = artistInput.nextSibling;
 
 									while (typeSelect.tagName !== 'SELECT') {
@@ -2344,7 +2340,7 @@ factory = {
 									}
 
 									// Next artist input
-									inputIdx += 1;
+									inputIndex += 1;
 								}
 							}
 
@@ -2455,7 +2451,7 @@ factory = {
 								element.value = '';
 							}
 						} else {
-							let inputIdx = 0;
+							let inputIndex = 0;
 
 							yadgUtil.addRemoveArtistBoxes(
 								data.effective_artist_count - artistInputs.length,
@@ -2473,7 +2469,7 @@ factory = {
 								const artistTypes = data.artists[artistKey];
 
 								for (const artistType of artistTypes) {
-									const artistInput = artistInputs[inputIdx];
+									const artistInput = artistInputs[inputIndex];
 									let typeSelect = artistInput.nextSibling;
 
 									while (typeSelect.tagName !== 'SELECT') {
@@ -2510,7 +2506,7 @@ factory = {
 									}
 
 									// Next artist input
-									inputIdx += 1;
+									inputIndex += 1;
 								}
 							}
 
@@ -2619,7 +2615,7 @@ factory = {
 							element.value = '';
 						}
 					} else {
-						let inputIdx = 0;
+						let inputIndex = 0;
 
 						yadgUtil.addRemoveArtistBoxes(
 							data.effective_artist_count - artistInputs.length,
@@ -2632,7 +2628,7 @@ factory = {
 							const artistTypes = data.artists[artistKey];
 
 							for (const artistType of artistTypes) {
-								const artistInput = artistInputs[inputIdx];
+								const artistInput = artistInputs[inputIndex];
 								let typeSelect = artistInput.nextSibling;
 
 								while (typeSelect.tagName !== 'SELECT') {
@@ -2669,7 +2665,7 @@ factory = {
 								}
 
 								// Next artist input
-								inputIdx += 1;
+								inputIndex += 1;
 							}
 						}
 					}
@@ -2754,7 +2750,7 @@ factory = {
 								element.value = '';
 							}
 						} else {
-							let inputIdx = 0;
+							let inputIndex = 0;
 
 							yadgUtil.addRemoveArtistBoxes(
 								data.effective_artist_count - artistInputs.length,
@@ -2771,7 +2767,7 @@ factory = {
 								}
 
 								for (const artistType of artistTypes) {
-									const artistInput = artistInputs[inputIdx];
+									const artistInput = artistInputs[inputIndex];
 									let typeSelect = artistInput.nextSibling;
 
 									while (typeSelect.tagName !== 'SELECT') {
@@ -2808,7 +2804,7 @@ factory = {
 									}
 
 									// Next artist input
-									inputIdx += 1;
+									inputIndex += 1;
 								}
 							}
 
@@ -3140,8 +3136,8 @@ yadg = {
 							yadg.lastStateError = false;
 						}
 
-						const fillFunc = factory.getFormFillFunction();
-						fillFunc(response.data);
+						const fillFunction = factory.getFormFillFunction();
+						fillFunction(response.data);
 
 						break;
 					}
@@ -3318,9 +3314,9 @@ yadg = {
 							newTypes = result.artists[name].concat(type);
 							// Deduplicate new types array
 							for (let i = 0; i < newTypes.length; ++i) {
-								for (let j = i + 1; j < newTypes.length; ++j) {
-									if (newTypes[i] === newTypes[j]) {
-										newTypes.splice(j--, 1);
+								for (let index = i + 1; index < newTypes.length; ++index) {
+									if (newTypes[i] === newTypes[index]) {
+										newTypes.splice(index--, 1);
 									}
 								}
 							}
@@ -3419,7 +3415,7 @@ yadg = {
 			result.effective_artist_count = 0; // eslint-disable-line camelcase
 
 			for (const i in result.artists) {
-				if (Object.prototype.hasOwnProperty.call(result.artists, i)) {
+				if (Object.hasOwn(result.artists, i)) { // eslint-disable-line no-use-extend-native/no-use-extend-native
 					result.artists_length++;
 					result.artist_keys.push(i);
 					result.effective_artist_count += result.artists[i].length; // eslint-disable-line camelcase
