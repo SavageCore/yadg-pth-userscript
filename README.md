@@ -5,6 +5,9 @@
 
 A fork of [Slack06/yadg-userscript](https://gitlab.com/Slack06/yadg-userscript) for RED, OPS, NWCD and DIC
 
+## How to use
+Use a userscript manager like [Violentmonkey](https://violentmonkey.github.io)
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
