@@ -3,7 +3,7 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-A fork of [Slack06/yadg-userscript](https://gitlab.com/Slack06/yadg-userscript) for RED, OPS and DIC
+A fork of [Slack06/yadg-userscript](https://gitlab.com/Slack06/yadg-userscript) for DB9, RED, OPS. DIC and d3si are also community supported.
 
 ## How to use
 Use a userscript manager like [Violentmonkey](https://violentmonkey.github.io)
