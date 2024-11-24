@@ -9,9 +9,9 @@
 // @grant          GM.xmlHttpRequest
 // @require        https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
 // @require        https://yadg.cc/static/js/jsandbox.min.js
-// @include        http*://*redacted.ch/upload.php*
-// @include        http*://*redacted.ch/requests.php*
-// @include        http*://*redacted.ch/torrents.php*
+// @include        http*://*redacted.sh/upload.php*
+// @include        http*://*redacted.sh/requests.php*
+// @include        http*://*redacted.sh/torrents.php*
 // @include        http*://*orpheus.network/upload.php*
 // @include        http*://*orpheus.network/requests.php*
 // @include        http*://*orpheus.network/torrents.php*
