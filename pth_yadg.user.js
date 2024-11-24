@@ -9,9 +9,9 @@
 // @grant          GM.xmlHttpRequest
 // @require        https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
 // @require        https://yadg.cc/static/js/jsandbox.min.js
-// @include        http*://*redacted.ch/upload.php*
-// @include        http*://*redacted.ch/requests.php*
-// @include        http*://*redacted.ch/torrents.php*
+// @include        http*://*redacted.sh/upload.php*
+// @include        http*://*redacted.sh/requests.php*
+// @include        http*://*redacted.sh/torrents.php*
 // @include        http*://*orpheus.network/upload.php*
 // @include        http*://*orpheus.network/requests.php*
 // @include        http*://*orpheus.network/torrents.php*
@@ -819,23 +819,23 @@ factory = {
 	locations: [
 		{
 			name: 'pth_upload',
-			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/upload\.php.*/i,
+			regex: /http(s)?:\/\/(.*\.)?redacted\.sh\/upload\.php.*/i,
 		},
 		{
 			name: 'pth_edit',
-			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/torrents\.php\?action=editgroup&groupid=.*/i,
+			regex: /http(s)?:\/\/(.*\.)?redacted\.sh\/torrents\.php\?action=editgroup&groupid=.*/i,
 		},
 		{
 			name: 'pth_request',
-			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/requests\.php\?action=new/i,
+			regex: /http(s)?:\/\/(.*\.)?redacted\.sh\/requests\.php\?action=new/i,
 		},
 		{
 			name: 'pth_request_edit',
-			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/requests\.php\?action=edit&id=.*/i,
+			regex: /http(s)?:\/\/(.*\.)?redacted\.sh\/requests\.php\?action=edit&id=.*/i,
 		},
 		{
 			name: 'pth_torrent_overview',
-			regex: /http(s)?:\/\/(.*\.)?redacted\.ch\/torrents\.php\?id=.*/i,
+			regex: /http(s)?:\/\/(.*\.)?redacted\.sh\/torrents\.php\?id=.*/i,
 		},
 		{
 			name: 'd3si_upload',
@@ -1571,7 +1571,7 @@ factory = {
 
 		for (const [i, element] of data.entries()) {
 			// We are not using the javascript constructor to create an Option instance because this will create an
-			// incompatibility with jQuery in Chrome which will make it impossible to add a new artist field on redacted.ch
+			// incompatibility with jQuery in Chrome which will make it impossible to add a new artist field on redacted.sh
 			const o = document.createElement('option');
 			o.text = 'nameFormatted' in element ? element.nameFormatted : element.name;
 
@@ -1627,7 +1627,7 @@ factory = {
 			+= '<div id="yadg_options_coversize"><label for="yadg_coversize" id="yadg_coversize_label">Cover size: </label><select name="yadg_coversize" id="yadg_coversize"><option value="large">Large</option><option value="medium">Medium</option></select></div>';
 		if (document.querySelectorAll('.rehost_it_cover')[0]) {
 			optionsHTML
-				+= '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://redacted.ch/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
+				+= '<div id="yadg_options_rehost_div"><input type="checkbox" name="yadg_options_rehost" id="yadg_options_rehost" /> <label for="yadg_options_rehost" id="yadg_options_rehost_label">Auto rehost with <a href="https://redacted.sh/forums.php?action=viewthread&threadid=1992">[User Script] PTPIMG URL uploader</a></label></div>';
 		}
 
 		optionsHTML += '<div id="yadg_options_preview_div"><input type="checkbox" name="yadg_options_preview" id="yadg_options_preview" /> <label for="yadg_options_preview" id="yadg_options_preview_label">Auto preview description</label></div>';
