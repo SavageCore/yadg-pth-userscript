@@ -18,8 +18,6 @@
 // @include        http*://*dicmusic.club/upload.php*
 // @include        http*://*dicmusic.club/requests.php*
 // @include        http*://*dicmusic.club/torrents.php*
-// @include        http*://*waffles.ch/upload.php*
-// @include        http*://*waffles.ch/requests.php*
 // @include        http*://*d3si.net/upload.php*
 // @include        http*://*d3si.net/requests.php*
 // @include        http*://*d3si.net/torrents.php*

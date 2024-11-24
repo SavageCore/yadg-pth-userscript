@@ -18,8 +18,6 @@
 // @include        http*://*dicmusic.club/upload.php*
 // @include        http*://*dicmusic.club/requests.php*
 // @include        http*://*dicmusic.club/torrents.php*
-// @include        http*://*waffles.ch/upload.php*
-// @include        http*://*waffles.ch/requests.php*
 // @include        http*://*d3si.net/upload.php*
 // @include        http*://*d3si.net/requests.php*
 // @include        http*://*d3si.net/torrents.php*
@@ -32,7 +30,7 @@
 
 // --------- USER SETTINGS START ---------
 
-/*	global window	unsafeWindow document GM JSandbox formatName AddArtistField RemoveArtistField alert Image */
+/*	global window	unsafeWindow document GM JSandbox AddArtistField RemoveArtistField alert Image */
 /*	eslint max-depth: 'off', block-scoped-var: 'off', no-loop-func: 'off', no-alert: 'off', unicorn/prefer-module: 'off', no-bitwise: 'off' */
 
 /*
@@ -40,7 +38,6 @@ Here you can set site specific default templates.
 You can find a list of available templates at: https://yadg.cc/api/v2/templates/
 */
 const defaultPTHFormat = 5;
-const defaultWafflesFormat = 9;
 const defaultPTHTarget = 'other';
 const defaultPTHDescriptionTarget = 'album';
 let yadg; // eslint-disable-line prefer-const
@@ -898,14 +895,6 @@ factory = {
 			regex: /http(s)?:\/\/(.*\.)?dicmusic\.club\/torrents\.php\?id=.*/i,
 		},
 		{
-			name: 'waffles_upload',
-			regex: /http(s)?:\/\/(.*\.)?waffles\.ch\/upload\.php.*/i,
-		},
-		{
-			name: 'waffles_request',
-			regex: /http(s)?:\/\/(.*\.)?waffles\.ch\/requests\.php\?do=add/i,
-		},
-		{
 			name: 'db9_upload',
 			regex: /https:\/\/www.deepbassnine\.com\/upload\.php.*/i,
 		},
@@ -1170,9 +1159,6 @@ factory = {
 				'ops_request',
 				'dic_upload',
 				'dic_request',
-				'waffles_upload',
-				'waffles_upload_new',
-				'waffles_request',
 				'd3si_upload',
 				'd3si_request',
 				'db9_upload',
@@ -1413,24 +1399,8 @@ factory = {
 		const defaultFormat = yadgUtil.settings.getItem(
 			factory.KEY_DEFAULT_TEMPLATE,
 		);
-		if (defaultFormat !== null && defaultFormat in formatOffsets) {
-			formatSelect.selectedIndex = formatOffsets[defaultFormat];
-		} else {
-			// We have no settings so fall back to the hard coded defaults
-			switch (this.currentLocation) {
-				case 'waffles_upload':
-				case 'waffles_upload_new':
-				case 'waffles_request': {
-					formatSelect.selectedIndex = formatOffsets[defaultWafflesFormat];
-					break;
-				}
-
-				default: {
-					formatSelect.selectedIndex = formatOffsets[defaultPTHFormat];
-					break;
-				}
-			}
-		}
+		const format = defaultFormat !== null && defaultFormat in formatOffsets ? defaultFormat : defaultPTHFormat;
+		formatSelect.selectedIndex = formatOffsets[format];
 	},
 
 	getCoverSize() {
@@ -1593,27 +1563,6 @@ factory = {
 		yadgUtil.addCSS(
 			'div#yadg_options{ display:none; margin-top:3px; } input#yadg_input,input#yadg_submit,label#yadg_format_label,a#yadg_scraper_info { margin-right: 5px } div#yadg_response { margin-top:3px; } select#yadg_scraper { margin-right: 2px } #yadg_options_template,#yadg_options_api_token,#yadg_options_replace_div { margin-bottom: 3px; } .add_form[name="yadg"] input,.add_form[name="yadg"] select { width: 90%; margin: 2px 0 !important; } input#yadg_submit { position: inherit !important} div#yadg_options_coversize { display:none; padding-left: 16px }',
 		);
-
-		// Location specific styles will go here
-		switch (this.currentLocation) {
-			case 'waffles_upload': {
-				yadgUtil.addCSS(
-					'div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }',
-				);
-				break;
-			}
-
-			case 'waffles_request': {
-				yadgUtil.addCSS(
-					'div#yadg_response ul { margin-left: 0 !important; padding-left: 0 !important; }',
-				);
-				break;
-			}
-
-			default: {
-				break;
-			}
-		}
 	},
 
 	// eslint-disable-next-line complexity
@@ -1735,53 +1684,6 @@ factory = {
 				return tr;
 			}
 
-			case 'waffles_upload': {
-				const tr = document.createElement('tr');
-				tr.className = 'yadg_tr';
-				tr.innerHTML
-					= '<td class="heading" valign="top" align="right"><label for="yadg_input">YADG:</label></td><td>'
-					+ inputHTML
-					+ scraperSelectHTML
-					+ scraperInfoLink
-					+ buttonHTML
-					+ toggleOptionsLinkHTML
-					+ optionsHTML
-					+ responseDivHTML
-					+ '</td>';
-				return tr;
-			}
-
-			case 'waffles_upload_new': {
-				const p = document.createElement('p');
-				p.className = 'yadg_p';
-				p.innerHTML
-					= '<label for="yadg_input">YADG:</label>'
-					+ inputHTML
-					+ scraperSelectHTML
-					+ scraperInfoLink
-					+ buttonHTML
-					+ toggleOptionsLinkHTML
-					+ optionsHTML
-					+ responseDivHTML;
-				return p;
-			}
-
-			case 'waffles_request': {
-				const tr = document.createElement('tr');
-				tr.className = 'yadg_tr';
-				tr.innerHTML
-					= '<td style="text-align:left;width:100px;">YADG:</td><td style="text-align:left;">'
-					+ inputHTML
-					+ scraperSelectHTML
-					+ scraperInfoLink
-					+ buttonHTML
-					+ toggleOptionsLinkHTML
-					+ optionsHTML
-					+ responseDivHTML
-					+ '</td>';
-				return tr;
-			}
-
 			default: {
 				// This should actually never happen
 				return document.createElement('div');
@@ -1843,38 +1745,6 @@ factory = {
 			case 'pth_request_edit': {
 				const artistTr = document.querySelector('#artist_tr');
 				artistTr.parentNode.insertBefore(element, artistTr);
-				break;
-			}
-
-			case 'waffles_upload': {
-				const [submitButton] = document.getElementsByName('submit');
-				submitButton.parentNode.parentNode.parentNode.insertBefore(
-					element,
-					submitButton.parentNode.parentNode,
-				);
-				break;
-			}
-
-			case 'waffles_upload_new': {
-				const h4s = document.querySelectorAll('h4');
-				let div;
-				for (const h4 of h4s) {
-					if (h4s[h4].innerHTML.includes('read the rules')) {
-						div = h4s[h4].parentNode;
-						break;
-					}
-				}
-
-				div.append(element);
-				break;
-			}
-
-			case 'waffles_request': {
-				const [categorySelect] = document.getElementsByName('category');
-				categorySelect.parentNode.parentNode.parentNode.insertBefore(
-					element,
-					categorySelect.parentNode.parentNode,
-				);
 				break;
 			}
 
@@ -1941,18 +1811,6 @@ factory = {
 			case 'pth_request':
 			case 'pth_request_edit': {
 				return document.getElementsByName('description')[0];
-			}
-
-			case 'waffles_upload': {
-				return document.querySelector('#descr');
-			}
-
-			case 'waffles_upload_new': {
-				return document.querySelector('#id_descr');
-			}
-
-			case 'waffles_request': {
-				return document.getElementsByName('information')[0];
 			}
 
 			default: {
@@ -2828,109 +2686,6 @@ factory = {
 						data.catalog,
 						catalogInput,
 						data.catalog !== false,
-					);
-				};
-
-				return f;
-			}
-
-			case 'waffles_upload': {
-				const f = function (rawData) {
-					const [artistInput] = document.getElementsByName('artist');
-					const [albumTitleInput] = document.getElementsByName('album');
-					const [yearInput] = document.getElementsByName('year');
-					const vaCheckbox = document.querySelector('#va');
-					const tagsInput = document.querySelector('#tags');
-					const data = yadg.prepareRawResponse(rawData);
-
-					if (data.artists === false) {
-						vaCheckbox.checked = false;
-						artistInput.value = '';
-					} else if (data.is_various) {
-						artistInput.value = '';
-						vaCheckbox.checked = true;
-					} else {
-						artistInput.value = data.flat_artistString;
-						vaCheckbox.checked = false;
-					}
-
-					yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
-					yadgUtil.setValueIfSet(
-						data.title,
-						albumTitleInput,
-						data.title !== false,
-					);
-
-					tagsInput.value = data.tags === false ? '' : data.tag_string_nodots.toLowerCase();
-
-					yadgUtil.exec(() => {
-						formatName();
-					});
-				};
-
-				return f;
-			}
-
-			case 'waffles_upload_new': {
-				const f = function (rawData) {
-					const artistInput = document.querySelector('#id_artist');
-					const albumTitleInput = document.querySelector('#id_album');
-					const yearInput = document.querySelector('#id_year');
-					const vaCheckbox = document.querySelector('#id_va');
-					const tagsInput = document.querySelector('#id_tags');
-					const data = yadg.prepareRawResponse(rawData);
-
-					if (data.artists === false) {
-						if (vaCheckbox.checked) {
-							vaCheckbox.click();
-						}
-
-						artistInput.value = '';
-					} else if (data.is_various) {
-						if (!vaCheckbox.checked) {
-							vaCheckbox.click();
-						}
-					} else {
-						if (vaCheckbox.checked) {
-							vaCheckbox.click();
-						}
-
-						artistInput.value = data.flat_artistString;
-					}
-
-					yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
-					yadgUtil.setValueIfSet(
-						data.title,
-						albumTitleInput,
-						data.title !== false,
-					);
-
-					tagsInput.value = data.tags === false ? '' : data.tag_string_nodots.toLowerCase();
-				};
-
-				return f;
-			}
-
-			case 'waffles_request': {
-				const f = function (rawData) {
-					const [artistInput] = document.getElementsByName('artist');
-					const [albumTitleInput] = document.getElementsByName('title');
-					const [yearInput] = document.getElementsByName('year');
-					const data = yadg.prepareRawResponse(rawData);
-
-					if (data.artists === false) {
-						artistInput.value = '';
-					} else if (data.is_various) {
-						artistInput.value = 'Various Artists';
-					} else {
-						artistInput.value = data.flat_artistString;
-					}
-
-					yadgUtil.setValueIfSet(data.year, yearInput, data.year !== false);
-					yadgUtil.setValueIfSet(
-						data.title,
-						albumTitleInput,
-						data.title !== false,
 					);
 				};
 
