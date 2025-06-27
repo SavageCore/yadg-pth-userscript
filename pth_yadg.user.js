@@ -1699,8 +1699,8 @@ factory = {
 			case 'dic_upload':
 			case 'd3si_upload':
 			case 'pth_upload': {
-				const yearTr = document.querySelector('#year_tr');
-				yearTr.parentNode.insertBefore(element, yearTr);
+				const typeRow = document.querySelector('#upload_table > table > tbody> tr:last-child');
+				typeRow.parentNode.append(element);
 				break;
 			}
 
