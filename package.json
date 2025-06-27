@@ -4,7 +4,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "xo": "^0.59.3",
+    "xo": "^1.1.1",
     "husky": "^9.1.7"
   },
   "xo": {
