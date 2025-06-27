@@ -1,28 +1,30 @@
 {
-  "scripts": {
-    "test": "xo",
-    "prepare": "husky"
-  },
-  "devDependencies": {
-    "xo": "^0.59.3",
-    "husky": "^9.1.7"
-  },
-  "xo": {
-    "plugins": [
-      "unicorn"
-    ],
-    "rules": {
-      "unicorn/filename-case": [
-        "error",
-        {
-          "case": "snakeCase"
-        }
-      ]
-    }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/SavageCore/yadg-pth-userscript.git"
-  },
-  "license": "MIT"
+	"scripts": {
+		"test": "xo",
+		"prepare": "husky",
+		"preinstall": "npx only-allow pnpm"
+	},
+	"devDependencies": {
+		"husky": "^9.1.7",
+		"only-allow": "^1.2.1",
+		"xo": "^0.59.3"
+	},
+	"xo": {
+		"plugins": [
+			"unicorn"
+		],
+		"rules": {
+			"unicorn/filename-case": [
+				"error",
+				{
+					"case": "snakeCase"
+				}
+			]
+		}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/SavageCore/yadg-pth-userscript.git"
+	},
+	"license": "MIT"
 }
