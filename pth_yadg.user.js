@@ -1700,7 +1700,7 @@ factory = {
 			case 'd3si_upload':
 			case 'pth_upload': {
 				const typeRow = document.querySelector('#upload_table > table > tbody> tr:last-child');
-				typeRow.parentNode.appendChild(element, typeRow);
+				typeRow.parentNode.appendChild(element);
 				break;
 			}
 
