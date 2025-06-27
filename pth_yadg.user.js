@@ -374,7 +374,7 @@ function insertImage(img, callback) {
 
 		case (window.location.href.match(/requests\.php\?/) || {}).input: {
 			const [imageInputElement] = document.querySelectorAll(
-				'#image_tr > td:nth-child(2) > input[type="text"]:nth-child(1)',
+				'#image_tr > td:nth-child(2) > input[type="url"]:nth-child(1)',
 			);
 			imageInputElement.value = img;
 			imageInputElement.parentNode.parentNode.insertAdjacentHTML(
