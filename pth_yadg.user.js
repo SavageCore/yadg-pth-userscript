@@ -1793,7 +1793,7 @@ factory = {
 			case 'dic_torrent_overview':
 			case 'd3si_torrent_overview':
 			case 'pth_torrent_overview': {
-				if (!Object.hasOwn(this, 'dummybox')) { // eslint-disable-line no-use-extend-native/no-use-extend-native
+				if (!Object.hasOwn(this, 'dummybox')) {
 					this.dummybox = document.createElement('div');
 				}
 
@@ -3170,7 +3170,7 @@ yadg = {
 			result.effective_artist_count = 0; // eslint-disable-line camelcase
 
 			for (const i in result.artists) {
-				if (Object.hasOwn(result.artists, i)) { // eslint-disable-line no-use-extend-native/no-use-extend-native
+				if (Object.hasOwn(result.artists, i)) {
 					result.artists_length++;
 					result.artist_keys.push(i);
 					result.effective_artist_count += result.artists[i].length; // eslint-disable-line camelcase
